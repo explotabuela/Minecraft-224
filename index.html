@@ -227,6 +227,7 @@ h2{font-family:var(--f-display);font-weight:800;font-size:clamp(1.7rem,4vw,2.4re
 .linea-tiempo time{font-family:var(--f-pixel);font-size:.72rem;letter-spacing:.06em;color:var(--verde)}
 .linea-tiempo h3{margin:2px 0 4px;font-size:1.1rem}
 .linea-tiempo p{margin:0;color:var(--tenue)}
+.foto-momento{display:block;margin-top:10px;width:100%;max-width:420px;aspect-ratio:16/9;object-fit:cover;border-radius:12px;border:1px solid var(--linea)}
 
 /* Carrusel de capturas */
 .carrusel{position:relative}
@@ -243,6 +244,49 @@ h2{font-family:var(--f-display);font-weight:800;font-size:clamp(1.7rem,4vw,2.4re
 .visor figcaption{color:#eef3f0;text-align:center}
 .visor .controles{display:flex;justify-content:center;gap:10px}
 .visor button{border:1px solid #ffffff33;background:#ffffff14;color:#fff;border-radius:999px;padding:10px 18px;font:600 .95rem var(--f-body);cursor:pointer}
+
+/* Perfil (ficha) */
+.perfil{cursor:pointer}
+.ficha{border:1px solid var(--linea);border-radius:20px;background:var(--capa);color:var(--texto);padding:0;width:min(760px,94vw);max-height:90vh;overflow:auto}
+.ficha::backdrop{background:#000000b3;backdrop-filter:blur(4px)}
+.ficha-x{position:absolute;top:12px;right:12px;width:38px;height:38px;border-radius:999px;border:1px solid var(--linea);background:var(--capa-2);color:var(--texto);font-size:1.4rem;cursor:pointer;z-index:1}
+.ficha-cuerpo{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr)}
+.ficha-skin{display:grid;place-items:end center;padding:28px 12px 0;min-height:320px;background:radial-gradient(70% 70% at 50% 100%,var(--brillo-suave),transparent),var(--capa-2)}
+.ficha-skin .cuerpo{height:280px;width:auto;image-rendering:pixelated;filter:drop-shadow(0 12px 18px var(--sombra))}
+.ficha-skin .cuerpo.sin-cara{height:120px;width:120px;margin-bottom:60px;font-size:2.6rem;border-radius:24px}
+.ficha-datos{padding:28px;display:grid;gap:14px;align-content:start;min-width:0}
+.ficha-datos h2{font-size:1.8rem;overflow-wrap:anywhere;padding-right:40px}
+.ficha-sub{margin:-8px 0 0;color:var(--tenue)}
+.ficha-stats{margin:0;display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.ficha-stats div{background:var(--capa-2);border-radius:12px;padding:10px 12px;display:grid}
+.ficha-stats dt{font-size:.72rem;font-weight:700;letter-spacing:.04em;color:var(--tenue)}
+.ficha-stats dd{margin:0;font-family:var(--f-display);font-weight:800;font-size:1.15rem;font-variant-numeric:tabular-nums}
+.ficha-acciones{display:flex;gap:10px;flex-wrap:wrap}
+.ficha-acciones .btn{border-radius:12px;padding:12px 18px}
+.btn.secundario{background:var(--capa-2);color:var(--texto);border:1px solid var(--linea)}
+
+/* Wrapped */
+.wrapped{position:relative;overflow:hidden;border-radius:20px;padding:40px 32px;display:grid;gap:12px;justify-items:start;color:#fff;
+  background:linear-gradient(135deg,#1f7a35 0%,#2b5fd9 55%,#a33ed6 100%)}
+.wrapped::after{content:"224";position:absolute;right:-10px;bottom:-40px;font-family:var(--f-display);font-weight:800;font-size:clamp(7rem,20vw,12rem);line-height:1;color:#ffffff1f;pointer-events:none}
+.wrapped .eyebrow{color:#ffffffcc}.wrapped .eyebrow::before{background:#fff}
+.wrapped h2{font-size:clamp(2rem,6vw,3.2rem)}
+.wrapped p{margin:0;max-width:56ch;color:#ffffffd9;position:relative;z-index:1}
+.wrapped .btn{border-radius:12px;padding:12px 20px;text-decoration:none;position:relative;z-index:1;background:#fff;color:#14201a}
+.wrapped .btn[aria-disabled="true"]{background:#ffffff26;color:#fff;cursor:default}
+
+/* Easter eggs */
+.girar{animation:girar 1s ease-in-out}
+@keyframes girar{to{transform:rotate(360deg)}}
+.creeper{position:fixed;inset:0;z-index:60;display:grid;place-items:center;align-content:center;gap:16px;background:#000000cc}
+.cara-creeper{display:grid;grid-template-columns:repeat(8,1fr);width:min(260px,60vw);aspect-ratio:1;animation:inflar 1.4s ease-in forwards}
+.cara-creeper i{background:#4caf50}.cara-creeper i:nth-child(3n){background:#5cc062}.cara-creeper i:nth-child(7n){background:#3e9a43}
+.cara-creeper i.n{background:#111}
+.creeper p{margin:0;color:#fff;font-family:var(--f-pixel);font-size:1.4rem}
+@keyframes inflar{60%{transform:scale(1.15)}100%{transform:scale(1.35);filter:brightness(1.8)}}
+.creeper.boom{background:#fff;transition:background .1s}.creeper.boom *{opacity:0}
+.temblor main,.temblor .hero{animation:temblor .4s linear 2}
+@keyframes temblor{25%{transform:translate(6px,-4px)}50%{transform:translate(-6px,4px)}75%{transform:translate(4px,6px)}}
 
 /* Preguntas */
 .faq{display:grid;gap:10px;max-width:760px}
@@ -284,6 +328,10 @@ footer{border-top:1px solid var(--linea);padding-block:28px 96px;color:var(--ten
   .ranking{grid-template-columns:1fr}
   .marca span{display:none}
 }
+@media (max-width:640px){
+  .ficha-cuerpo{grid-template-columns:1fr}
+  .ficha-skin{min-height:240px}.ficha-skin .cuerpo{height:210px}
+}
 @media (max-width:480px){
   .numeros{grid-template-columns:repeat(2,minmax(0,1fr))}
   .carrusel .galeria{grid-auto-columns:88%}
@@ -310,6 +358,7 @@ footer{border-top:1px solid var(--linea);padding-block:28px 96px;color:var(--ten
       <a href="#historia">Historia</a>
       <a href="#capturas">Capturas</a>
       <a href="#mapa">Mapa</a>
+      <a href="#wrapped">Wrapped</a>
       <a href="#preguntas">Preguntas</a>
     </nav>
     <button class="tema" id="tema" type="button" aria-label="Cambiar a modo claro u oscuro">◐</button>
@@ -399,7 +448,7 @@ footer{border-top:1px solid var(--linea);padding-block:28px 96px;color:var(--ten
     <div class="cabeza">
       <span class="eyebrow">JUGADORES</span>
       <h2>La banda de la 224</h2>
-      <p>Las stats de cada quien.</p>
+      <p>Las stats de cada quien. Dale clic a alguien para ver su perfil.<span id="actualizado"></span></p>
     </div>
     <div class="herramientas">
       <label class="campo" for="buscar"><span aria-hidden="true">⌕</span><input id="buscar" type="search" placeholder="Buscar jugador…" autocomplete="off" list="sugerencias"><datalist id="sugerencias"></datalist></label>
@@ -460,6 +509,15 @@ footer{border-top:1px solid var(--linea);padding-block:28px 96px;color:var(--ten
     </div>
   </section>
 
+  <section id="wrapped">
+    <div class="wrapped">
+      <span class="eyebrow">TEMPORADA 1</span>
+      <h2>Wrapped 224</h2>
+      <p>Al final de la temporada, cada quien recibe su resumen: horas jugadas, tus muertes más tontas, el mob que más te mató, tu primer diamante y tu mejor racha. Con tarjeta para presumir.</p>
+      <a class="btn" id="wrapped-link" target="_blank" rel="noopener" aria-disabled="true">Disponible al final de la temporada</a>
+    </div>
+  </section>
+
   <section id="preguntas">
     <div class="cabeza">
       <span class="eyebrow">PREGUNTAS</span>
@@ -516,6 +574,13 @@ footer{border-top:1px solid var(--linea);padding-block:28px 96px;color:var(--ten
 
 <div class="aviso" id="aviso" role="status" hidden>IP copiada</div>
 
+<dialog class="ficha" id="ficha" aria-label="Perfil del jugador">
+  <button class="ficha-x" id="ficha-cerrar" type="button" aria-label="Cerrar">×</button>
+  <div class="ficha-cuerpo" id="ficha-cuerpo"></div>
+</dialog>
+
+<div class="creeper" id="creeper" hidden aria-hidden="true"><div class="cara-creeper"></div><p>Sssss…</p></div>
+
 <script>
 /* =====================================================
    CONFIGURACIÓN DE LA PÁGINA — aquí cambias todo
@@ -560,9 +625,13 @@ const CONFIG = {
     { nombre: "explotabuela", muertes: 2, horas: 1, minado: 0, metros: 0, mobs: 0, record: 15 },
   ],
 
+  // Link del Wrapped cuando esté listo (al final de la temporada)
+  wrapped: null,
+
   // Momentos importantes de la 224 (los más nuevos arriba)
   momentos: [
-    // { fecha: "20 dic 2026", titulo: "Inauguración", texto: "Entramos todos al mismo tiempo." },
+    // { fecha: "20 dic 2026", titulo: "Inauguración", texto: "Entramos todos al mismo tiempo.", foto: "capturas/inauguracion.png" },
+    // La foto es opcional: si no tiene, se quita esa parte.
   ],
 
   // Capturas: pon las imágenes en una carpeta "capturas" junto a esta página
@@ -592,6 +661,18 @@ function foto(src, nombre, clase = "foto") {
   return i;
 }
 
+(async () => {
+/* Stats automáticas: si existe data.json (lo sube el bot), manda sobre la configuración */
+try {
+  const r = await fetch("data.json?v=" + Date.now(), { cache: "no-store" });
+  if (r.ok) {
+    const d = await r.json();
+    if (Array.isArray(d.jugadores) && d.jugadores.length) CONFIG.jugadores = d.jugadores;
+    if (d.ranking) CONFIG.ranking = d.ranking;
+    CONFIG.actualizado = d.actualizado;
+  }
+} catch {}
+
 /* IP + copiar */
 $("#ip-texto").textContent = CONFIG.ip;
 $("#version").textContent = CONFIG.version;
@@ -610,8 +691,7 @@ $("#copiar").addEventListener("click", async () => {
     const r = document.createRange(); r.selectNodeContents($("#ip-texto"));
     const s = getSelection(); s.removeAllRanges(); s.addRange(r);
   }
-  const a = $("#aviso"); a.hidden = false;
-  clearTimeout(a._t); a._t = setTimeout(() => a.hidden = true, 1800);
+  avisar("IP copiada");
 });
 
 /* Cuenta regresiva → después, cuánto lleva la 224 */
@@ -680,6 +760,9 @@ const tarjetas = [];
      ["METROS", num(j.metros)], ["MOBS", num(j.mobs)], ["RÉCORD", num(j.record) + "m"]]
       .forEach(([k, v]) => dl.insertAdjacentHTML("beforeend", `<div><dt>${k}</dt><dd>${v}</dd></div>`));
     p.append(e, cab, dl); caja.append(p);
+    p.tabIndex = 0; p.setAttribute("role", "button"); p.setAttribute("aria-label", "Ver perfil de " + j.nombre);
+    p.addEventListener("click", () => abrirFicha(j.nombre));
+    p.addEventListener("keydown", ev => { if (ev.key === "Enter") abrirFicha(j.nombre); });
     tarjetas.push({ nombre: j.nombre.toLowerCase(), el: p });
     $("#sugerencias").append(new Option(j.nombre));
   });
@@ -690,7 +773,8 @@ const tarjetas = [];
     let n = 0;
     tarjetas.forEach(t => { const ok = t.nombre.includes(q); t.el.hidden = !ok; if (ok) n++; });
     $("#conteo").textContent = `${n} de ${tarjetas.length} ${tarjetas.length === 1 ? "jugador" : "jugadores"}`;
-    vacio.hidden = n > 0; vacio.textContent = `Nadie se llama "${$("#buscar").value}" en la 224.`;
+    vacio.hidden = n > 0;
+    vacio.textContent = q === "herobrine" ? "Herobrine no está en la whitelist… todavía. 👁️" : `Nadie se llama "${$("#buscar").value}" en la 224.`;
   }
   $("#buscar").addEventListener("input", filtrar);
   filtrar();
@@ -724,6 +808,96 @@ const tarjetas = [];
   a.addEventListener("change", pintar); b.addEventListener("change", pintar); pintar();
 })();
 
+/* Última actualización de stats */
+if (CONFIG.actualizado) {
+  const min = Math.round((Date.now() - new Date(CONFIG.actualizado)) / 6e4);
+  $("#actualizado").textContent = " Actualizado " + (min < 1 ? "hace un momento" : min < 60 ? `hace ${min} min` : `hace ${Math.round(min / 60)} h`) + ".";
+}
+
+/* Perfil de cada jugador (ficha) */
+function posicion(nombre, k, menos) {
+  const orden = [...CONFIG.jugadores].sort((a, b) => menos ? a[k] - b[k] : b[k] - a[k]);
+  return orden.findIndex(j => j.nombre === nombre) + 1;
+}
+function abrirFicha(nombre) {
+  const j = CONFIG.jugadores.find(x => x.nombre.toLowerCase() === String(nombre).toLowerCase());
+  if (!j) return;
+  const caja = $("#ficha-cuerpo"); caja.innerHTML = "";
+  const izq = document.createElement("div"); izq.className = "ficha-skin";
+  izq.append(foto(`https://mc-heads.net/body/${encodeURIComponent(j.nombre)}/260`, j.nombre, "cuerpo"));
+  const der = document.createElement("div"); der.className = "ficha-datos";
+  const h = document.createElement("h2"); h.textContent = j.nombre;
+  const total = CONFIG.jugadores.length;
+  const sub = document.createElement("p"); sub.className = "ficha-sub";
+  sub.textContent = total > 1 ? `#${posicion(j.nombre, "horas")} en horas jugadas · #${posicion(j.nombre, "muertes")} en muertes de ${total}` : "Jugador de la 224";
+  const dl = document.createElement("dl"); dl.className = "ficha-stats";
+  [["Muertes", num(j.muertes)], ["Horas jugadas", num(j.horas)], ["Bloques minados", num(j.minado)],
+   ["Metros caminados", num(j.metros)], ["Mobs matados", num(j.mobs)], ["Récord sin morir", num(j.record) + " min"],
+   ["Racha actual", num(j.racha) + " días"], ["Mejor racha", num(j.mejorRacha) + " días"]]
+    .forEach(([k, v]) => dl.insertAdjacentHTML("beforeend", `<div><dt>${k}</dt><dd>${v}</dd></div>`));
+  const acciones = document.createElement("div"); acciones.className = "ficha-acciones";
+  const copiar = document.createElement("button"); copiar.type = "button"; copiar.className = "btn"; copiar.textContent = "Copiar link del perfil";
+  copiar.addEventListener("click", async () => {
+    const url = location.href.split("#")[0] + "#j-" + encodeURIComponent(j.nombre);
+    try { await navigator.clipboard.writeText(url); copiar.textContent = "Link copiado ✔"; } catch { copiar.textContent = url; }
+  });
+  const cmp = document.createElement("button"); cmp.type = "button"; cmp.className = "btn secundario"; cmp.textContent = "Comparar";
+  cmp.addEventListener("click", () => {
+    const i = CONFIG.jugadores.indexOf(j); const a = $("#vs-a");
+    if (a.options.length) { a.value = String(i); a.dispatchEvent(new Event("change")); }
+    $("#ficha").close(); $("#comparador").scrollIntoView({ behavior: "smooth" });
+  });
+  acciones.append(copiar); if (CONFIG.jugadores.length > 1) acciones.append(cmp);
+  der.append(h, sub, dl, acciones);
+  caja.append(izq, der);
+  const d = $("#ficha"); if (!d.open) d.showModal ? d.showModal() : d.setAttribute("open", "");
+}
+$("#ficha-cerrar").addEventListener("click", () => $("#ficha").close());
+$("#ficha").addEventListener("click", e => { if (e.target.id === "ficha") $("#ficha").close(); });
+function fichaDesdeLink() {
+  if (location.hash.startsWith("#j-")) abrirFicha(decodeURIComponent(location.hash.slice(3)));
+}
+addEventListener("hashchange", fichaDesdeLink);
+
+/* Wrapped */
+if (CONFIG.wrapped) {
+  const a = $("#wrapped-link"); a.href = CONFIG.wrapped; a.textContent = "Ver mi Wrapped"; a.removeAttribute("aria-disabled");
+}
+
+/* 🥚 */
+console.log("%c⛏ MINECRAFT 224", "font:800 20px sans-serif;color:#5fd068", "\n¿Andas viendo el código? Únete al Discord y ayúdale a Dylan con el server.");
+(function () {
+  let toques = 0, t;
+  $(".logo-grande").addEventListener("click", () => {
+    toques++; clearTimeout(t); t = setTimeout(() => toques = 0, 1500);
+    if (toques === 7) {
+      toques = 0;
+      const l = $(".logo-grande"); l.classList.remove("girar"); void l.offsetWidth; l.classList.add("girar");
+      avisar("¿Ya? Deja el logo en paz.");
+    }
+  });
+  const codigo = ["ArrowUp","ArrowUp","ArrowDown","ArrowDown","ArrowLeft","ArrowRight","ArrowLeft","ArrowRight","b","a"];
+  let pos = 0;
+  addEventListener("keydown", e => {
+    pos = (e.key === codigo[pos] || e.key.toLowerCase() === codigo[pos]) ? pos + 1 : (e.key === codigo[0] ? 1 : 0);
+    if (pos === codigo.length) { pos = 0; creeper(); }
+  });
+  function creeper() {
+    const c = $("#creeper"); const g = c.querySelector(".cara-creeper");
+    if (!g.children.length) {
+      const m = ["00000000","00000000","01100110","01100110","00011000","00111100","00111100","00100100"];
+      m.join("").split("").forEach(v => { const i = document.createElement("i"); if (v === "1") i.className = "n"; g.append(i); });
+    }
+    c.hidden = false;
+    setTimeout(() => { c.classList.add("boom"); document.body.classList.add("temblor"); }, 1400);
+    setTimeout(() => { c.hidden = true; c.classList.remove("boom"); document.body.classList.remove("temblor"); avisar("💥 Te explotó un creeper. Por tonto."); }, 2100);
+  }
+})();
+function avisar(texto) {
+  const a = $("#aviso"); a.textContent = texto; a.hidden = false;
+  clearTimeout(a._t); a._t = setTimeout(() => { a.hidden = true; a.textContent = "IP copiada"; }, 2600);
+}
+
 /* La 224 en números */
 (function () {
   const js = CONFIG.jugadores, suma = k => js.reduce((t, j) => t + Number(j[k] || 0), 0);
@@ -744,7 +918,9 @@ const tarjetas = [];
     const t = document.createElement("time"); t.textContent = m.fecha || "";
     const h = document.createElement("h3"); h.textContent = m.titulo || "";
     const p = document.createElement("p"); p.textContent = m.texto || "";
-    li.append(t, h, p); ol.append(li);
+    li.append(t, h, p);
+    if (m.foto) { const im = document.createElement("img"); im.src = m.foto; im.alt = m.titulo || ""; im.loading = "lazy"; im.className = "foto-momento"; li.append(im); }
+    ol.append(li);
   });
 })();
 
@@ -851,6 +1027,8 @@ async function revisar() {
   }
 }
 revisar(); setInterval(revisar, 60000);
+fichaDesdeLink();
+})();
 </script>
 
 </html>
