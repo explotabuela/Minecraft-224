@@ -1,137 +1,16 @@
 {
-  "actualizado": "2026-10-10T22:32",
+  "actualizado": "2026-10-10T22:35",
   "jugadores": [
-    {
-      "nombre": "$despawn_seconds",
-      "muertes": 0,
-      "horas": 0,
-      "minado": 0,
-      "metros": 0,
-      "mobs": 0,
-      "record": 0,
-      "racha": 0,
-      "mejorRacha": 0
-    },
-    {
-      "nombre": "$first_listing_number",
-      "muertes": 0,
-      "horas": 0,
-      "minado": 0,
-      "metros": 0,
-      "mobs": 0,
-      "record": 0,
-      "racha": 0,
-      "mejorRacha": 0
-    },
-    {
-      "nombre": "$max",
-      "muertes": 0,
-      "horas": 0,
-      "minado": 0,
-      "metros": 0,
-      "mobs": 0,
-      "record": 0,
-      "racha": 0,
-      "mejorRacha": 0
-    },
-    {
-      "nombre": "$max_listing_number",
-      "muertes": 0,
-      "horas": 0,
-      "minado": 0,
-      "metros": 0,
-      "mobs": 0,
-      "record": 0,
-      "racha": 0,
-      "mejorRacha": 0
-    },
-    {
-      "nombre": "$page_number",
-      "muertes": 0,
-      "horas": 0,
-      "minado": 0,
-      "metros": 0,
-      "mobs": 0,
-      "record": 0,
-      "racha": 0,
-      "mejorRacha": 0
-    },
     {
       "nombre": "explotabuela",
       "muertes": 5,
       "horas": 0.5,
       "minado": 4,
-      "metros": 1087,
+      "metros": 1090,
       "mobs": 6,
       "record": 12,
       "racha": 1,
       "mejorRacha": 1
-    },
-    {
-      "nombre": "$ticks_since_death",
-      "muertes": 0,
-      "horas": 0,
-      "minado": 0,
-      "metros": 0,
-      "mobs": 0,
-      "record": 0,
-      "racha": 0,
-      "mejorRacha": 0
-    },
-    {
-      "nombre": "$xp_orb_value",
-      "muertes": 0,
-      "horas": 0,
-      "minado": 0,
-      "metros": 0,
-      "mobs": 0,
-      "record": 0,
-      "racha": 0,
-      "mejorRacha": 0
-    },
-    {
-      "nombre": "$tick_id",
-      "muertes": 0,
-      "horas": 0,
-      "minado": 0,
-      "metros": 0,
-      "mobs": 0,
-      "record": 0,
-      "racha": 0,
-      "mejorRacha": 0
-    },
-    {
-      "nombre": "$last_listing_number",
-      "muertes": 0,
-      "horas": 0,
-      "minado": 0,
-      "metros": 0,
-      "mobs": 0,
-      "record": 0,
-      "racha": 0,
-      "mejorRacha": 0
-    },
-    {
-      "nombre": "$death_gametime",
-      "muertes": 0,
-      "horas": 0,
-      "minado": 0,
-      "metros": 0,
-      "mobs": 0,
-      "record": 0,
-      "racha": 0,
-      "mejorRacha": 0
-    },
-    {
-      "nombre": "$TICKS_PER_HOUR",
-      "muertes": 0,
-      "horas": 0,
-      "minado": 0,
-      "metros": 0,
-      "mobs": 0,
-      "record": 0,
-      "racha": 0,
-      "mejorRacha": 0
     }
   ],
   "ranking": {
