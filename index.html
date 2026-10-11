@@ -20,7 +20,29 @@
   --f-body:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif;
   --f-pixel:"Silkscreen",ui-monospace,monospace;
   --radio:14px;
+  --vidrio:#0c1110e6;
+  --sobre-verde:#08210c;
+  --campeon-a:#3a1712;
+  --campeon-borde:#4a231b;
+  --mapa-a:#123021;
+  --brillo:#5fd06866;
+  --brillo-suave:#5fd06830;
+  --sombra:#000000aa;
   color-scheme:dark;
+}
+@media (prefers-color-scheme:light){
+  :root:not([data-theme="dark"]){
+    --fondo:#f3f6f2;--capa:#ffffff;--capa-2:#e8efe8;--linea:#d3ddd5;--verde:#23893a;--verde-suave:#23893a1f;
+    --oro:#a87708;--rojo:#cf3d27;--texto:#14201a;--tenue:#56665e;--vidrio:#f3f6f2e6;--sobre-verde:#ffffff;
+    --campeon-a:#ffe2db;--campeon-borde:#f2c3b8;--mapa-a:#dcefdf;--brillo:#23893a55;--brillo-suave:#23893a22;--sombra:#14201a33;
+    color-scheme:light;
+  }
+}
+:root[data-theme="light"]{
+  --fondo:#f3f6f2;--capa:#ffffff;--capa-2:#e8efe8;--linea:#d3ddd5;--verde:#23893a;--verde-suave:#23893a1f;
+  --oro:#a87708;--rojo:#cf3d27;--texto:#14201a;--tenue:#56665e;--vidrio:#f3f6f2e6;--sobre-verde:#ffffff;
+  --campeon-a:#ffe2db;--campeon-borde:#f2c3b8;--mapa-a:#dcefdf;--brillo:#23893a55;--brillo-suave:#23893a22;--sombra:#14201a33;
+  color-scheme:light;
 }
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
@@ -33,7 +55,7 @@ a{color:var(--verde)}
 .envoltura{max-width:1080px;margin:0 auto;padding-inline:20px}
 
 /* ===== Menú ===== */
-.menu{position:sticky;top:env(safe-area-inset-top,0px);z-index:30;background:#0c1110cc;backdrop-filter:blur(14px);
+.menu{position:sticky;top:env(safe-area-inset-top,0px);z-index:30;background:var(--vidrio);backdrop-filter:blur(14px);
   border-bottom:1px solid var(--linea)}
 .menu .envoltura{display:flex;align-items:center;gap:20px;height:60px}
 .marca{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--texto);font-family:var(--f-display);font-weight:800;font-size:.95rem;flex:none}
@@ -57,7 +79,7 @@ h1 em{font-style:normal;color:var(--verde)}
 .ip .datos{display:grid;padding:10px 18px;min-width:0}
 .ip small{font-size:.72rem;color:var(--tenue);font-weight:600;letter-spacing:.06em}
 .ip code{font-family:var(--f-pixel);font-size:1rem;overflow-wrap:anywhere}
-.btn{font-family:var(--f-body);font-weight:700;font-size:.95rem;border:0;cursor:pointer;padding:0 22px;color:#08210c;background:var(--verde);transition:filter .15s,transform .15s}
+.btn{font-family:var(--f-body);font-weight:700;font-size:.95rem;border:0;cursor:pointer;padding:0 22px;color:var(--sobre-verde);background:var(--verde);transition:filter .15s,transform .15s}
 .btn:hover{filter:brightness(1.08)}
 .btn:active{transform:translateY(1px)}
 .ip-ayuda{font-size:.85rem;color:var(--tenue);margin:12px 0 0}
@@ -66,7 +88,7 @@ h1 em{font-style:normal;color:var(--verde)}
 .ip-ayuda code{font-family:var(--f-pixel);color:var(--verde)}
 
 .lado{display:grid;justify-items:center;gap:22px}
-.logo-grande{width:min(280px,70vw);height:auto;border-radius:28px;box-shadow:0 30px 80px -20px #5fd06866,0 0 0 1px var(--linea);animation:flota 7s ease-in-out infinite}
+.logo-grande{width:min(280px,70vw);height:auto;border-radius:28px;box-shadow:0 30px 80px -20px var(--brillo),0 0 0 1px var(--linea);animation:flota 7s ease-in-out infinite}
 @keyframes flota{50%{transform:translateY(-10px) rotate(-1deg)}}
 .cuenta{width:100%;max-width:340px;background:var(--capa);border:1px solid var(--linea);border-radius:var(--radio);padding:16px 18px;display:grid;gap:10px}
 .cuenta .etiqueta{font-family:var(--f-pixel);font-size:.72rem;letter-spacing:.08em;color:var(--oro);text-align:center}
@@ -110,7 +132,7 @@ h2{font-family:var(--f-display);font-weight:800;font-size:clamp(1.7rem,4vw,2.4re
 .pestanas button{font:600 .9rem var(--f-body);color:var(--tenue);background:none;border:0;border-radius:999px;padding:8px 16px;cursor:pointer}
 .pestanas button[aria-selected="true"]{background:var(--rojo);color:#2a0702}
 .ranking{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:16px}
-.campeon{position:relative;overflow:hidden;background:linear-gradient(160deg,#3a1712,var(--capa) 70%);border:1px solid #4a231b;border-radius:var(--radio);padding:28px;display:grid;justify-items:center;text-align:center;gap:4px}
+.campeon{position:relative;overflow:hidden;background:linear-gradient(160deg,var(--campeon-a),var(--capa) 70%);border:1px solid var(--campeon-borde);border-radius:var(--radio);padding:28px;display:grid;justify-items:center;text-align:center;gap:4px}
 .campeon .etiqueta{font-family:var(--f-pixel);font-size:.72rem;letter-spacing:.1em;color:var(--oro)}
 .campeon .foto{width:112px;height:112px;margin:14px 0 10px;border-radius:18px;image-rendering:pixelated;box-shadow:0 14px 40px -10px #ff6b5788}
 .campeon .nombre{font-family:var(--f-display);font-weight:800;font-size:1.6rem;line-height:1.15;overflow-wrap:anywhere}
@@ -126,35 +148,195 @@ h2{font-family:var(--f-display);font-weight:800;font-size:clamp(1.7rem,4vw,2.4re
 .fila .cuantas{font-weight:700;color:var(--rojo);font-variant-numeric:tabular-nums;white-space:nowrap}
 .vacio{grid-column:1/-1;background:var(--capa);border:1px dashed var(--linea);border-radius:var(--radio);padding:28px;text-align:center;color:var(--tenue);margin:0}
 
-/* Jugadores */
-.perfiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:16px}
-.perfil{background:var(--capa);border:1px solid var(--linea);border-radius:var(--radio);overflow:hidden;transition:transform .2s,border-color .2s}
-.perfil:hover{transform:translateY(-4px);border-color:#5fd06866}
-.perfil .escena{height:210px;display:grid;place-items:end center;background:radial-gradient(70% 80% at 50% 100%,#5fd06830,transparent),var(--capa-2)}
-.perfil .escena .cuerpo{height:180px;width:auto;image-rendering:pixelated;filter:drop-shadow(0 10px 14px #0008)}
-.perfil .cabecera{display:flex;align-items:center;gap:10px;padding:16px 18px 10px}
-.perfil .cabecera .foto{width:32px;height:32px;border-radius:8px;image-rendering:pixelated}
-.perfil h3{margin:0;font-family:var(--f-display);font-weight:600;font-size:1.05rem;overflow-wrap:anywhere;min-width:0}
-.stats{margin:0;padding:4px 18px 18px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px 10px}
-.stats div{display:grid}
-.stats dt{font-size:.68rem;font-weight:700;letter-spacing:.06em;color:var(--tenue)}
-.stats dd{margin:0;font-weight:700;font-size:1.05rem;font-variant-numeric:tabular-nums}
+/* Jugadores + buscador */
+const tarjetas = [];
+(function () {
+  const caja = $("#perfiles");
+  CONFIG.jugadores.forEach(j => {
+    const p = document.createElement("article"); p.className = "perfil";
+    const e = document.createElement("div"); e.className = "escena";
+    e.append(foto(cuerpo(j.nombre), j.nombre, "cuerpo"));
+    const cab = document.createElement("div"); cab.className = "cabecera";
+    const h = document.createElement("h3"); h.textContent = j.nombre;
+    cab.append(foto(cara(j.nombre), j.nombre), h);
+    const dl = document.createElement("dl"); dl.className = "stats";
+    [["MUERTES", num(j.muertes)], ["HORAS", num(j.horas)], ["MINADOS", num(j.minado)],
+     ["METROS", num(j.metros)], ["MOBS", num(j.mobs)], ["RÉCORD", num(j.record) + "m"]]
+      .forEach(([k, v]) => dl.insertAdjacentHTML("beforeend", `<div><dt>${k}</dt><dd>${v}</dd></div>`));
+    p.append(e, cab, dl); caja.append(p);
+    tarjetas.push({ nombre: j.nombre.toLowerCase(), el: p });
+  });
+  const vacio = document.createElement("p"); vacio.className = "vacio"; vacio.hidden = true;
+  caja.after(vacio);
+  function filtrar() {
+    const q = $("#buscar").value.trim().toLowerCase();
+    let n = 0;
+    tarjetas.forEach(t => { const ok = t.nombre.includes(q); t.el.hidden = !ok; if (ok) n++; });
+    $("#conteo").textContent = `${n} de ${tarjetas.length} ${tarjetas.length === 1 ? "jugador" : "jugadores"}`;
+    vacio.hidden = n > 0; vacio.textContent = `Nadie se llama "${$("#buscar").value}" en la 224.`;
+  }
+  $("#buscar").addEventListener("input", filtrar);
+  filtrar();
+})();
 
-/* Respaldo cuando la cara no carga */
-.sin-cara{display:grid;place-items:center;background:var(--capa-2);color:var(--verde);font-family:var(--f-display);font-weight:800;border:1px solid var(--linea)}
-.cuerpo.sin-cara{width:100px;height:100px;margin-bottom:40px;border-radius:20px;font-size:2rem}
+/* Comparador */
+(function () {
+  const js = CONFIG.jugadores;
+  const a = $("#vs-a"), b = $("#vs-b"), duelo = $("#duelo");
+  if (js.length < 2) {
+    $(".elegir").hidden = true;
+    duelo.innerHTML = `<p class="vacio">Se necesitan al menos 2 jugadores. Cuando entre la banda, aquí se van a poder comparar.</p>`;
+    return;
+  }
+  js.forEach((j, i) => { a.add(new Option(j.nombre, i)); b.add(new Option(j.nombre, i)); });
+  b.selectedIndex = 1;
+  // "menos es mejor" en muertes
+  const stats = [["MUERTES","muertes",true],["HORAS","horas"],["MINADOS","minado"],["METROS","metros"],["MOBS","mobs"],["RÉCORD","record"]];
+  function pintar() {
+    const A = js[a.value], B = js[b.value]; duelo.innerHTML = "";
+    stats.forEach(([t, k, menos]) => {
+      const va = Number(A[k] || 0), vb = Number(B[k] || 0), max = Math.max(va, vb, 1);
+      const ganaA = menos ? va < vb : va > vb, ganaB = menos ? vb < va : vb > va;
+      const f = document.createElement("div"); f.className = "fila-vs";
+      f.innerHTML = `<div class="lado-a ${ganaA ? "gana" : ""}"><span>${num(va)}</span><span class="barra"><i style="width:${va / max * 100}%"></i></span></div>
+        <div class="stat">${t}${menos ? " ↓" : ""}</div>
+        <div class="lado-b ${ganaB ? "gana" : ""}"><span class="barra"><i style="width:${vb / max * 100}%"></i></span><span>${num(vb)}</span></div>`;
+      duelo.append(f);
+    });
+  }
+  a.addEventListener("change", pintar); b.addEventListener("change", pintar); pintar();
+})();
 
-/* Capturas */
-.galeria{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
-.galeria figure{margin:0;border-radius:var(--radio);overflow:hidden;background:var(--capa);border:1px solid var(--linea)}
-.galeria img{display:block;width:100%;aspect-ratio:16/9;object-fit:cover}
-.galeria figcaption{padding:10px 14px;font-size:.9rem;color:var(--tenue)}
+/* La 224 en números */
+(function () {
+  const js = CONFIG.jugadores, suma = k => js.reduce((t, j) => t + Number(j[k] || 0), 0);
+  $("#numeros").innerHTML = [[js.length, "JUGADORES"], [suma("muertes"), "MUERTES"], [suma("horas"), "HORAS JUGADAS"],
+    [suma("minado"), "BLOQUES MINADOS"], [suma("mobs"), "MOBS MATADOS"]]
+    .map(([v, t]) => `<div class="numero"><b>${num(v)}</b><span>${t}</span></div>`).join("");
+})();
+
+/* Historia */
+(function () {
+  const ol = $("#linea");
+  if (!CONFIG.momentos.length) {
+    ol.outerHTML = `<p class="vacio">La historia de la 224 empieza el día de la inauguración.</p>`;
+    return;
+  }
+  CONFIG.momentos.forEach(m => {
+    const li = document.createElement("li");
+    const t = document.createElement("time"); t.textContent = m.fecha || "";
+    const h = document.createElement("h3"); h.textContent = m.titulo || "";
+    const p = document.createElement("p"); p.textContent = m.texto || "";
+    li.append(t, h, p); ol.append(li);
+  });
+})();
+
+/* Capturas en carrusel + visor */
+(function () {
+  const caja = $("#galeria"), izq = $("#gal-izq"), der = $("#gal-der");
+  if (!CONFIG.capturas.length) {
+    caja.outerHTML = `<p class="vacio">Todavía no hay capturas. Las mejores de #capturas van a salir aquí.</p>`;
+    izq.hidden = der.hidden = true;
+    return;
+  }
+  CONFIG.capturas.forEach((c, n) => {
+    const f = document.createElement("figure");
+    const i = document.createElement("img"); i.src = c.archivo; i.alt = c.texto || "Captura de la 224"; i.loading = "lazy";
+    f.append(i);
+    if (c.texto) { const fc = document.createElement("figcaption"); fc.textContent = c.texto; f.append(fc); }
+    f.tabIndex = 0;
+    f.addEventListener("click", () => abrir(n));
+    f.addEventListener("keydown", e => { if (e.key === "Enter") abrir(n); });
+    caja.append(f);
+  });
+  const mover = d => caja.scrollBy({ left: d * caja.clientWidth, behavior: "smooth" });
+  izq.addEventListener("click", () => mover(-1));
+  der.addEventListener("click", () => mover(1));
+  function flechas() {
+    const max = caja.scrollWidth - caja.clientWidth - 2;
+    izq.hidden = caja.scrollLeft <= 2; der.hidden = caja.scrollLeft >= max;
+  }
+  caja.addEventListener("scroll", flechas, { passive: true });
+  addEventListener("resize", flechas); flechas();
+
+  const visor = $("#visor"); let actual = 0;
+  function mostrar(n) {
+    actual = (n + CONFIG.capturas.length) % CONFIG.capturas.length;
+    const c = CONFIG.capturas[actual];
+    $("#visor-img").src = c.archivo; $("#visor-img").alt = c.texto || "Captura de la 224";
+    $("#visor-txt").textContent = c.texto || "";
+  }
+  function abrir(n) { mostrar(n); visor.showModal ? visor.showModal() : visor.setAttribute("open", ""); }
+  $("#visor-cerrar").addEventListener("click", () => visor.close());
+  $("#visor-ant").addEventListener("click", () => mostrar(actual - 1));
+  $("#visor-sig").addEventListener("click", () => mostrar(actual + 1));
+  visor.addEventListener("click", e => { if (e.target === visor) visor.close(); });
+  visor.addEventListener("keydown", e => { if (e.key === "ArrowLeft") mostrar(actual - 1); if (e.key === "ArrowRight") mostrar(actual + 1); });
+})();
 
 /* Mapa */
-.mapa{display:flex;gap:24px;align-items:center;justify-content:space-between;flex-wrap:wrap;background:linear-gradient(120deg,#123021,var(--capa) 60%);border:1px solid var(--linea);border-radius:var(--radio);padding:32px}
+.mapa{display:flex;gap:24px;align-items:center;justify-content:space-between;flex-wrap:wrap;background:linear-gradient(120deg,var(--mapa-a),var(--capa) 60%);border:1px solid var(--linea);border-radius:var(--radio);padding:32px}
 .mapa p{margin:6px 0 0;color:var(--tenue);max-width:52ch}
 .mapa .btn{display:inline-flex;align-items:center;height:48px;border-radius:12px;text-decoration:none}
 .mapa .btn[aria-disabled="true"]{background:var(--capa-2);color:var(--tenue);cursor:default}
+
+/* Botón de tema */
+.tema{flex:none;width:38px;height:38px;border-radius:999px;border:1px solid var(--linea);background:var(--capa);color:var(--texto);cursor:pointer;font-size:1.05rem;display:grid;place-items:center}
+.tema:hover{border-color:var(--verde)}
+
+/* La 224 en números */
+.numeros{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;padding-block:0 64px}
+.numero{background:var(--capa);border:1px solid var(--linea);border-radius:var(--radio);padding:18px 20px;display:grid;gap:2px}
+.numero b{font-family:var(--f-display);font-weight:800;font-size:clamp(1.4rem,3vw,2rem);line-height:1.15;font-variant-numeric:tabular-nums}
+.numero span{font-size:.75rem;font-weight:700;letter-spacing:.06em;color:var(--tenue)}
+.numero:first-child b{color:var(--verde)}
+
+/* Buscador y comparador */
+.herramientas{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:18px}
+.campo{flex:1 1 260px;max-width:380px;display:flex;align-items:center;gap:10px;background:var(--capa);border:1px solid var(--linea);border-radius:12px;padding:0 14px}
+.campo:focus-within{border-color:var(--verde)}
+.campo input{flex:1;min-width:0;border:0;background:none;color:var(--texto);font:500 1rem var(--f-body);padding:12px 0;outline:none}
+.conteo{color:var(--tenue);font-size:.9rem}
+.comparador{margin-top:40px;background:var(--capa);border:1px solid var(--linea);border-radius:var(--radio);padding:24px}
+.comparador h3{margin:0 0 4px;font-family:var(--f-display);font-size:1.2rem}
+.comparador > p{margin:0 0 18px;color:var(--tenue)}
+.elegir{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:12px;align-items:center;margin-bottom:20px}
+.elegir select{width:100%;font:600 1rem var(--f-body);color:var(--texto);background:var(--capa-2);border:1px solid var(--linea);border-radius:12px;padding:12px}
+.elegir .vs{font-family:var(--f-display);font-weight:800;color:var(--rojo)}
+.duelo{display:grid;gap:12px}
+.duelo .fila-vs{display:grid;grid-template-columns:minmax(0,1fr) 7.5rem minmax(0,1fr);gap:10px;align-items:center}
+.duelo .lado-a,.duelo .lado-b{display:flex;align-items:center;gap:8px;font-weight:700;font-variant-numeric:tabular-nums}
+.duelo .lado-a{justify-content:flex-end}
+.duelo .barra{height:8px;border-radius:99px;background:var(--capa-2);flex:1;overflow:hidden;display:flex}
+.duelo .lado-a .barra{justify-content:flex-end}
+.duelo .barra i{display:block;height:100%;background:var(--tenue);border-radius:99px}
+.duelo .gana .barra i{background:var(--verde)}
+.duelo .gana{color:var(--verde)}
+.duelo .stat{text-align:center;font-size:.72rem;font-weight:700;letter-spacing:.06em;color:var(--tenue)}
+
+/* Historia */
+.linea-tiempo{list-style:none;margin:0;padding:0 0 0 22px;border-left:2px solid var(--linea);display:grid;gap:22px;max-width:760px}
+.linea-tiempo li{position:relative}
+.linea-tiempo li::before{content:"";position:absolute;left:-30px;top:6px;width:12px;height:12px;background:var(--verde);border:3px solid var(--fondo);border-radius:3px}
+.linea-tiempo time{font-family:var(--f-pixel);font-size:.72rem;letter-spacing:.06em;color:var(--verde)}
+.linea-tiempo h3{margin:2px 0 4px;font-size:1.1rem}
+.linea-tiempo p{margin:0;color:var(--tenue)}
+
+/* Carrusel de capturas */
+.carrusel{position:relative}
+.carrusel .galeria{display:grid;grid-auto-flow:column;grid-auto-columns:calc((100% - 3 * 14px) / 4);gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;scroll-behavior:smooth;scrollbar-width:none;grid-template-columns:none}
+.carrusel .galeria::-webkit-scrollbar{display:none}
+.carrusel .galeria figure{scroll-snap-align:start;cursor:zoom-in}
+.flecha{position:absolute;top:calc(50% - 22px);z-index:2;width:44px;height:44px;border-radius:999px;border:1px solid var(--linea);background:var(--vidrio);color:var(--texto);font-size:1.5rem;line-height:1;cursor:pointer;display:grid;place-items:center;box-shadow:0 8px 24px -8px var(--sombra)}
+.flecha:hover{border-color:var(--verde)}
+.flecha.izq{left:-14px}.flecha.der{right:-14px}
+.visor{border:0;padding:0;background:transparent;max-width:min(1100px,94vw);width:100%}
+.visor::backdrop{background:#000000d9}
+.visor figure{margin:0;display:grid;gap:10px}
+.visor img{width:100%;max-height:78vh;object-fit:contain;border-radius:12px}
+.visor figcaption{color:#eef3f0;text-align:center}
+.visor .controles{display:flex;justify-content:center;gap:10px}
+.visor button{border:1px solid #ffffff33;background:#ffffff14;color:#fff;border-radius:999px;padding:10px 18px;font:600 .95rem var(--f-body);cursor:pointer}
 
 /* Preguntas */
 .faq{display:grid;gap:10px;max-width:760px}
@@ -170,20 +352,24 @@ footer{border-top:1px solid var(--linea);padding-block:28px 96px;color:var(--ten
 
 /* ===== Estado del server (esquina) ===== */
 .estado{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:40;display:grid;justify-items:end;gap:8px;max-width:calc(100vw - 32px)}
-.pastilla{display:flex;align-items:center;gap:8px;background:#0c1110ee;border:1px solid var(--linea);color:var(--texto);padding:9px 14px;border-radius:999px;font:600 .82rem var(--f-body);cursor:pointer;backdrop-filter:blur(10px);box-shadow:0 10px 30px -10px #000}
+.pastilla{display:flex;align-items:center;gap:8px;background:var(--vidrio);border:1px solid var(--linea);color:var(--texto);padding:9px 14px;border-radius:999px;font:600 .82rem var(--f-body);cursor:pointer;backdrop-filter:blur(10px);box-shadow:0 10px 30px -10px var(--sombra)}
 .punto{width:9px;height:9px;border-radius:50%;background:var(--tenue);flex:none}
 .estado[data-estado="on"] .punto{background:#4ade5c;animation:late 2s infinite}
 .estado[data-estado="off"] .punto{background:var(--rojo)}
 @keyframes late{0%{box-shadow:0 0 0 0 #4ade5c88}70%,100%{box-shadow:0 0 0 8px #4ade5c00}}
-.lista{background:#0c1110f5;border:1px solid var(--linea);border-radius:var(--radio);padding:12px 14px;width:240px;max-width:100%;max-height:50vh;overflow:auto;backdrop-filter:blur(10px)}
+.lista{background:var(--vidrio);border:1px solid var(--linea);border-radius:var(--radio);padding:12px 14px;width:240px;max-width:100%;max-height:50vh;overflow:auto;backdrop-filter:blur(10px)}
 .lista p{margin:0 0 8px;font-size:.72rem;font-weight:700;letter-spacing:.06em;color:var(--tenue)}
 .lista ul{list-style:none;margin:0;padding:0;display:grid;gap:8px}
 .lista li{display:flex;align-items:center;gap:10px;font-size:.92rem;min-width:0}
 .lista li .foto{width:22px;height:22px;border-radius:6px;image-rendering:pixelated;flex:none;font-size:.7rem}
 .lista li span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 
-.aviso{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:50;background:var(--verde);color:#08210c;font-weight:700;padding:10px 18px;border-radius:999px}
+.aviso{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:50;background:var(--verde);color:var(--sobre-verde);font-weight:700;padding:10px 18px;border-radius:999px}
 
+@media (max-width:900px){
+  .numeros{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .carrusel .galeria{grid-auto-columns:calc((100% - 14px) / 2)}
+}
 @media (max-width:820px){
   .hero{padding-block:44px 48px}
   .hero .envoltura{grid-template-columns:1fr;gap:36px}
@@ -193,6 +379,12 @@ footer{border-top:1px solid var(--linea);padding-block:28px 96px;color:var(--ten
   .marca span{display:none}
 }
 @media (max-width:480px){
+  .numeros{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .carrusel .galeria{grid-auto-columns:88%}
+  .flecha{display:none}
+  .elegir{grid-template-columns:1fr}
+  .elegir .vs{text-align:center}
+  .duelo .fila-vs{grid-template-columns:minmax(0,1fr) 5.5rem minmax(0,1fr)}
   .mandamiento{grid-template-columns:44px minmax(0,1fr);gap:14px;padding:18px}
   .mandamiento .n{font-size:1.9rem}
   .ip{display:flex;width:100%}
@@ -209,10 +401,12 @@ footer{border-top:1px solid var(--linea);padding-block:28px 96px;color:var(--ten
       <a href="#reglas">Reglas</a>
       <a href="#ranking">Ranking</a>
       <a href="#jugadores">Jugadores</a>
+      <a href="#historia">Historia</a>
       <a href="#capturas">Capturas</a>
       <a href="#mapa">Mapa</a>
       <a href="#preguntas">Preguntas</a>
     </nav>
+    <button class="tema" id="tema" type="button" aria-label="Cambiar a modo claro u oscuro">◐</button>
   </div>
 </header>
 
@@ -239,6 +433,8 @@ footer{border-top:1px solid var(--linea);padding-block:28px 96px;color:var(--ten
     </div>
   </div>
 </div>
+
+<div class="envoltura numeros" id="numeros" aria-label="La 224 en números"></div>
 
 <main class="envoltura">
 
@@ -299,7 +495,31 @@ footer{border-top:1px solid var(--linea);padding-block:28px 96px;color:var(--ten
       <h2>La banda de la 224</h2>
       <p>Las stats de cada quien.</p>
     </div>
+    <div class="herramientas">
+      <label class="campo" for="buscar"><span aria-hidden="true">⌕</span><input id="buscar" type="search" placeholder="Buscar jugador…" autocomplete="off"></label>
+      <span class="conteo" id="conteo"></span>
+    </div>
     <div class="perfiles" id="perfiles"></div>
+
+    <div class="comparador" id="comparador">
+      <h3>Comparador</h3>
+      <p>Elige a dos y mira quién gana en cada stat.</p>
+      <div class="elegir">
+        <select id="vs-a" aria-label="Primer jugador"></select>
+        <span class="vs">VS</span>
+        <select id="vs-b" aria-label="Segundo jugador"></select>
+      </div>
+      <div class="duelo" id="duelo"></div>
+    </div>
+  </section>
+
+  <section id="historia">
+    <div class="cabeza">
+      <span class="eyebrow">HISTORIA</span>
+      <h2>Los momentos de la 224</h2>
+      <p>Lo que pasó y nadie va a olvidar.</p>
+    </div>
+    <ol class="linea-tiempo" id="linea"></ol>
   </section>
 
   <section id="capturas">
@@ -308,7 +528,19 @@ footer{border-top:1px solid var(--linea);padding-block:28px 96px;color:var(--ten
       <h2>Lo mejor de la 224</h2>
       <p>Las mejores capturas de <b>#capturas</b> en el Discord.</p>
     </div>
-    <div class="galeria" id="galeria"></div>
+    <div class="carrusel">
+      <button class="flecha izq" id="gal-izq" type="button" aria-label="Capturas anteriores">‹</button>
+      <div class="galeria" id="galeria"></div>
+      <button class="flecha der" id="gal-der" type="button" aria-label="Más capturas">›</button>
+    </div>
+    <dialog class="visor" id="visor" aria-label="Captura en grande">
+      <figure><img id="visor-img" alt=""><figcaption id="visor-txt"></figcaption></figure>
+      <div class="controles">
+        <button type="button" id="visor-ant">‹ Anterior</button>
+        <button type="button" id="visor-cerrar">Cerrar</button>
+        <button type="button" id="visor-sig">Siguiente ›</button>
+      </div>
+    </dialog>
   </section>
 
   <section id="mapa">
@@ -420,6 +652,11 @@ const CONFIG = {
   // Perfiles: agrega un bloque { } por cada jugador
   jugadores: [
     { nombre: "explotabuela", muertes: 2, horas: 1, minado: 0, metros: 0, mobs: 0, record: 15 },
+  ],
+
+  // Momentos importantes de la 224 (los más nuevos arriba)
+  momentos: [
+    // { fecha: "20 dic 2026", titulo: "Inauguración", texto: "Entramos todos al mismo tiempo." },
   ],
 
   // Capturas: pon las imágenes en una carpeta "capturas" junto a esta página
@@ -559,6 +796,18 @@ pintarRanking("semana");
 if (CONFIG.mapa) {
   const a = $("#mapa-link"); a.href = CONFIG.mapa; a.textContent = "Abrir mapa"; a.removeAttribute("aria-disabled");
 }
+
+/* Modo claro / oscuro */
+(function () {
+  const raiz = document.documentElement;
+  try { const g = localStorage.getItem("tema224"); if (g) raiz.dataset.theme = g; } catch {}
+  $("#tema").addEventListener("click", () => {
+    const actual = raiz.dataset.theme || (matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark");
+    const nuevo = actual === "dark" ? "light" : "dark";
+    raiz.dataset.theme = nuevo;
+    try { localStorage.setItem("tema224", nuevo); } catch {}
+  });
+})();
 
 /* Menú: resalta el apartado donde vas */
 const links = [...document.querySelectorAll(".menu nav a")];
