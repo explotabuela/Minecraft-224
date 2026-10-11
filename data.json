@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-10-10T22:31",
+  "actualizado": "2026-10-10T22:32",
   "jugadores": [
     {
       "nombre": "$despawn_seconds",
@@ -64,8 +64,8 @@
       "metros": 1087,
       "mobs": 6,
       "record": 12,
-      "racha": 0,
-      "mejorRacha": 0
+      "racha": 1,
+      "mejorRacha": 1
     },
     {
       "nombre": "$ticks_since_death",
