@@ -1,3 +1,8 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Minecraft 224</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -45,6 +50,9 @@
   color-scheme:light;
 }
 *{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0}
+img{max-width:100%}
 html{scroll-behavior:smooth}
 html,body{background:var(--fondo);color:var(--texto)}
 body{font-family:var(--f-body);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
@@ -148,131 +156,29 @@ h2{font-family:var(--f-display);font-weight:800;font-size:clamp(1.7rem,4vw,2.4re
 .fila .cuantas{font-weight:700;color:var(--rojo);font-variant-numeric:tabular-nums;white-space:nowrap}
 .vacio{grid-column:1/-1;background:var(--capa);border:1px dashed var(--linea);border-radius:var(--radio);padding:28px;text-align:center;color:var(--tenue);margin:0}
 
-/* Jugadores + buscador */
-const tarjetas = [];
-(function () {
-  const caja = $("#perfiles");
-  CONFIG.jugadores.forEach(j => {
-    const p = document.createElement("article"); p.className = "perfil";
-    const e = document.createElement("div"); e.className = "escena";
-    e.append(foto(cuerpo(j.nombre), j.nombre, "cuerpo"));
-    const cab = document.createElement("div"); cab.className = "cabecera";
-    const h = document.createElement("h3"); h.textContent = j.nombre;
-    cab.append(foto(cara(j.nombre), j.nombre), h);
-    const dl = document.createElement("dl"); dl.className = "stats";
-    [["MUERTES", num(j.muertes)], ["HORAS", num(j.horas)], ["MINADOS", num(j.minado)],
-     ["METROS", num(j.metros)], ["MOBS", num(j.mobs)], ["RÉCORD", num(j.record) + "m"]]
-      .forEach(([k, v]) => dl.insertAdjacentHTML("beforeend", `<div><dt>${k}</dt><dd>${v}</dd></div>`));
-    p.append(e, cab, dl); caja.append(p);
-    tarjetas.push({ nombre: j.nombre.toLowerCase(), el: p });
-  });
-  const vacio = document.createElement("p"); vacio.className = "vacio"; vacio.hidden = true;
-  caja.after(vacio);
-  function filtrar() {
-    const q = $("#buscar").value.trim().toLowerCase();
-    let n = 0;
-    tarjetas.forEach(t => { const ok = t.nombre.includes(q); t.el.hidden = !ok; if (ok) n++; });
-    $("#conteo").textContent = `${n} de ${tarjetas.length} ${tarjetas.length === 1 ? "jugador" : "jugadores"}`;
-    vacio.hidden = n > 0; vacio.textContent = `Nadie se llama "${$("#buscar").value}" en la 224.`;
-  }
-  $("#buscar").addEventListener("input", filtrar);
-  filtrar();
-})();
+/* Jugadores */
+.perfiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:16px}
+.perfil{background:var(--capa);border:1px solid var(--linea);border-radius:var(--radio);overflow:hidden;transition:transform .2s,border-color .2s}
+.perfil:hover{transform:translateY(-4px);border-color:var(--brillo)}
+.perfil .escena{height:210px;display:grid;place-items:end center;background:radial-gradient(70% 80% at 50% 100%,var(--brillo-suave),transparent),var(--capa-2)}
+.perfil .escena .cuerpo{height:180px;width:auto;image-rendering:pixelated;filter:drop-shadow(0 10px 14px #0008)}
+.perfil .cabecera{display:flex;align-items:center;gap:10px;padding:16px 18px 10px}
+.perfil .cabecera .foto{width:32px;height:32px;border-radius:8px;image-rendering:pixelated}
+.perfil h3{margin:0;font-family:var(--f-display);font-weight:600;font-size:1.05rem;overflow-wrap:anywhere;min-width:0}
+.stats{margin:0;padding:4px 18px 18px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px 10px}
+.stats div{display:grid}
+.stats dt{font-size:.68rem;font-weight:700;letter-spacing:.06em;color:var(--tenue)}
+.stats dd{margin:0;font-weight:700;font-size:1.05rem;font-variant-numeric:tabular-nums}
 
-/* Comparador */
-(function () {
-  const js = CONFIG.jugadores;
-  const a = $("#vs-a"), b = $("#vs-b"), duelo = $("#duelo");
-  if (js.length < 2) {
-    $(".elegir").hidden = true;
-    duelo.innerHTML = `<p class="vacio">Se necesitan al menos 2 jugadores. Cuando entre la banda, aquí se van a poder comparar.</p>`;
-    return;
-  }
-  js.forEach((j, i) => { a.add(new Option(j.nombre, i)); b.add(new Option(j.nombre, i)); });
-  b.selectedIndex = 1;
-  // "menos es mejor" en muertes
-  const stats = [["MUERTES","muertes",true],["HORAS","horas"],["MINADOS","minado"],["METROS","metros"],["MOBS","mobs"],["RÉCORD","record"]];
-  function pintar() {
-    const A = js[a.value], B = js[b.value]; duelo.innerHTML = "";
-    stats.forEach(([t, k, menos]) => {
-      const va = Number(A[k] || 0), vb = Number(B[k] || 0), max = Math.max(va, vb, 1);
-      const ganaA = menos ? va < vb : va > vb, ganaB = menos ? vb < va : vb > va;
-      const f = document.createElement("div"); f.className = "fila-vs";
-      f.innerHTML = `<div class="lado-a ${ganaA ? "gana" : ""}"><span>${num(va)}</span><span class="barra"><i style="width:${va / max * 100}%"></i></span></div>
-        <div class="stat">${t}${menos ? " ↓" : ""}</div>
-        <div class="lado-b ${ganaB ? "gana" : ""}"><span class="barra"><i style="width:${vb / max * 100}%"></i></span><span>${num(vb)}</span></div>`;
-      duelo.append(f);
-    });
-  }
-  a.addEventListener("change", pintar); b.addEventListener("change", pintar); pintar();
-})();
+/* Respaldo cuando la cara no carga */
+.sin-cara{display:grid;place-items:center;background:var(--capa-2);color:var(--verde);font-family:var(--f-display);font-weight:800;border:1px solid var(--linea)}
+.cuerpo.sin-cara{width:100px;height:100px;margin-bottom:40px;border-radius:20px;font-size:2rem}
 
-/* La 224 en números */
-(function () {
-  const js = CONFIG.jugadores, suma = k => js.reduce((t, j) => t + Number(j[k] || 0), 0);
-  $("#numeros").innerHTML = [[js.length, "JUGADORES"], [suma("muertes"), "MUERTES"], [suma("horas"), "HORAS JUGADAS"],
-    [suma("minado"), "BLOQUES MINADOS"], [suma("mobs"), "MOBS MATADOS"]]
-    .map(([v, t]) => `<div class="numero"><b>${num(v)}</b><span>${t}</span></div>`).join("");
-})();
-
-/* Historia */
-(function () {
-  const ol = $("#linea");
-  if (!CONFIG.momentos.length) {
-    ol.outerHTML = `<p class="vacio">La historia de la 224 empieza el día de la inauguración.</p>`;
-    return;
-  }
-  CONFIG.momentos.forEach(m => {
-    const li = document.createElement("li");
-    const t = document.createElement("time"); t.textContent = m.fecha || "";
-    const h = document.createElement("h3"); h.textContent = m.titulo || "";
-    const p = document.createElement("p"); p.textContent = m.texto || "";
-    li.append(t, h, p); ol.append(li);
-  });
-})();
-
-/* Capturas en carrusel + visor */
-(function () {
-  const caja = $("#galeria"), izq = $("#gal-izq"), der = $("#gal-der");
-  if (!CONFIG.capturas.length) {
-    caja.outerHTML = `<p class="vacio">Todavía no hay capturas. Las mejores de #capturas van a salir aquí.</p>`;
-    izq.hidden = der.hidden = true;
-    return;
-  }
-  CONFIG.capturas.forEach((c, n) => {
-    const f = document.createElement("figure");
-    const i = document.createElement("img"); i.src = c.archivo; i.alt = c.texto || "Captura de la 224"; i.loading = "lazy";
-    f.append(i);
-    if (c.texto) { const fc = document.createElement("figcaption"); fc.textContent = c.texto; f.append(fc); }
-    f.tabIndex = 0;
-    f.addEventListener("click", () => abrir(n));
-    f.addEventListener("keydown", e => { if (e.key === "Enter") abrir(n); });
-    caja.append(f);
-  });
-  const mover = d => caja.scrollBy({ left: d * caja.clientWidth, behavior: "smooth" });
-  izq.addEventListener("click", () => mover(-1));
-  der.addEventListener("click", () => mover(1));
-  function flechas() {
-    const max = caja.scrollWidth - caja.clientWidth - 2;
-    izq.hidden = caja.scrollLeft <= 2; der.hidden = caja.scrollLeft >= max;
-  }
-  caja.addEventListener("scroll", flechas, { passive: true });
-  addEventListener("resize", flechas); flechas();
-
-  const visor = $("#visor"); let actual = 0;
-  function mostrar(n) {
-    actual = (n + CONFIG.capturas.length) % CONFIG.capturas.length;
-    const c = CONFIG.capturas[actual];
-    $("#visor-img").src = c.archivo; $("#visor-img").alt = c.texto || "Captura de la 224";
-    $("#visor-txt").textContent = c.texto || "";
-  }
-  function abrir(n) { mostrar(n); visor.showModal ? visor.showModal() : visor.setAttribute("open", ""); }
-  $("#visor-cerrar").addEventListener("click", () => visor.close());
-  $("#visor-ant").addEventListener("click", () => mostrar(actual - 1));
-  $("#visor-sig").addEventListener("click", () => mostrar(actual + 1));
-  visor.addEventListener("click", e => { if (e.target === visor) visor.close(); });
-  visor.addEventListener("keydown", e => { if (e.key === "ArrowLeft") mostrar(actual - 1); if (e.key === "ArrowRight") mostrar(actual + 1); });
-})();
+/* Capturas */
+.galeria{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
+.galeria figure{margin:0;border-radius:var(--radio);overflow:hidden;background:var(--capa);border:1px solid var(--linea)}
+.galeria img{display:block;width:100%;aspect-ratio:16/9;object-fit:cover}
+.galeria figcaption{padding:10px 14px;font-size:.9rem;color:var(--tenue)}
 
 /* Mapa */
 .mapa{display:flex;gap:24px;align-items:center;justify-content:space-between;flex-wrap:wrap;background:linear-gradient(120deg,var(--mapa-a),var(--capa) 60%);border:1px solid var(--linea);border-radius:var(--radio);padding:32px}
@@ -496,7 +402,7 @@ footer{border-top:1px solid var(--linea);padding-block:28px 96px;color:var(--ten
       <p>Las stats de cada quien.</p>
     </div>
     <div class="herramientas">
-      <label class="campo" for="buscar"><span aria-hidden="true">⌕</span><input id="buscar" type="search" placeholder="Buscar jugador…" autocomplete="off"></label>
+      <label class="campo" for="buscar"><span aria-hidden="true">⌕</span><input id="buscar" type="search" placeholder="Buscar jugador…" autocomplete="off" list="sugerencias"><datalist id="sugerencias"></datalist></label>
       <span class="conteo" id="conteo"></span>
     </div>
     <div class="perfiles" id="perfiles"></div>
@@ -758,7 +664,8 @@ document.querySelectorAll(".pestanas button").forEach(b => b.addEventListener("c
 }));
 pintarRanking("semana");
 
-/* Jugadores */
+/* Jugadores + buscador */
+const tarjetas = [];
 (function () {
   const caja = $("#perfiles");
   CONFIG.jugadores.forEach(j => {
@@ -773,23 +680,115 @@ pintarRanking("semana");
      ["METROS", num(j.metros)], ["MOBS", num(j.mobs)], ["RÉCORD", num(j.record) + "m"]]
       .forEach(([k, v]) => dl.insertAdjacentHTML("beforeend", `<div><dt>${k}</dt><dd>${v}</dd></div>`));
     p.append(e, cab, dl); caja.append(p);
+    tarjetas.push({ nombre: j.nombre.toLowerCase(), el: p });
+    $("#sugerencias").append(new Option(j.nombre));
+  });
+  const vacio = document.createElement("p"); vacio.className = "vacio"; vacio.hidden = true;
+  caja.after(vacio);
+  function filtrar() {
+    const q = $("#buscar").value.trim().toLowerCase();
+    let n = 0;
+    tarjetas.forEach(t => { const ok = t.nombre.includes(q); t.el.hidden = !ok; if (ok) n++; });
+    $("#conteo").textContent = `${n} de ${tarjetas.length} ${tarjetas.length === 1 ? "jugador" : "jugadores"}`;
+    vacio.hidden = n > 0; vacio.textContent = `Nadie se llama "${$("#buscar").value}" en la 224.`;
+  }
+  $("#buscar").addEventListener("input", filtrar);
+  filtrar();
+})();
+
+/* Comparador */
+(function () {
+  const js = CONFIG.jugadores;
+  const a = $("#vs-a"), b = $("#vs-b"), duelo = $("#duelo");
+  if (js.length < 2) {
+    $(".elegir").hidden = true;
+    duelo.innerHTML = `<p class="vacio">Se necesitan al menos 2 jugadores. Cuando entre la banda, aquí se van a poder comparar.</p>`;
+    return;
+  }
+  js.forEach((j, i) => { a.add(new Option(j.nombre, i)); b.add(new Option(j.nombre, i)); });
+  b.selectedIndex = 1;
+  // "menos es mejor" en muertes
+  const stats = [["MUERTES","muertes",true],["HORAS","horas"],["MINADOS","minado"],["METROS","metros"],["MOBS","mobs"],["RÉCORD","record"]];
+  function pintar() {
+    const A = js[a.value], B = js[b.value]; duelo.innerHTML = "";
+    stats.forEach(([t, k, menos]) => {
+      const va = Number(A[k] || 0), vb = Number(B[k] || 0), max = Math.max(va, vb, 1);
+      const ganaA = menos ? va < vb : va > vb, ganaB = menos ? vb < va : vb > va;
+      const f = document.createElement("div"); f.className = "fila-vs";
+      f.innerHTML = `<div class="lado-a ${ganaA ? "gana" : ""}"><span>${num(va)}</span><span class="barra"><i style="width:${va / max * 100}%"></i></span></div>
+        <div class="stat">${t}${menos ? " ↓" : ""}</div>
+        <div class="lado-b ${ganaB ? "gana" : ""}"><span class="barra"><i style="width:${vb / max * 100}%"></i></span><span>${num(vb)}</span></div>`;
+      duelo.append(f);
+    });
+  }
+  a.addEventListener("change", pintar); b.addEventListener("change", pintar); pintar();
+})();
+
+/* La 224 en números */
+(function () {
+  const js = CONFIG.jugadores, suma = k => js.reduce((t, j) => t + Number(j[k] || 0), 0);
+  $("#numeros").innerHTML = [[js.length, "JUGADORES"], [suma("muertes"), "MUERTES"], [suma("horas"), "HORAS JUGADAS"],
+    [suma("minado"), "BLOQUES MINADOS"], [suma("mobs"), "MOBS MATADOS"]]
+    .map(([v, t]) => `<div class="numero"><b>${num(v)}</b><span>${t}</span></div>`).join("");
+})();
+
+/* Historia */
+(function () {
+  const ol = $("#linea");
+  if (!CONFIG.momentos.length) {
+    ol.outerHTML = `<p class="vacio">La historia de la 224 empieza el día de la inauguración.</p>`;
+    return;
+  }
+  CONFIG.momentos.forEach(m => {
+    const li = document.createElement("li");
+    const t = document.createElement("time"); t.textContent = m.fecha || "";
+    const h = document.createElement("h3"); h.textContent = m.titulo || "";
+    const p = document.createElement("p"); p.textContent = m.texto || "";
+    li.append(t, h, p); ol.append(li);
   });
 })();
 
-/* Capturas */
+/* Capturas en carrusel + visor */
 (function () {
-  const caja = $("#galeria");
+  const caja = $("#galeria"), izq = $("#gal-izq"), der = $("#gal-der");
   if (!CONFIG.capturas.length) {
-    caja.innerHTML = `<p class="vacio">Todavía no hay capturas. Las mejores de #capturas van a salir aquí.</p>`;
+    caja.outerHTML = `<p class="vacio">Todavía no hay capturas. Las mejores de #capturas van a salir aquí.</p>`;
+    izq.hidden = der.hidden = true;
     return;
   }
-  CONFIG.capturas.forEach(c => {
+  CONFIG.capturas.forEach((c, n) => {
     const f = document.createElement("figure");
     const i = document.createElement("img"); i.src = c.archivo; i.alt = c.texto || "Captura de la 224"; i.loading = "lazy";
     f.append(i);
     if (c.texto) { const fc = document.createElement("figcaption"); fc.textContent = c.texto; f.append(fc); }
+    f.tabIndex = 0;
+    f.addEventListener("click", () => abrir(n));
+    f.addEventListener("keydown", e => { if (e.key === "Enter") abrir(n); });
     caja.append(f);
   });
+  const mover = d => caja.scrollBy({ left: d * caja.clientWidth, behavior: "smooth" });
+  izq.addEventListener("click", () => mover(-1));
+  der.addEventListener("click", () => mover(1));
+  function flechas() {
+    const max = caja.scrollWidth - caja.clientWidth - 2;
+    izq.hidden = caja.scrollLeft <= 2; der.hidden = caja.scrollLeft >= max;
+  }
+  caja.addEventListener("scroll", flechas, { passive: true });
+  addEventListener("resize", flechas); flechas();
+
+  const visor = $("#visor"); let actual = 0;
+  function mostrar(n) {
+    actual = (n + CONFIG.capturas.length) % CONFIG.capturas.length;
+    const c = CONFIG.capturas[actual];
+    $("#visor-img").src = c.archivo; $("#visor-img").alt = c.texto || "Captura de la 224";
+    $("#visor-txt").textContent = c.texto || "";
+  }
+  function abrir(n) { mostrar(n); visor.showModal ? visor.showModal() : visor.setAttribute("open", ""); }
+  $("#visor-cerrar").addEventListener("click", () => visor.close());
+  $("#visor-ant").addEventListener("click", () => mostrar(actual - 1));
+  $("#visor-sig").addEventListener("click", () => mostrar(actual + 1));
+  visor.addEventListener("click", e => { if (e.target === visor) visor.close(); });
+  visor.addEventListener("keydown", e => { if (e.key === "ArrowLeft") mostrar(actual - 1); if (e.key === "ArrowRight") mostrar(actual + 1); });
 })();
 
 /* Mapa */
@@ -853,3 +852,5 @@ async function revisar() {
 }
 revisar(); setInterval(revisar, 60000);
 </script>
+
+</html>
