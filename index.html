@@ -294,13 +294,14 @@ h2{font-family:var(--f-display);font-weight:800;font-size:clamp(1.7rem,4vw,2.4re
 .hist-cerrar{right:10px}.hist-sonido{right:54px}
 .hist-quien{position:absolute;top:22px;left:12px;z-index:6;display:flex;align-items:center;gap:8px;font-weight:700;font-size:.9rem;text-shadow:0 1px 4px #0008;pointer-events:none}
 .hist-quien img{width:30px;height:30px;border-radius:8px;image-rendering:pixelated;box-shadow:0 2px 8px #0006}
-.lam{position:absolute;inset:0;isolation:isolate;overflow:hidden;padding:70px 24px 34px;display:flex;flex-direction:column;justify-content:flex-start;gap:12px;opacity:0;pointer-events:none;transition:opacity .35s}
+.lam{position:absolute;inset:0;isolation:isolate;overflow:hidden;padding:70px 24px 34px;display:flex;flex-direction:column;justify-content:center;gap:18px;opacity:0;pointer-events:none;transition:opacity .35s}
 .lam.activa{opacity:1;pointer-events:auto}
 .lam::before{content:"";position:absolute;inset:-20%;z-index:-2;background:var(--g);filter:saturate(1.15)}
 .lam::after{content:"";position:absolute;inset:0;z-index:-1;background:repeating-linear-gradient(90deg,#ffffff07 0 2px,transparent 2px 22px),repeating-linear-gradient(0deg,#ffffff07 0 2px,transparent 2px 22px)}
-.lam .contenido{display:flex;flex-direction:column;gap:12px;margin-top:auto;margin-bottom:auto}
-.deco{position:relative;flex:0 0 34%;min-height:150px;display:grid;place-items:center}
-.deco .skin{height:100%;max-height:260px;width:auto;image-rendering:pixelated;filter:drop-shadow(0 18px 26px #0009);position:relative;z-index:2}
+.lam .contenido{display:flex;flex-direction:column;gap:12px}
+.lam .viaje{display:grid;grid-template-columns:1.7em 1fr;align-items:start;margin-left:-.2em}
+.deco{position:relative;flex:0 0 auto;display:grid;place-items:center}
+.deco .skin{height:min(30dvh,240px);max-height:none;width:auto;image-rendering:pixelated;filter:drop-shadow(0 18px 26px #0009);position:relative;z-index:2}
 .lam.activa .deco .skin{animation:entrar-skin .8s cubic-bezier(.2,.9,.3,1.3) both,flotar 3.2s ease-in-out .8s infinite}
 @keyframes entrar-skin{from{opacity:0;transform:translateY(40px) scale(.85)}to{opacity:1;transform:none}}
 @keyframes flotar{50%{transform:translateY(-8px)}}
@@ -342,8 +343,7 @@ h2{font-family:var(--f-display);font-weight:800;font-size:clamp(1.7rem,4vw,2.4re
 .lam .acciones{display:grid;gap:8px}
 .lam .acciones button{font:700 1rem var(--f-body);border:0;border-radius:12px;padding:13px;cursor:pointer;background:#fff;color:#14201a}
 .lam .acciones button.sec{background:#00000040;color:#fff;border:1px solid #ffffff40}
-.tarjeta-mini{height:100%;max-height:330px;width:auto;border-radius:12px;box-shadow:0 20px 50px -10px #000a}
-.lam-tarjeta .deco{flex-basis:52%}
+.tarjeta-mini{height:min(52dvh,420px);max-height:none;width:auto;border-radius:12px;box-shadow:0 20px 50px -10px #000a}
 .wr-elegir{position:fixed;inset:0;z-index:190;background:#05080ae6;display:grid;place-items:center;padding:16px}
 .wr-caja{width:min(520px,100%);max-height:86dvh;overflow:auto;background:var(--capa);border:1px solid var(--linea);border-radius:18px;padding:22px;color:var(--texto)}
 .wr-caja h3{font-family:var(--f-display);margin:0 0 4px}
@@ -963,6 +963,7 @@ addEventListener("hashchange", fichaDesdeLink);
   const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   const fecha = f => { if (!f) return ""; const [, m, d] = f.split("-").map(Number); return `${d} de ${MESES[m - 1]}`; };
   const enMes = (f, m) => f && f.startsWith(m);
+  const limpia = c => String(c).replace(/^[^\p{L}\p{N}]+\s*/u, "");
   const GRADS = [
     "linear-gradient(160deg,#1f7a35,#2b5fd9 60%,#a33ed6)", "linear-gradient(160deg,#0f3d2e,#1f7a35 50%,#c9e265)",
     "linear-gradient(160deg,#2b1a6b,#5b2bd9 50%,#ff6bb5)", "linear-gradient(160deg,#1b1206,#6b4a12 45%,#3fc6d8)",
@@ -1030,7 +1031,7 @@ addEventListener("hashchange", fichaDesdeLink);
     const deco = (html) => `<div class="deco">${html}</div>`;
     const lam = (decoHtml, cuerpo, clase = "") => ({ html: deco(decoHtml) + `<div class="contenido">${cuerpo}</div>`, clase });
 
-    L.push(lam(skin(j.nombre, POSES[0]) + flotan([["✨", 8, 10, 2, .3, 15], ["⭐", 80, 6, 1.6, .5, -12], ["🌱", 14, 70, 1.8, .7, 8], ["✨", 84, 64, 1.4, .9, -8]]),
+    L.push(lam(skin(j.nombre, POSES[0]),
       `<span class="ojo anim">Wrapped 224 · ${esc(nombreMesLargo(mes))}${mes === hoyMes ? " (va en curso)" : ""}</span>
        <h3 class="anim">${esc(j.nombre)}, este fue tu ${nm} en la 224</h3>
        <p class="anim">Toca para seguir →</p>`));
@@ -1047,7 +1048,7 @@ addEventListener("hashchange", fichaDesdeLink);
        </div>`));
 
     const pelis = Math.floor((j.horas || 0) / 1.5);
-    L.push(lam(skin(j.nombre, POSES[1]) + flotan([["⏰", 10, 12, 2.4, .3, 12], ["⌛", 82, 18, 2, .5, -10], ["🕹️", 12, 66, 2, .7, -8], ["☕", 82, 70, 1.8, .9, 10]]),
+    L.push(lam(skin(j.nombre, POSES[1]),
       `<span class="ojo anim">Tu tiempo</span>
        <h3 class="anim">Este mes le metiste</h3>
        <div class="grande anim"><span data-num="${j.horas}" data-dec="1">0</span> <span class="unidad">horas</span></div>
@@ -1056,20 +1057,20 @@ addEventListener("hashchange", fichaDesdeLink);
          <div><b>#${d.lugar("horas")}</b><span>más viciado de ${d.n}</span></div></div>`));
 
     const fuiPrimero = P.diamante && P.diamante.Jugador === j.nombre && enMes(P.diamante.Fecha, mes);
-    L.push(lam(skin(j.nombre, POSES[2]) + flotan([["⛏️", 6, 14, 2.6, .3, -18], ["💎", 82, 10, 2.4, .5, 14], ["🪨", 10, 70, 2, .7, 6], ["💎", 84, 66, 1.6, .9, -10]]),
+    L.push(lam(skin(j.nombre, POSES[2]),
       `<span class="ojo anim">Bajo tierra</span>
        <h3 class="anim">Minaste</h3>
        <div class="grande anim"><span data-num="${j.minado}">0</span> <span class="unidad">bloques</span></div>
-       <div class="cuad anim"><div><b data-num="${j.diamantes}">0</b><span>💎 diamantes</span></div>
+       <div class="cuad anim"><div><b data-num="${j.diamantes}">0</b><span>diamantes</span></div>
          <div><b>#${d.lugar("minado")}</b><span>minero de la 224</span></div></div>
        ${w.Diamante ? `<p class="anim">Este mes sacaste tu <b>primer diamante</b>: el ${fecha(w.Diamante)}.</p>` : ""}
-       ${fuiPrimero ? `<span class="chip oro anim">🏆 ¡El PRIMERO de toda la 224 en sacar diamante!</span>` : ""}
-       ${!j.diamantes && !w.Diamante ? `<p class="anim">Y ni un diamante en todo el mes. 💀</p>` : ""}`));
+       ${fuiPrimero ? `<span class="chip oro anim">¡El PRIMERO de toda la 224 en sacar diamante!</span>` : ""}
+       ${!j.diamantes && !w.Diamante ? `<p class="anim">Y ni un diamante en todo el mes.</p>` : ""}`));
 
-    const decoMuerte = skin(j.nombre, j.muertes ? POSES[3] : "cheering") + flotan([["💀", 8, 10, 2.6, .3, -14], ["🧟", 80, 12, 2.4, .5, 10], ["💥", 10, 68, 2.2, .7, 12], ["⚰️", 82, 68, 2, .9, -8]]);
+    const decoMuerte = skin(j.nombre, j.muertes ? POSES[3] : "cheering");
     if (!j.muertes) {
       L.push(lam(decoMuerte, `<span class="ojo anim">Muertes</span><h3 class="anim">Este mes te moriste</h3>
-        <div class="grande anim">0 <span class="unidad">veces</span></div><p class="anim">¿Eres real? ¿Juegas con hacks? 🤨</p>`));
+        <div class="grande anim">0 <span class="unidad">veces</span></div><p class="anim">¿Eres real? ¿Juegas con hacks?</p>`));
     } else {
       const max = causas[0]?.[1] || 1;
       L.push(lam(decoMuerte, `<span class="ojo anim">Muertes</span>
@@ -1077,24 +1078,24 @@ addEventListener("hashchange", fichaDesdeLink);
         <div class="grande anim"><span data-num="${j.muertes}">0</span> <span class="unidad">veces por tonto</span></div>
         <span class="chip anim ${d.lugar("muertes") === 1 ? "oro" : ""}">#${d.lugar("muertes")} más tonto de la 224</span>
         ${causas.length ? `<div class="barras-causa anim">${causas.slice(0, 3).map(([c, v]) =>
-          `<div><span><em>${esc(c)}</em><em>${v}</em></span><i><b data-ancho="${Math.round(v / max * 100)}"></b></i></div>`).join("")}</div>` : ""}`));
+          `<div><span><em>${esc(limpia(c))}</em><em>${v}</em></span><i><b data-ancho="${Math.round(v / max * 100)}"></b></i></div>`).join("")}</div>` : ""}`));
     }
 
     const km = j.metros / 1000;
     const viajes = [];
-    if (w.Nether) viajes.push(`🔥 Llegaste al Nether el <b>${fecha(w.Nether)}</b>${P.nether?.Jugador === j.nombre ? " (¡el primero!)" : ""}.`);
-    if (w.End) viajes.push(`🌌 Llegaste al End el <b>${fecha(w.End)}</b>${P.end?.Jugador === j.nombre ? " (¡el primero!)" : ""}.`);
-    if (P.dragon?.Jugador === j.nombre && enMes(P.dragon.Fecha, mes)) viajes.push(`🐉 <b>Tú mataste al Ender Dragon.</b> Leyenda.`);
-    L.push(lam(skin(j.nombre, POSES[4]) + flotan([["🧭", 8, 12, 2.4, .3, -12], ["🗺️", 80, 10, 2.4, .5, 10], ["⚔️", 10, 68, 2.2, .7, 14], ["🌲", 84, 66, 2, .9, -6]]),
+    if (w.Nether) viajes.push(`<span>🔥</span><span>Llegaste al Nether el <b>${fecha(w.Nether)}</b>${P.nether?.Jugador === j.nombre ? " (¡el primero!)" : ""}.</span>`);
+    if (w.End) viajes.push(`<span>🌌</span><span>Llegaste al End el <b>${fecha(w.End)}</b>${P.end?.Jugador === j.nombre ? " (¡el primero!)" : ""}.</span>`);
+    if (P.dragon?.Jugador === j.nombre && enMes(P.dragon.Fecha, mes)) viajes.push(`<span>🐉</span><span><b>Tú mataste al Ender Dragon.</b> Leyenda.</span>`);
+    L.push(lam(skin(j.nombre, POSES[4]),
       `<span class="ojo anim">Aventura</span>
        <h3 class="anim">Caminaste</h3>
        <div class="grande anim"><span data-num="${km}" data-dec="1">0</span> <span class="unidad">km</span></div>
        <p class="anim">Como <b>${num(Math.round(j.metros / 105))} canchas de fútbol</b>.</p>
        <div class="cuad anim"><div><b data-num="${j.mobs}">0</b><span>mobs matados</span></div>
          <div><b>#${d.lugar("mobs")}</b><span>más asesino</span></div></div>
-       ${viajes.map(v => `<p class="anim">${v}</p>`).join("")}`));
+       ${viajes.map(v => `<p class="anim viaje">${v}</p>`).join("")}`));
 
-    L.push(lam(skin(j.nombre, POSES[5]) + flotan([["🔥", 8, 12, 2.6, .3, -10], ["📅", 80, 12, 2.2, .5, 12], ["💬", 10, 68, 2.2, .7, 8], ["🤝", 82, 68, 2, .9, -10]]),
+    L.push(lam(skin(j.nombre, POSES[5]),
       `<span class="ojo anim">Tú y la banda</span>
        <h3 class="anim">Tu mejor racha del mes</h3>
        <div class="grande anim"><span data-num="${j.racha}">0</span> <span class="unidad">días seguidos</span></div>
@@ -1102,12 +1103,12 @@ addEventListener("hashchange", fichaDesdeLink);
          <div><b data-num="${j.mensajes}">0</b><span>mensajes en el chat</span></div>
          <div><b data-num="${j.entradas}">0</b><span>veces que entraste</span></div>
        </div>
-       ${d.lugar("mensajes") === 1 && j.mensajes ? `<span class="chip oro anim">💬 El que más habló</span>` : ""}`));
+       ${d.lugar("mensajes") === 1 && j.mensajes ? `<span class="chip oro anim">El que más habló</span>` : ""}`));
 
     const t = titulo(d);
     L.push(lam(confeti() + skin(j.nombre, POSES[6]),
       `<span class="ojo anim centro">Tu título de ${nm}</span>
-       <h3 class="anim titulo-grande">${t.e} ${t.t}</h3>
+       <h3 class="anim titulo-grande">${t.t}</h3>
        <p class="anim centro" style="text-align:center">${t.x}</p>`));
 
     L.push(lam(`<img class="tarjeta-mini" alt="Tu tarjeta del Wrapped">`,
@@ -1239,6 +1240,9 @@ addEventListener("hashchange", fichaDesdeLink);
     };
   })();
 
+  const ICONO_SONIDO = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19 5a10 10 0 0 1 0 14"/></svg>`;
+  const ICONO_MUTE = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="m22 9-6 6"/><path d="m16 9 6 6"/></svg>`;
+
   // ---------- Elegir mes y jugador ----------
   function elegir() {
     const caja = document.createElement("div");
@@ -1285,7 +1289,7 @@ addEventListener("hashchange", fichaDesdeLink);
     h.setAttribute("role", "dialog"); h.setAttribute("aria-modal", "true"); h.setAttribute("aria-label", "Wrapped de " + d.j.nombre);
     h.innerHTML = `<div class="hist-marco"><div class="hist-barras">${L.map(() => "<i><b></b></i>").join("")}</div>
       <div class="hist-quien"><img src="${cara(d.j.nombre)}" alt="" onerror="this.remove()">${esc(d.j.nombre)}</div>
-      <button class="hist-boton hist-sonido" type="button" aria-label="Música">${Musica.callado ? "🔇" : "🔊"}</button>
+      <button class="hist-boton hist-sonido" type="button" aria-label="Música" aria-pressed="${!Musica.callado}">${Musica.callado ? ICONO_MUTE : ICONO_SONIDO}</button>
       <button class="hist-boton hist-cerrar" type="button" aria-label="Cerrar">✕</button>
       ${L.map((l, i) => `<section class="lam ${l.clase}" style="--g:${GRADS[i % GRADS.length]}">${l.html}</section>`).join("")}</div>`;
     document.body.append(h);
@@ -1320,7 +1324,7 @@ addEventListener("hashchange", fichaDesdeLink);
     addEventListener("keydown", teclas);
     h.querySelector(".hist-cerrar").addEventListener("click", cerrar);
     const bs = h.querySelector(".hist-sonido");
-    bs.addEventListener("click", () => { Musica.despertar(); bs.textContent = Musica.alternar() ? "🔇" : "🔊"; });
+    bs.addEventListener("click", () => { Musica.despertar(); const c = Musica.alternar(); bs.innerHTML = c ? ICONO_MUTE : ICONO_SONIDO; bs.setAttribute("aria-pressed", !c); });
 
     const marco = h.querySelector(".hist-marco");
     let tocado = 0;
@@ -1401,7 +1405,7 @@ addEventListener("hashchange", fichaDesdeLink);
     g.fillStyle = "#fff"; g.font = '800 72px "Unbounded", sans-serif';
     let nom = d.j.nombre; while (g.measureText(nom).width > W_ - xTexto - 70 && nom.length > 3) nom = nom.slice(0, -1);
     g.fillText(nom, xTexto, 270);
-    g.font = '600 46px "Figtree", sans-serif'; g.fillText(`${t.e} ${t.t}`, xTexto, 350);
+    g.font = '600 46px "Figtree", sans-serif'; g.fillText(t.t, xTexto, 350);
 
     const stats = [
       ["Horas jugadas", num(d.j.horas)], ["Muertes por tonto", num(d.j.muertes)],
@@ -1415,8 +1419,8 @@ addEventListener("hashchange", fichaDesdeLink);
       g.fillStyle = "#ffffffcc"; g.font = '600 32px "Figtree", sans-serif'; g.fillText(etq, x + 34, y + 145);
     });
     const extra = [];
-    if (d.causas[0]) extra.push(`💀 Lo que más lo mató: ${d.causas[0][0]}`);
-    if (d.j.racha > 1) extra.push(`🔥 Mejor racha: ${d.j.racha} días seguidos`);
+    if (d.causas[0]) extra.push(`Lo que más lo mató: ${limpia(d.causas[0][0])}`);
+    if (d.j.racha > 1) extra.push(`Mejor racha: ${d.j.racha} días seguidos`);
     g.fillStyle = "#fff"; g.font = '600 38px "Figtree", sans-serif';
     extra.slice(0, 2).forEach((e, k) => g.fillText(e, 80, 1130 + k * 58));
     g.fillStyle = "#ffffffaa"; g.font = '28px "Silkscreen", monospace'; g.fillText("explotabuela.github.io/Minecraft-224", 80, H - 60);
