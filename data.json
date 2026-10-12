@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-10-11T19:53",
+  "actualizado": "2026-10-11T20:45",
   "jugadores": [
     {
       "nombre": "explotabuela",
@@ -9,6 +9,7 @@
       "metros": 1237,
       "mobs": 10,
       "record": 12,
+      "diamantes": 0,
       "racha": 1,
       "mejorRacha": 1
     }
@@ -32,5 +33,34 @@
         "muertes": 6
       }
     ]
+  },
+  "wrapped": {
+    "Meses": {
+      "2026-10": {
+        "Jugadores": {},
+        "Base": {
+          "explotabuela": {
+            "muertes": 6,
+            "minutos": 36,
+            "minado": 4,
+            "metros": 1237,
+            "mobs": 10,
+            "diamantes": 0
+          }
+        },
+        "Stats": {
+          "explotabuela": {
+            "muertes": 0,
+            "minutos": 0,
+            "minado": 0,
+            "metros": 0,
+            "mobs": 0,
+            "diamantes": 0
+          }
+        }
+      }
+    },
+    "Primeros": {},
+    "Logros": {}
   }
 }
