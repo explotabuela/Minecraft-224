@@ -4,6 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Minecraft 224</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0c1110">
+<link rel="icon" href="iconos/icono-192.png">
+<link rel="apple-touch-icon" href="iconos/apple-touch.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="MC 224">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;800&family=Figtree:wght@400;500;600;700&family=Silkscreen&display=swap">
@@ -189,6 +195,7 @@ h2{font-family:var(--f-display);font-weight:800;font-size:clamp(1.7rem,4vw,2.4re
 /* Botón de tema */
 .tema{flex:none;width:38px;height:38px;border-radius:999px;border:1px solid var(--linea);background:var(--capa);color:var(--texto);cursor:pointer;font-size:1.05rem;display:grid;place-items:center}
 .tema:hover{border-color:var(--verde)}
+.instalar{width:auto;padding:0 14px;font-family:var(--f-body);font-weight:700;font-size:.85rem;color:var(--sobre-verde);background:var(--verde);border-color:var(--verde)}
 
 /* La 224 en números */
 .numeros{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;padding-block:0 64px}
@@ -274,6 +281,59 @@ h2{font-family:var(--f-display);font-weight:800;font-size:clamp(1.7rem,4vw,2.4re
 .wrapped p{margin:0;max-width:56ch;color:#ffffffd9;position:relative;z-index:1}
 .wrapped .btn{border-radius:12px;padding:12px 20px;text-decoration:none;position:relative;z-index:1;background:#fff;color:#14201a}
 .wrapped .btn[aria-disabled="true"]{background:#ffffff26;color:#fff;cursor:default}
+/* Wrapped en modo historia (pantalla completa) */
+.hist{position:fixed;inset:0;z-index:200;background:#05080a;display:grid;place-items:center;color:#fff;font-family:var(--f-body)}
+.hist-marco{position:relative;width:min(100vw,calc(100dvh * .5625));height:100dvh;overflow:hidden;background:#111;user-select:none;-webkit-user-select:none;touch-action:manipulation}
+@media (min-width:700px){.hist-marco{height:min(94dvh,860px);width:calc(min(94dvh,860px) * .5625);border-radius:22px;box-shadow:0 40px 120px -30px #000}}
+.hist-barras{position:absolute;top:12px;left:12px;right:12px;display:flex;gap:4px;z-index:5}
+.hist-barras i{flex:1;height:3px;border-radius:3px;background:#ffffff40;overflow:hidden}
+.hist-barras i b{display:block;height:100%;width:0;background:#fff}
+.hist-barras i.lista b{width:100%}
+.hist-cerrar{position:absolute;top:24px;right:12px;z-index:6;width:40px;height:40px;border:0;border-radius:999px;background:#00000040;color:#fff;font-size:1.3rem;cursor:pointer}
+.hist-cerrar:focus-visible{outline:2px solid #fff}
+.lam{position:absolute;inset:0;isolation:isolate;overflow:hidden;padding:78px 26px 40px;display:flex;flex-direction:column;justify-content:center;gap:14px;opacity:0;pointer-events:none;transition:opacity .35s}
+.lam.activa{opacity:1;pointer-events:auto}
+.lam::before{content:"";position:absolute;inset:-20%;z-index:-1;background:var(--g);filter:saturate(1.15)}
+.lam::after{content:"";position:absolute;inset:0;z-index:-1;background:repeating-linear-gradient(90deg,#ffffff07 0 2px,transparent 2px 22px),repeating-linear-gradient(0deg,#ffffff07 0 2px,transparent 2px 22px)}
+.lam .ojo{font-family:var(--f-pixel);font-size:.78rem;letter-spacing:.1em;color:#ffffffcc;text-transform:uppercase}
+.lam h3{font-family:var(--f-display);font-weight:800;font-size:clamp(1.6rem,7.5vw,2.3rem);line-height:1.08;margin:0;text-wrap:balance}
+.lam .grande{font-family:var(--f-display);font-weight:800;font-size:clamp(3.6rem,19vw,6rem);line-height:.95;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.lam .unidad{font-family:var(--f-display);font-weight:600;font-size:1.25rem}
+.lam p{margin:0;font-size:1.05rem;line-height:1.45;color:#ffffffe6;text-wrap:pretty}
+.lam .chip{align-self:flex-start;background:#00000033;border:1px solid #ffffff33;border-radius:999px;padding:6px 14px;font-weight:700;font-size:.95rem}
+.lam .oro{background:#f5c451;color:#2a1d00;border-color:#f5c451}
+.lam .cuerpo-skin{width:min(46%,200px);align-self:center;image-rendering:pixelated;filter:drop-shadow(0 18px 30px #0008)}
+.lam .cuad{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.lam .cuad div{background:#00000030;border:1px solid #ffffff26;border-radius:14px;padding:12px}
+.lam .cuad b{display:block;font-family:var(--f-display);font-size:1.5rem;line-height:1.1;font-variant-numeric:tabular-nums}
+.lam .cuad span{font-size:.82rem;color:#ffffffcc}
+.barras-causa{display:grid;gap:10px}
+.barras-causa div{display:grid;gap:4px}
+.barras-causa span{display:flex;justify-content:space-between;font-weight:700}
+.barras-causa i{height:12px;border-radius:6px;background:#ffffff2e;overflow:hidden}
+.barras-causa i b{display:block;height:100%;width:0;background:#fff;border-radius:6px;transition:width 1.2s cubic-bezier(.2,.8,.2,1) .3s}
+.lam.activa .anim{animation:subir .6s cubic-bezier(.2,.8,.2,1) both}
+.lam.activa .anim:nth-child(2){animation-delay:.12s}.lam.activa .anim:nth-child(3){animation-delay:.24s}
+.lam.activa .anim:nth-child(4){animation-delay:.36s}.lam.activa .anim:nth-child(5){animation-delay:.48s}
+.lam.activa .anim:nth-child(6){animation-delay:.6s}.lam.activa .anim:nth-child(7){animation-delay:.72s}
+@keyframes subir{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+.lam .emoji-titulo{font-size:5.5rem;line-height:1;align-self:center;animation:latir 1.6s ease-in-out infinite}
+@keyframes latir{50%{transform:scale(1.12) rotate(-4deg)}}
+.lam .acciones{display:grid;gap:10px;margin-top:6px}
+.lam .acciones button{font:700 1rem var(--f-body);border:0;border-radius:12px;padding:14px;cursor:pointer;background:#fff;color:#14201a}
+.lam .acciones button.sec{background:#00000040;color:#fff;border:1px solid #ffffff40}
+.tarjeta-mini{width:72%;align-self:center;border-radius:14px;box-shadow:0 20px 50px -10px #000a}
+.wr-elegir{position:fixed;inset:0;z-index:190;background:#05080ae6;display:grid;place-items:center;padding:16px}
+.wr-caja{width:min(520px,100%);max-height:86dvh;overflow:auto;background:var(--capa);border:1px solid var(--linea);border-radius:18px;padding:22px;color:var(--texto)}
+.wr-caja h3{font-family:var(--f-display);margin:0 0 4px}
+.wr-caja p{margin:0 0 14px;color:var(--tenue)}
+.wr-lista{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px}
+.wr-lista button{display:grid;justify-items:center;gap:6px;padding:12px 8px;border-radius:12px;border:1px solid var(--linea);background:var(--capa-2);color:var(--texto);font:600 .9rem var(--f-body);cursor:pointer;overflow-wrap:anywhere}
+.wr-lista button:hover{border-color:var(--verde)}
+.wr-lista img{width:56px;height:56px;border-radius:10px;image-rendering:pixelated}
+.wr-caja .wr-cerrar{margin-top:14px;width:100%}
+@media (prefers-reduced-motion:reduce){.lam.activa .anim,.lam .emoji-titulo{animation:none}.barras-causa i b{transition:none}}
+
 
 /* Easter eggs */
 .girar{animation:girar 1s ease-in-out}
@@ -361,6 +421,7 @@ footer{border-top:1px solid var(--linea);padding-block:28px 96px;color:var(--ten
       <a href="#wrapped">Wrapped</a>
       <a href="#preguntas">Preguntas</a>
     </nav>
+    <button class="tema instalar" id="instalar" type="button" hidden aria-label="Instalar la app">⬇ App</button>
     <button class="tema" id="tema" type="button" aria-label="Cambiar a modo claro u oscuro">◐</button>
   </div>
 </header>
@@ -514,7 +575,7 @@ footer{border-top:1px solid var(--linea);padding-block:28px 96px;color:var(--ten
       <span class="eyebrow">TEMPORADA 1</span>
       <h2>Wrapped 224</h2>
       <p>Al final de la temporada, cada quien recibe su resumen: horas jugadas, tus muertes más tontas, el mob que más te mató, tu primer diamante y tu mejor racha. Con tarjeta para presumir.</p>
-      <a class="btn" id="wrapped-link" target="_blank" rel="noopener" aria-disabled="true">Disponible al final de la temporada</a>
+      <button class="btn" id="wrapped-link" type="button" aria-disabled="true">Disponible al final de la temporada</button>
     </div>
   </section>
 
@@ -625,8 +686,9 @@ const CONFIG = {
     { nombre: "explotabuela", muertes: 2, horas: 1, minado: 0, metros: 0, mobs: 0, record: 15 },
   ],
 
-  // Link del Wrapped cuando esté listo (al final de la temporada)
-  wrapped: null,
+  // Wrapped: ponlo en true al final de la temporada para que todos lo vean.
+  // Para verlo tú antes, abre la página con ?wrapped al final del link.
+  wrapped: false,
 
   // Momentos importantes de la 224 (los más nuevos arriba)
   momentos: [
@@ -669,6 +731,7 @@ try {
     const d = await r.json();
     if (Array.isArray(d.jugadores) && d.jugadores.length) CONFIG.jugadores = d.jugadores;
     if (d.ranking) CONFIG.ranking = d.ranking;
+    if (d.wrapped) CONFIG.datosWrapped = d.wrapped;
     CONFIG.actualizado = d.actualizado;
   }
 } catch {}
@@ -859,10 +922,321 @@ function fichaDesdeLink() {
 }
 addEventListener("hashchange", fichaDesdeLink);
 
-/* Wrapped */
-if (CONFIG.wrapped) {
-  const a = $("#wrapped-link"); a.href = CONFIG.wrapped; a.textContent = "Ver mi Wrapped"; a.removeAttribute("aria-disabled");
-}
+/* Wrapped: historias tipo Spotify con los datos de cada quien */
+(function () {
+  const boton = $("#wrapped-link");
+  const prueba = new URLSearchParams(location.search).has("wrapped"); // ?wrapped para verlo antes de tiempo
+  if (!CONFIG.wrapped && !prueba) return;
+  boton.textContent = "Ver mi Wrapped"; boton.removeAttribute("aria-disabled");
+  boton.addEventListener("click", () => elegir());
+  if (location.hash.startsWith("#wrapped-")) setTimeout(() => abrir(decodeURIComponent(location.hash.slice(9))), 400);
+
+  const W = CONFIG.datosWrapped || { Jugadores: {}, Primeros: {} };
+  const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  const MESES = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"];
+  const fecha = f => { if (!f) return ""; const [a, m, d] = f.split("-").map(Number); return `${d} de ${MESES[m - 1]}`; };
+  const GRADS = [
+    "linear-gradient(160deg,#1f7a35,#2b5fd9 60%,#a33ed6)", "linear-gradient(160deg,#0f3d2e,#1f7a35 50%,#c9e265)",
+    "linear-gradient(160deg,#2b1a6b,#5b2bd9 50%,#ff6bb5)", "linear-gradient(160deg,#3a2400,#b8860b 50%,#5fd0e8)",
+    "linear-gradient(160deg,#2a0606,#b3261e 55%,#ff9a3c)", "linear-gradient(160deg,#04223a,#0f6e8c 50%,#5fd068)",
+    "linear-gradient(160deg,#3d0a3a,#c2185b 50%,#ffb74d)", "linear-gradient(160deg,#111,#3a3a3a 50%,#f5c451)",
+    "linear-gradient(160deg,#1f7a35,#2b5fd9 60%,#a33ed6)",
+  ];
+
+  function datos(nombre) {
+    const j = CONFIG.jugadores.find(x => x.nombre.toLowerCase() === nombre.toLowerCase());
+    if (!j) return null;
+    const w = W.Jugadores?.[j.nombre] || {};
+    const todos = CONFIG.jugadores.map(x => ({ ...x, mensajes: W.Jugadores?.[x.nombre]?.Mensajes || 0 }));
+    const yo = todos.find(x => x.nombre === j.nombre);
+    const lugar = c => 1 + todos.filter(x => (x[c] || 0) > (yo[c] || 0)).length;
+    const causas = Object.entries(w.Muertes || {}).sort((a, b) => b[1] - a[1]);
+    return { j: yo, w, todos, lugar, causas, n: todos.length };
+  }
+
+  function titulo(d) {
+    const opciones = [
+      ["muertes", "El Más Tonto", "💀", "Nadie se murió más que tú en toda la temporada. Por tonto."],
+      ["horas", "El Viciado", "🕹️", "Nadie le metió más horas que tú. Ve a tocar pasto."],
+      ["minado", "El Topo", "⛏️", "Nadie minó más bloques que tú. Vives bajo tierra."],
+      ["mobs", "El Asesino", "⚔️", "Los mobs cambian de camino cuando te ven."],
+      ["metros", "El Explorador", "🧭", "Conoces el mapa mejor que nadie."],
+      ["mensajes", "El Chismoso", "💬", "Nadie habló más que tú en el chat."],
+      ["mejorRacha", "El Fiel", "🔥", "Nadie entró tantos días seguidos como tú."],
+    ];
+    for (const [c, t, e, x] of opciones) if ((d.j[c] || 0) > 0 && d.lugar(c) === 1) return { t, e, x };
+    if ((d.j.horas || 0) === 0) return { t: "El Fantasma", e: "👻", x: "Casi ni te vimos por la 224." };
+    return { t: "El Tranquilo", e: "😌", x: "Jugaste a tu ritmo, sin broncas. El más chill de la 224." };
+  }
+
+  function laminas(d) {
+    const { j, w, causas } = d;
+    const P = W.Primeros || {};
+    const L = [];
+    const horasTot = d.todos.reduce((s, x) => s + (x.horas || 0), 0);
+    const muertesTot = d.todos.reduce((s, x) => s + (x.muertes || 0), 0);
+    const minadoTot = d.todos.reduce((s, x) => s + (x.minado || 0), 0);
+
+    L.push(`<span class="ojo anim">Wrapped 224 · Temporada 1</span>
+      <h3 class="anim">${esc(j.nombre)}, este fue tu año en la 224</h3>
+      <img class="cuerpo-skin anim" src="${cuerpo(j.nombre)}" alt="" onerror="this.remove()">
+      <p class="anim">Toca para seguir →</p>`);
+
+    L.push(`<span class="ojo anim">Primero, la 224 completa</span>
+      <h3 class="anim">Entre todos jugamos</h3>
+      <div class="grande anim"><span data-num="${horasTot}" data-dec="${horasTot % 1 ? 1 : 0}">0</span> <span class="unidad">horas</span></div>
+      <div class="cuad anim">
+        <div><b data-num="${d.n}">0</b><span>jugadores</span></div>
+        <div><b data-num="${muertesTot}">0</b><span>muertes por tonto</span></div>
+        <div><b data-num="${minadoTot}">0</b><span>bloques minados</span></div>
+        <div><b data-num="${d.todos.reduce((s, x) => s + (x.mobs || 0), 0)}">0</b><span>mobs matados</span></div>
+      </div>`);
+
+    const pelis = Math.floor((j.horas || 0) / 1.5);
+    L.push(`<span class="ojo anim">Tu tiempo</span>
+      <h3 class="anim">Le metiste</h3>
+      <div class="grande anim"><span data-num="${j.horas || 0}" data-dec="1">0</span> <span class="unidad">horas</span></div>
+      <p class="anim">${pelis >= 2 ? `Eso es como ver <b>${pelis} películas</b> seguidas. Pero preferiste picar piedra.` : "Poquito, pero bien aprovechado."}</p>
+      <span class="chip anim ${d.lugar("horas") === 1 ? "oro" : ""}">#${d.lugar("horas")} más viciado de ${d.n}</span>
+      ${j.record ? `<p class="anim">Tu sesión más larga: <b>${Math.floor(j.record / 60) ? Math.floor(j.record / 60) + "h " : ""}${j.record % 60}m</b> sin despegarte.</p>` : ""}`);
+
+    const fuiPrimero = P.diamante && P.diamante.Jugador === j.nombre;
+    L.push(`<span class="ojo anim">Bajo tierra</span>
+      <h3 class="anim">Minaste</h3>
+      <div class="grande anim"><span data-num="${j.minado || 0}">0</span> <span class="unidad">bloques</span></div>
+      <span class="chip anim ${d.lugar("minado") === 1 ? "oro" : ""}">#${d.lugar("minado")} minero de la 224</span>
+      ${w.Diamante
+        ? `<p class="anim">💎 Tu primer diamante: el <b>${fecha(w.Diamante)}</b>.</p>${fuiPrimero ? `<span class="chip oro anim">🏆 ¡El PRIMERO de toda la 224 en sacar diamante!</span>` : P.diamante ? `<p class="anim">El primero de todos fue ${esc(P.diamante.Jugador)}.</p>` : ""}`
+        : `<p class="anim">Y en toda la temporada… <b>ni un diamante</b>. 💀</p>`}`);
+
+    if ((j.muertes || 0) === 0) {
+      L.push(`<span class="ojo anim">Muertes</span><h3 class="anim">Te moriste</h3>
+        <div class="grande anim">0 <span class="unidad">veces</span></div><p class="anim">¿Eres real? ¿Juegas con hacks? 🤨</p>`);
+    } else {
+      const max = causas[0]?.[1] || 1;
+      L.push(`<span class="ojo anim">Muertes</span>
+        <h3 class="anim">Te moriste</h3>
+        <div class="grande anim"><span data-num="${j.muertes}">0</span> <span class="unidad">veces por tonto</span></div>
+        <span class="chip anim ${d.lugar("muertes") === 1 ? "oro" : ""}">#${d.lugar("muertes")} más tonto de la 224</span>
+        ${causas.length ? `<p class="anim">Lo que más te mató: <b>${esc(causas[0][0])}</b></p>
+        <div class="barras-causa anim">${causas.slice(0, 4).map(([c, v]) =>
+          `<div><span><em>${esc(c)}</em><em>${v}</em></span><i><b data-ancho="${Math.round(v / max * 100)}"></b></i></div>`).join("")}</div>` : ""}`);
+    }
+
+    const km = (j.metros || 0) / 1000;
+    const canchas = Math.round((j.metros || 0) / 105);
+    const viajes = [];
+    if (w.Nether) viajes.push(`🔥 Llegaste al Nether el <b>${fecha(w.Nether)}</b>${P.nether?.Jugador === j.nombre ? " <b>(¡el primero!)</b>" : ""}.`);
+    if (w.End) viajes.push(`🌌 Llegaste al End el <b>${fecha(w.End)}</b>${P.end?.Jugador === j.nombre ? " <b>(¡el primero!)</b>" : ""}.`);
+    if (P.dragon?.Jugador === j.nombre) viajes.push(`🐉 <b>Tú mataste al Ender Dragon.</b> Leyenda.`);
+    L.push(`<span class="ojo anim">Aventura</span>
+      <h3 class="anim">Caminaste</h3>
+      <div class="grande anim"><span data-num="${km}" data-dec="1">0</span> <span class="unidad">km</span></div>
+      <p class="anim">Eso son como <b>${num(canchas)} canchas de fútbol</b>.</p>
+      <div class="cuad anim"><div><b data-num="${j.mobs || 0}">0</b><span>mobs matados</span></div>
+        <div><b>#${d.lugar("mobs")}</b><span>más asesino</span></div></div>
+      ${viajes.map(v => `<p class="anim">${v}</p>`).join("") || `<p class="anim">Ni al Nether fuiste. Miedoso. 🐔</p>`}`);
+
+    L.push(`<span class="ojo anim">Tú y la banda</span>
+      <h3 class="anim">Tu mejor racha</h3>
+      <div class="grande anim"><span data-num="${j.mejorRacha || 0}">0</span> <span class="unidad">días seguidos</span></div>
+      <div class="cuad anim">
+        <div><b data-num="${w.Mensajes || 0}">0</b><span>mensajes en el chat</span></div>
+        <div><b data-num="${w.Entradas || 0}">0</b><span>veces que entraste</span></div>
+      </div>
+      ${d.lugar("mensajes") === 1 && w.Mensajes ? `<span class="chip oro anim">💬 El que más habló</span>` : ""}`);
+
+    const t = titulo(d);
+    L.push(`<span class="ojo anim">Tu título de la temporada</span>
+      <div class="emoji-titulo anim">${t.e}</div>
+      <h3 class="anim" style="text-align:center;font-size:clamp(2rem,10vw,3rem)">${t.t}</h3>
+      <p class="anim" style="text-align:center">${t.x}</p>`);
+
+    L.push(`<span class="ojo anim">Para presumir</span>
+      <h3 class="anim">Tu tarjeta</h3>
+      <img class="tarjeta-mini anim" alt="Tu tarjeta del Wrapped">
+      <div class="acciones anim">
+        <button type="button" data-acc="bajar">⬇ Descargar tarjeta</button>
+        <button type="button" class="sec" data-acc="compartir" hidden>Compartir</button>
+        <button type="button" class="sec" data-acc="otra">Ver de nuevo</button>
+      </div>`);
+    return { L, t };
+  }
+
+  // ---------- Elegir jugador ----------
+  function elegir() {
+    const caja = document.createElement("div");
+    caja.className = "wr-elegir";
+    caja.innerHTML = `<div class="wr-caja" role="dialog" aria-modal="true" aria-label="Elige tu jugador">
+      <h3>¿Quién eres?</h3><p>Escoge tu jugador para ver tu Wrapped.</p><div class="wr-lista"></div>
+      <button class="btn secundario wr-cerrar" type="button">Cerrar</button></div>`;
+    const lista = caja.querySelector(".wr-lista");
+    [...CONFIG.jugadores].sort((a, b) => a.nombre.localeCompare(b.nombre)).forEach(j => {
+      const b = document.createElement("button"); b.type = "button";
+      b.append(foto(cara(j.nombre), j.nombre, "wr-cara"), document.createTextNode(j.nombre));
+      b.addEventListener("click", () => { caja.remove(); abrir(j.nombre); });
+      lista.append(b);
+    });
+    const cerrar = () => caja.remove();
+    caja.querySelector(".wr-cerrar").addEventListener("click", cerrar);
+    caja.addEventListener("click", e => { if (e.target === caja) cerrar(); });
+    document.body.append(caja);
+  }
+
+  // ---------- Historia ----------
+  function abrir(nombre) {
+    const d = datos(nombre);
+    if (!d) { avisar("Ese jugador no está en la 224"); return; }
+    const { L, t } = laminas(d);
+    const h = document.createElement("div");
+    h.className = "hist";
+    h.setAttribute("role", "dialog"); h.setAttribute("aria-modal", "true"); h.setAttribute("aria-label", "Wrapped de " + d.j.nombre);
+    h.innerHTML = `<div class="hist-marco"><div class="hist-barras">${L.map(() => "<i><b></b></i>").join("")}</div>
+      <button class="hist-cerrar" type="button" aria-label="Cerrar">✕</button>
+      ${L.map((c, i) => `<section class="lam" style="--g:${GRADS[i % GRADS.length]}">${c}</section>`).join("")}</div>`;
+    document.body.append(h);
+    document.body.style.overflow = "hidden";
+    const lams = [...h.querySelectorAll(".lam")], barras = [...h.querySelectorAll(".hist-barras i")];
+    const DUR = 6500;
+    let i = -1, inicio = 0, pausa = false, transcurrido = 0, raf;
+
+    function ir(n) {
+      if (n < 0) n = 0;
+      if (n >= lams.length) return;
+      i = n; transcurrido = 0; inicio = performance.now();
+      lams.forEach((l, k) => l.classList.toggle("activa", k === i));
+      barras.forEach((b, k) => { b.classList.toggle("lista", k < i); b.firstChild.style.width = k < i ? "100%" : "0"; });
+      animar(lams[i]);
+    }
+    function paso(ahora) {
+      if (!pausa && i < lams.length - 1) {
+        const p = Math.min(1, (transcurrido + ahora - inicio) / DUR);
+        barras[i].firstChild.style.width = p * 100 + "%";
+        if (p >= 1) ir(i + 1);
+      } else if (i === lams.length - 1) barras[i].firstChild.style.width = "100%";
+      raf = requestAnimationFrame(paso);
+    }
+    function cerrar() { cancelAnimationFrame(raf); h.remove(); document.body.style.overflow = ""; removeEventListener("keydown", teclas); }
+    function teclas(e) {
+      if (e.key === "Escape") cerrar();
+      if (e.key === "ArrowRight") ir(i + 1);
+      if (e.key === "ArrowLeft") ir(i - 1);
+    }
+    addEventListener("keydown", teclas);
+    h.querySelector(".hist-cerrar").addEventListener("click", cerrar);
+
+    const marco = h.querySelector(".hist-marco");
+    let tocado = 0;
+    marco.addEventListener("pointerdown", e => {
+      if (e.target.closest("button")) return;
+      tocado = performance.now(); pausa = true; transcurrido += performance.now() - inicio;
+    });
+    marco.addEventListener("pointercancel", () => { pausa = false; inicio = performance.now(); });
+    marco.addEventListener("pointerup", e => {
+      if (e.target.closest("button")) return;
+      pausa = false; inicio = performance.now();
+      if (performance.now() - tocado < 250) {
+        const r = marco.getBoundingClientRect();
+        ir(e.clientX - r.left < r.width / 3 ? i - 1 : i + 1);
+      }
+    });
+
+    // Última lámina: tarjeta
+    const ultima = lams[lams.length - 1];
+    let png = null;
+    tarjeta(d, t).then(blob => {
+      png = blob;
+      ultima.querySelector(".tarjeta-mini").src = URL.createObjectURL(blob);
+      const archivo = new File([blob], `wrapped-224-${d.j.nombre}.png`, { type: "image/png" });
+      if (navigator.canShare && navigator.canShare({ files: [archivo] })) {
+        const b = ultima.querySelector('[data-acc="compartir"]'); b.hidden = false;
+        b.addEventListener("click", () => navigator.share({ files: [archivo], title: "Mi Wrapped 224" }).catch(() => {}));
+      }
+    });
+    ultima.querySelector('[data-acc="bajar"]').addEventListener("click", () => {
+      if (!png) return;
+      const a = document.createElement("a"); a.href = URL.createObjectURL(png); a.download = `wrapped-224-${d.j.nombre}.png`; a.click();
+    });
+    ultima.querySelector('[data-acc="otra"]').addEventListener("click", () => ir(0));
+
+    ir(0);
+    raf = requestAnimationFrame(paso);
+    h.querySelector(".hist-cerrar").focus();
+  }
+
+  // Números que suben y barras que se llenan
+  function animar(lam) {
+    const mov = !matchMedia("(prefers-reduced-motion: reduce)").matches;
+    lam.querySelectorAll("[data-num]").forEach(el => {
+      const fin = Number(el.dataset.num), dec = Number(el.dataset.dec || 0), t0 = performance.now(), dur = mov ? 1400 : 0;
+      const fmt = v => v.toLocaleString("es-MX", { minimumFractionDigits: dec, maximumFractionDigits: dec });
+      (function f(a) {
+        const p = dur ? Math.min(1, (a - t0) / dur) : 1;
+        el.textContent = fmt(fin * (1 - Math.pow(1 - p, 3)));
+        if (p < 1) requestAnimationFrame(f);
+      })(t0);
+    });
+    lam.querySelectorAll("[data-ancho]").forEach(b => { b.style.width = "0"; requestAnimationFrame(() => requestAnimationFrame(() => b.style.width = b.dataset.ancho + "%")); });
+  }
+
+  // ---------- Tarjeta PNG para descargar ----------
+  async function tarjeta(d, t, conCabeza = true) {
+    const W_ = 1080, H = 1350, c = document.createElement("canvas");
+    c.width = W_; c.height = H;
+    const g = c.getContext("2d");
+    try { await Promise.all([document.fonts.load('800 80px "Unbounded"'), document.fonts.load('600 40px "Figtree"'), document.fonts.load('40px "Silkscreen"')]); } catch {}
+    const fondo = g.createLinearGradient(0, 0, W_, H);
+    fondo.addColorStop(0, "#1f7a35"); fondo.addColorStop(.55, "#2b5fd9"); fondo.addColorStop(1, "#a33ed6");
+    g.fillStyle = fondo; g.fillRect(0, 0, W_, H);
+    g.fillStyle = "#ffffff12";
+    for (let x = 0; x < W_; x += 40) g.fillRect(x, 0, 2, H);
+    for (let y = 0; y < H; y += 40) g.fillRect(0, y, W_, 2);
+    g.fillStyle = "#ffffff1c"; g.font = '800 420px "Unbounded", sans-serif'; g.textAlign = "right"; g.fillText("224", W_ + 30, H - 20);
+    g.textAlign = "left";
+
+    g.fillStyle = "#ffffffcc"; g.font = '34px "Silkscreen", monospace'; g.fillText("WRAPPED 224 · TEMPORADA 1", 80, 120);
+
+    const cabeza = !conCabeza ? null : await new Promise(res => {
+      const im = new Image(); im.crossOrigin = "anonymous";
+      im.onload = () => res(im); im.onerror = () => res(null);
+      im.src = `https://mc-heads.net/avatar/${encodeURIComponent(d.j.nombre)}/240`;
+    });
+    if (cabeza) { g.imageSmoothingEnabled = false; g.drawImage(cabeza, 80, 170, 220, 220); }
+    const xTexto = cabeza ? 340 : 80;
+    g.fillStyle = "#fff"; g.font = '800 72px "Unbounded", sans-serif';
+    let nom = d.j.nombre; while (g.measureText(nom).width > W_ - xTexto - 70 && nom.length > 3) nom = nom.slice(0, -1);
+    g.fillText(nom, xTexto, 270);
+    g.font = '600 46px "Figtree", sans-serif'; g.fillText(`${t.e} ${t.t}`, xTexto, 350);
+
+    const stats = [
+      ["Horas jugadas", num(d.j.horas || 0)], ["Muertes por tonto", num(d.j.muertes || 0)],
+      ["Bloques minados", num(d.j.minado || 0)], ["Mobs matados", num(d.j.mobs || 0)],
+      ["Km caminados", ((d.j.metros || 0) / 1000).toLocaleString("es-MX", { maximumFractionDigits: 1 })], ["Mejor racha", `${d.j.mejorRacha || 0} días`],
+    ];
+    stats.forEach(([etq, val], k) => {
+      const x = 80 + (k % 2) * 470, y = 450 + Math.floor(k / 2) * 210;
+      g.fillStyle = "#00000038"; redondo(g, x, y, 450, 180, 28); g.fill();
+      g.fillStyle = "#fff"; g.font = '800 64px "Unbounded", sans-serif'; g.fillText(val, x + 34, y + 95);
+      g.fillStyle = "#ffffffcc"; g.font = '600 32px "Figtree", sans-serif'; g.fillText(etq, x + 34, y + 145);
+    });
+    const extra = [];
+    if (d.causas[0]) extra.push(`💀 Lo que más te mató: ${d.causas[0][0]}`);
+    if (d.w.Diamante) extra.push(`💎 Primer diamante: ${fecha(d.w.Diamante)}`);
+    g.fillStyle = "#fff"; g.font = '600 38px "Figtree", sans-serif';
+    extra.slice(0, 2).forEach((e, k) => g.fillText(e, 80, 1130 + k * 58));
+    g.fillStyle = "#ffffffaa"; g.font = '28px "Silkscreen", monospace'; g.fillText("explotabuela.github.io/Minecraft-224", 80, H - 60);
+    try {
+      return await new Promise((res, rej) => { try { c.toBlob(b => b ? res(b) : rej(), "image/png"); } catch (e) { rej(e); } });
+    } catch (e) {
+      if (conCabeza) return tarjeta(d, t, false); // si la cara no se deja dibujar, sin cara
+      throw e;
+    }
+  }
+  function redondo(g, x, y, w, h, r) {
+    g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + h, r); g.arcTo(x + w, y + h, x, y + h, r);
+    g.arcTo(x, y + h, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath();
+  }
+})();
 
 /* 🥚 */
 console.log("%c⛏ MINECRAFT 224", "font:800 20px sans-serif;color:#5fd068", "\n¿Andas viendo el código? Únete al Discord y ayúdale a Dylan con el server.");
@@ -1028,6 +1402,23 @@ async function revisar() {
 }
 revisar(); setInterval(revisar, 60000);
 fichaDesdeLink();
+})();
+
+// App instalable
+(() => {
+  if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(() => {});
+  const b = document.getElementById("instalar");
+  const yaEsApp = matchMedia("(display-mode: standalone)").matches || navigator.standalone;
+  if (!b || yaEsApp) return;
+  let aviso = null;
+  addEventListener("beforeinstallprompt", e => { e.preventDefault(); aviso = e; b.hidden = false; });
+  const esIphone = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  if (esIphone) b.hidden = false;
+  b.addEventListener("click", async () => {
+    if (aviso) { aviso.prompt(); await aviso.userChoice; aviso = null; b.hidden = true; }
+    else if (esIphone) avisar("En Safari: botón Compartir → Agregar a inicio");
+  });
+  addEventListener("appinstalled", () => { b.hidden = true; avisar("¡Listo! Ya tienes la app de la 224"); });
 })();
 </script>
 
