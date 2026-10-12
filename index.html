@@ -13,6 +13,18 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;800&family=Figtree:wght@400;500;600;700&family=Silkscreen&display=swap">
+<meta name="description" content="El server de Minecraft del salón 5 del CBTIS 224: liga, rankings, perfiles, mini juegos y Wrapped.">
+<meta property="og:title" content="Minecraft 224">
+<meta property="og:description" content="La liga, los rankings y las stats de la banda del 224.">
+<meta property="og:image" content="iconos/icono-512.png">
+<meta property="og:type" content="website">
+<link rel="stylesheet" href="app/app.css">
+<script src="app/base.js" defer></script>
+<script src="app/compartir.js" defer></script>
+<script src="app/liga.js" defer></script>
+<script src="app/perfil.js" defer></script>
+<script src="app/juegos.js" defer></script>
+<script src="app/capturas.js" defer></script>
 <style>
 /* Layout: página moderna por apartados con menú fijo arriba; cada apartado con su encabezado.
    Oscuro con brillo verde suave; lo "Minecraft" queda solo en detalles pixelados chiquitos. */
@@ -141,50 +153,9 @@ h2{font-family:var(--f-display);font-weight:800;font-size:clamp(1.7rem,4vw,2.4re
 .cierre{margin:22px 0 0;color:var(--tenue)}
 .cierre b{color:var(--texto)}
 
-/* Ranking */
-.pestanas{display:inline-flex;gap:4px;background:var(--capa);border:1px solid var(--linea);border-radius:999px;padding:4px;margin-bottom:22px;flex-wrap:wrap}
-.pestanas button{font:600 .9rem var(--f-body);color:var(--tenue);background:none;border:0;border-radius:999px;padding:8px 16px;cursor:pointer}
-.pestanas button[aria-selected="true"]{background:var(--rojo);color:#2a0702}
-.ranking{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:16px}
-.campeon{position:relative;overflow:hidden;background:linear-gradient(160deg,var(--campeon-a),var(--capa) 70%);border:1px solid var(--campeon-borde);border-radius:var(--radio);padding:28px;display:grid;justify-items:center;text-align:center;gap:4px}
-.campeon .etiqueta{font-family:var(--f-pixel);font-size:.72rem;letter-spacing:.1em;color:var(--oro)}
-.campeon .foto{width:112px;height:112px;margin:14px 0 10px;border-radius:18px;image-rendering:pixelated;box-shadow:0 14px 40px -10px #ff6b5788}
-.campeon .nombre{font-family:var(--f-display);font-weight:800;font-size:1.6rem;line-height:1.15;overflow-wrap:anywhere}
-.campeon .dato{color:var(--tenue)}
-.campeon .dato b{color:var(--rojo);font-size:1.25rem}
-.tabla{background:var(--capa);border:1px solid var(--linea);border-radius:var(--radio);overflow:hidden;align-self:start}
-.fila{display:grid;grid-template-columns:2rem 40px minmax(0,1fr) auto;align-items:center;gap:14px;padding:12px 20px}
-.fila + .fila{border-top:1px solid var(--linea)}
-.fila .pos{font-family:var(--f-display);font-weight:800;color:var(--tenue)}
-.fila:first-child .pos{color:var(--oro)}
-.fila .foto{width:40px;height:40px;border-radius:10px;image-rendering:pixelated}
-.fila .quien{font-weight:600;overflow-wrap:anywhere}
-.fila .cuantas{font-weight:700;color:var(--rojo);font-variant-numeric:tabular-nums;white-space:nowrap}
-.vacio{grid-column:1/-1;background:var(--capa);border:1px dashed var(--linea);border-radius:var(--radio);padding:28px;text-align:center;color:var(--tenue);margin:0}
-
-/* Jugadores */
-.perfiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:16px}
-.perfil{background:var(--capa);border:1px solid var(--linea);border-radius:var(--radio);overflow:hidden;transition:transform .2s,border-color .2s}
-.perfil:hover{transform:translateY(-4px);border-color:var(--brillo)}
-.perfil .escena{height:210px;display:grid;place-items:end center;background:radial-gradient(70% 80% at 50% 100%,var(--brillo-suave),transparent),var(--capa-2)}
-.perfil .escena .cuerpo{height:180px;width:auto;image-rendering:pixelated;filter:drop-shadow(0 10px 14px #0008)}
-.perfil .cabecera{display:flex;align-items:center;gap:10px;padding:16px 18px 10px}
-.perfil .cabecera .foto{width:32px;height:32px;border-radius:8px;image-rendering:pixelated}
-.perfil h3{margin:0;font-family:var(--f-display);font-weight:600;font-size:1.05rem;overflow-wrap:anywhere;min-width:0}
-.stats{margin:0;padding:4px 18px 18px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px 10px}
-.stats div{display:grid}
-.stats dt{font-size:.68rem;font-weight:700;letter-spacing:.06em;color:var(--tenue)}
-.stats dd{margin:0;font-weight:700;font-size:1.05rem;font-variant-numeric:tabular-nums}
-
 /* Respaldo cuando la cara no carga */
 .sin-cara{display:grid;place-items:center;background:var(--capa-2);color:var(--verde);font-family:var(--f-display);font-weight:800;border:1px solid var(--linea)}
 .cuerpo.sin-cara{width:100px;height:100px;margin-bottom:40px;border-radius:20px;font-size:2rem}
-
-/* Capturas */
-.galeria{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
-.galeria figure{margin:0;border-radius:var(--radio);overflow:hidden;background:var(--capa);border:1px solid var(--linea)}
-.galeria img{display:block;width:100%;aspect-ratio:16/9;object-fit:cover}
-.galeria figcaption{padding:10px 14px;font-size:.9rem;color:var(--tenue)}
 
 /* Mapa */
 .mapa{display:flex;gap:24px;align-items:center;justify-content:space-between;flex-wrap:wrap;background:linear-gradient(120deg,var(--mapa-a),var(--capa) 60%);border:1px solid var(--linea);border-radius:var(--radio);padding:32px}
@@ -204,29 +175,6 @@ h2{font-family:var(--f-display);font-weight:800;font-size:clamp(1.7rem,4vw,2.4re
 .numero span{font-size:.75rem;font-weight:700;letter-spacing:.06em;color:var(--tenue)}
 .numero:first-child b{color:var(--verde)}
 
-/* Buscador y comparador */
-.herramientas{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:18px}
-.campo{flex:1 1 260px;max-width:380px;display:flex;align-items:center;gap:10px;background:var(--capa);border:1px solid var(--linea);border-radius:12px;padding:0 14px}
-.campo:focus-within{border-color:var(--verde)}
-.campo input{flex:1;min-width:0;border:0;background:none;color:var(--texto);font:500 1rem var(--f-body);padding:12px 0;outline:none}
-.conteo{color:var(--tenue);font-size:.9rem}
-.comparador{margin-top:40px;background:var(--capa);border:1px solid var(--linea);border-radius:var(--radio);padding:24px}
-.comparador h3{margin:0 0 4px;font-family:var(--f-display);font-size:1.2rem}
-.comparador > p{margin:0 0 18px;color:var(--tenue)}
-.elegir{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:12px;align-items:center;margin-bottom:20px}
-.elegir select{width:100%;font:600 1rem var(--f-body);color:var(--texto);background:var(--capa-2);border:1px solid var(--linea);border-radius:12px;padding:12px}
-.elegir .vs{font-family:var(--f-display);font-weight:800;color:var(--rojo)}
-.duelo{display:grid;gap:12px}
-.duelo .fila-vs{display:grid;grid-template-columns:minmax(0,1fr) 7.5rem minmax(0,1fr);gap:10px;align-items:center}
-.duelo .lado-a,.duelo .lado-b{display:flex;align-items:center;gap:8px;font-weight:700;font-variant-numeric:tabular-nums}
-.duelo .lado-a{justify-content:flex-end}
-.duelo .barra{height:8px;border-radius:99px;background:var(--capa-2);flex:1;overflow:hidden;display:flex}
-.duelo .lado-a .barra{justify-content:flex-end}
-.duelo .barra i{display:block;height:100%;background:var(--tenue);border-radius:99px}
-.duelo .gana .barra i{background:var(--verde)}
-.duelo .gana{color:var(--verde)}
-.duelo .stat{text-align:center;font-size:.72rem;font-weight:700;letter-spacing:.06em;color:var(--tenue)}
-
 /* Historia */
 .linea-tiempo{list-style:none;margin:0;padding:0 0 0 22px;border-left:2px solid var(--linea);display:grid;gap:22px;max-width:760px}
 .linea-tiempo li{position:relative}
@@ -235,42 +183,6 @@ h2{font-family:var(--f-display);font-weight:800;font-size:clamp(1.7rem,4vw,2.4re
 .linea-tiempo h3{margin:2px 0 4px;font-size:1.1rem}
 .linea-tiempo p{margin:0;color:var(--tenue)}
 .foto-momento{display:block;margin-top:10px;width:100%;max-width:420px;aspect-ratio:16/9;object-fit:cover;border-radius:12px;border:1px solid var(--linea)}
-
-/* Carrusel de capturas */
-.carrusel{position:relative}
-.carrusel .galeria{display:grid;grid-auto-flow:column;grid-auto-columns:calc((100% - 3 * 14px) / 4);gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;scroll-behavior:smooth;scrollbar-width:none;grid-template-columns:none}
-.carrusel .galeria::-webkit-scrollbar{display:none}
-.carrusel .galeria figure{scroll-snap-align:start;cursor:zoom-in}
-.flecha{position:absolute;top:calc(50% - 22px);z-index:2;width:44px;height:44px;border-radius:999px;border:1px solid var(--linea);background:var(--vidrio);color:var(--texto);font-size:1.5rem;line-height:1;cursor:pointer;display:grid;place-items:center;box-shadow:0 8px 24px -8px var(--sombra)}
-.flecha:hover{border-color:var(--verde)}
-.flecha.izq{left:-14px}.flecha.der{right:-14px}
-.visor{border:0;padding:0;background:transparent;max-width:min(1100px,94vw);width:100%}
-.visor::backdrop{background:#000000d9}
-.visor figure{margin:0;display:grid;gap:10px}
-.visor img{width:100%;max-height:78vh;object-fit:contain;border-radius:12px}
-.visor figcaption{color:#eef3f0;text-align:center}
-.visor .controles{display:flex;justify-content:center;gap:10px}
-.visor button{border:1px solid #ffffff33;background:#ffffff14;color:#fff;border-radius:999px;padding:10px 18px;font:600 .95rem var(--f-body);cursor:pointer}
-
-/* Perfil (ficha) */
-.perfil{cursor:pointer}
-.ficha{border:1px solid var(--linea);border-radius:20px;background:var(--capa);color:var(--texto);padding:0;width:min(760px,94vw);max-height:90vh;overflow:auto}
-.ficha::backdrop{background:#000000b3;backdrop-filter:blur(4px)}
-.ficha-x{position:absolute;top:12px;right:12px;width:38px;height:38px;border-radius:999px;border:1px solid var(--linea);background:var(--capa-2);color:var(--texto);font-size:1.4rem;cursor:pointer;z-index:1}
-.ficha-cuerpo{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr)}
-.ficha-skin{display:grid;place-items:end center;padding:28px 12px 0;min-height:320px;background:radial-gradient(70% 70% at 50% 100%,var(--brillo-suave),transparent),var(--capa-2)}
-.ficha-skin .cuerpo{height:280px;width:auto;image-rendering:pixelated;filter:drop-shadow(0 12px 18px var(--sombra))}
-.ficha-skin .cuerpo.sin-cara{height:120px;width:120px;margin-bottom:60px;font-size:2.6rem;border-radius:24px}
-.ficha-datos{padding:28px;display:grid;gap:14px;align-content:start;min-width:0}
-.ficha-datos h2{font-size:1.8rem;overflow-wrap:anywhere;padding-right:40px}
-.ficha-sub{margin:-8px 0 0;color:var(--tenue)}
-.ficha-stats{margin:0;display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.ficha-stats div{background:var(--capa-2);border-radius:12px;padding:10px 12px;display:grid}
-.ficha-stats dt{font-size:.72rem;font-weight:700;letter-spacing:.04em;color:var(--tenue)}
-.ficha-stats dd{margin:0;font-family:var(--f-display);font-weight:800;font-size:1.15rem;font-variant-numeric:tabular-nums}
-.ficha-acciones{display:flex;gap:10px;flex-wrap:wrap}
-.ficha-acciones .btn{border-radius:12px;padding:12px 18px}
-.btn.secundario{background:var(--capa-2);color:var(--texto);border:1px solid var(--linea)}
 
 /* Wrapped */
 .wrapped{position:relative;overflow:hidden;border-radius:20px;padding:40px 32px;display:grid;gap:12px;justify-items:start;color:#fff;
@@ -341,8 +253,45 @@ h2{font-family:var(--f-display);font-weight:800;font-size:clamp(1.7rem,4vw,2.4re
 .lam .titulo-grande{text-align:center;font-size:clamp(2rem,10vw,3rem)}
 .lam .centro{text-align:center;align-self:center}
 .lam .acciones{display:grid;gap:8px}
-.lam .acciones button{font:700 1rem var(--f-body);border:0;border-radius:12px;padding:13px;cursor:pointer;background:#fff;color:#14201a}
+.lam .acciones button{display:flex;align-items:center;justify-content:center;gap:8px;font:700 1rem var(--f-body);border:0;border-radius:12px;padding:13px;cursor:pointer;background:#fff;color:#14201a}
 .lam .acciones button.sec{background:#00000040;color:#fff;border:1px solid #ffffff40}
+.wrapped-botones{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.wr-224{display:flex;align-items:center;gap:12px;width:100%;text-align:left;margin:0 0 14px;padding:12px 14px;border-radius:14px;border:0;cursor:pointer;color:#fff;font:inherit;background:linear-gradient(120deg,#0f3d2e,#1f7a35 50%,#2b5fd9)}
+.wr-224 span:last-child{display:grid}.wr-224 small{color:#ffffffcc}
+.hist-logo{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:8px;background:#5fd068;color:#0b1a0f;font:800 .7rem var(--f-display);box-shadow:0 2px 8px #0006;flex:none}
+.wr-224 .hist-logo{width:42px;height:42px;font-size:.9rem;border-radius:10px}
+.lam.en-pausa *{animation-play-state:paused!important}
+.deco .caras-grandes{max-width:340px}.deco .caras-grandes img{width:50px;height:50px}
+.numero-fondo{font-family:var(--f-display);font-weight:800;font-size:min(34dvh,240px);line-height:.9;color:#ffffff1f}
+.wr-podio{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.wr-podio li{display:grid;grid-template-columns:2rem 44px minmax(0,1fr) auto;gap:10px;align-items:center;background:#00000033;border:1px solid #ffffff26;border-radius:14px;padding:8px 12px}
+.wr-podio li.p1{background:#f5c451;color:#2a1d00;border-color:#f5c451;transform:scale(1.03)}
+.wr-podio img{width:44px;height:44px;border-radius:9px;image-rendering:pixelated}
+.wr-podio b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.wr-podio em{font-style:normal;font-weight:800;font-family:var(--f-display);font-variant-numeric:tabular-nums}
+.wr-podio-lugar{font-family:var(--f-display);font-weight:800;font-size:1.3rem;text-align:center}
+.wr-titulos{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.wr-titulos li{display:grid;grid-template-columns:32px minmax(0,1fr) auto;gap:10px;align-items:center;background:#00000030;border-radius:12px;padding:6px 10px}
+.wr-titulos img{width:32px;height:32px;border-radius:7px;image-rendering:pixelated}
+.wr-titulos b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.wr-titulos em{font-style:normal;font-weight:700;font-size:.85rem;color:#f5c451;white-space:nowrap}
+.lam .chip svg{vertical-align:-4px}
+.lam-creditos{padding:0;justify-content:flex-start}
+.creditos{position:absolute;inset:0;overflow:hidden;-webkit-mask-image:linear-gradient(transparent,#000 14%,#000 86%,transparent);mask-image:linear-gradient(transparent,#000 14%,#000 86%,transparent)}
+.creditos-rollo{position:absolute;left:0;right:0;top:100%;display:grid;justify-items:center;gap:14px;padding:0 24px;text-align:center}
+.lam-creditos.activa .creditos-rollo{animation:rodar var(--dur) linear .4s both}
+@keyframes rodar{to{transform:translateY(calc(-100% - 100dvh))}}
+.cr-titulo{font-family:var(--f-display);font-weight:800;font-size:2.2rem;letter-spacing:.04em}
+.cr-sub{font-family:var(--f-pixel);font-size:.8rem;letter-spacing:.12em;color:#ffffffaa;text-transform:uppercase;margin-top:-8px}
+.cr-seccion{margin-top:28px;font-family:var(--f-pixel);font-size:.75rem;letter-spacing:.14em;color:#f5c451;text-transform:uppercase}
+.cr-persona{display:grid;justify-items:center;gap:2px}
+.cr-persona img{width:40px;height:40px;border-radius:9px;image-rendering:pixelated;margin-bottom:4px}
+.cr-persona b{font-size:1.15rem}.cr-persona span{color:#ffffffaa;font-size:.88rem}
+.cr-par{display:grid;justify-items:center;gap:1px}
+.cr-par span{color:#ffffffaa;font-size:.82rem;text-transform:uppercase;letter-spacing:.06em}
+.cr-par b{font-size:1.1rem}.cr-par em{font-style:normal;color:#ffffffaa;font-size:.85rem}
+.cr-nota{color:#ffffffd9;max-width:28ch}
+.cr-fin{margin-top:40px;font-family:var(--f-display);font-weight:800;font-size:1.8rem}
 .tarjeta-mini{height:min(52dvh,420px);max-height:none;width:auto;border-radius:12px;box-shadow:0 20px 50px -10px #000a}
 .wr-elegir{position:fixed;inset:0;z-index:190;background:#05080ae6;display:grid;place-items:center;padding:16px}
 .wr-caja{width:min(520px,100%);max-height:86dvh;overflow:auto;background:var(--capa);border:1px solid var(--linea);border-radius:18px;padding:22px;color:var(--texto)}
@@ -402,27 +351,16 @@ footer{border-top:1px solid var(--linea);padding-block:28px 96px;color:var(--ten
 
 @media (max-width:900px){
   .numeros{grid-template-columns:repeat(3,minmax(0,1fr))}
-  .carrusel .galeria{grid-auto-columns:calc((100% - 14px) / 2)}
 }
 @media (max-width:820px){
   .hero{padding-block:44px 48px}
   .hero .envoltura{grid-template-columns:1fr;gap:36px}
   .lado{order:-1}
   .logo-grande{width:min(180px,50vw)}
-  .ranking{grid-template-columns:1fr}
   .marca span{display:none}
-}
-@media (max-width:640px){
-  .ficha-cuerpo{grid-template-columns:1fr}
-  .ficha-skin{min-height:240px}.ficha-skin .cuerpo{height:210px}
 }
 @media (max-width:480px){
   .numeros{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .carrusel .galeria{grid-auto-columns:88%}
-  .flecha{display:none}
-  .elegir{grid-template-columns:1fr}
-  .elegir .vs{text-align:center}
-  .duelo .fila-vs{grid-template-columns:minmax(0,1fr) 5.5rem minmax(0,1fr)}
   .mandamiento{grid-template-columns:44px minmax(0,1fr);gap:14px;padding:18px}
   .mandamiento .n{font-size:1.9rem}
   .ip{display:flex;width:100%}
@@ -430,21 +368,38 @@ footer{border-top:1px solid var(--linea);padding-block:28px 96px;color:var(--ten
 }
 </style>
 
+<div class="carga" id="carga" aria-hidden="true">
+  <img src="data:image/webp;base64,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" alt="">
+  <div class="carga-barra"><i></i></div>
+  <p id="carga-dato">Cargando la 224…</p>
+</div>
+
 <header class="menu">
   <div class="envoltura">
     <a class="marca" href="#inicio"><img src="data:image/webp;base64,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" alt=""><span>MINECRAFT 224</span></a>
-    <nav aria-label="Apartados">
+    <nav aria-label="Apartados" id="menu-links">
       <a href="#inicio">Inicio</a>
-      <a href="#entrar">Cómo entrar</a>
-      <a href="#reglas">Reglas</a>
+      <a href="#liga">Liga</a>
       <a href="#ranking">Ranking</a>
       <a href="#jugadores">Jugadores</a>
-      <a href="#historia">Historia</a>
+      <a href="#juegos">Juegos</a>
       <a href="#capturas">Capturas</a>
-      <a href="#mapa">Mapa</a>
       <a href="#wrapped">Wrapped</a>
-      <a href="#preguntas">Preguntas</a>
+      <div class="mas" id="mas">
+        <button type="button" class="mas-boton" id="mas-boton" aria-expanded="false" aria-controls="mas-lista">Más <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+        <div class="mas-lista" id="mas-lista" hidden>
+          <a href="#entrar">Cómo entrar</a>
+          <a href="#reglas">Reglas</a>
+          <a href="#estadisticas">Estadísticas</a>
+          <a href="#meses">Meses</a>
+          <a href="#historia">Historia</a>
+          <a href="#mapa">Mapa</a>
+          <a href="#preguntas">Preguntas</a>
+          <button type="button" data-tv>Modo TV</button>
+        </div>
+      </div>
     </nav>
+    <button class="tema" id="buscar-abrir" type="button" aria-label="Buscar (tecla /)"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></button>
     <button class="tema instalar" id="instalar" type="button" hidden aria-label="Instalar la app">⬇ App</button>
     <button class="tema" id="tema" type="button" aria-label="Cambiar a modo claro u oscuro">◐</button>
   </div>
@@ -475,6 +430,7 @@ footer{border-top:1px solid var(--linea);padding-block:28px 96px;color:var(--ten
 </div>
 
 <div class="envoltura numeros" id="numeros" aria-label="La 224 en números"></div>
+<div class="envoltura"><div class="vivo" id="vivo" aria-live="polite"></div></div>
 
 <main class="envoltura">
 
@@ -515,42 +471,75 @@ footer{border-top:1px solid var(--linea);padding-block:28px 96px;color:var(--ten
     <p class="cierre"><b>¿Hubo pedo?</b> Se arregla en el Discord y gg.</p>
   </section>
 
+  <section id="liga">
+    <div class="cabeza">
+      <span class="eyebrow">LIGA DEL MES</span>
+      <h2 id="liga-titulo">La liga de la 224</h2>
+      <p>Todo lo que haces da puntos: horas, bloques, diamantes, mobs, caminar y entrar seguido. Morirte quita puntos. El que gane el mes se lleva el rol de campeón.</p>
+    </div>
+    <div id="liga-caja"></div>
+  </section>
+
   <section id="ranking">
     <div class="cabeza">
       <span class="eyebrow">RANKING</span>
-      <h2>El más tonto</h2>
-      <p>Quién se ha muerto más. Por tonto, obviamente.</p>
+      <h2>Los mejores de la 224</h2>
+      <p>Escoge la categoría y el periodo. El podio se arma solo.</p>
     </div>
-    <div class="pestanas" role="tablist" aria-label="Periodo del ranking">
-      <button role="tab" id="tab-semana" aria-selected="true" data-periodo="semana">Semana</button>
-      <button role="tab" id="tab-mes" aria-selected="false" data-periodo="mes">Mes</button>
-      <button role="tab" id="tab-siempre" aria-selected="false" data-periodo="siempre">De todo el server</button>
-    </div>
-    <div class="ranking" id="ranking-caja" role="tabpanel"></div>
+    <div id="ranking-caja"></div>
   </section>
 
   <section id="jugadores">
     <div class="cabeza">
       <span class="eyebrow">JUGADORES</span>
       <h2>La banda de la 224</h2>
-      <p>Las stats de cada quien. Dale clic a alguien para ver su perfil.<span id="actualizado"></span></p>
+      <p>Cada quien con su carta. Pícale a una para voltearla.<span id="actualizado"></span></p>
     </div>
     <div class="herramientas">
-      <label class="campo" for="buscar"><span aria-hidden="true">⌕</span><input id="buscar" type="search" placeholder="Buscar jugador…" autocomplete="off" list="sugerencias"><datalist id="sugerencias"></datalist></label>
+      <label class="campo" for="buscar"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="buscar" type="search" placeholder="Buscar jugador…" autocomplete="off"></label>
       <span class="conteo" id="conteo"></span>
     </div>
-    <div class="perfiles" id="perfiles"></div>
+    <div class="cartas" id="cartas"></div>
 
     <div class="comparador" id="comparador">
-      <h3>Comparador</h3>
-      <p>Elige a dos y mira quién gana en cada stat.</p>
+      <div>
+        <h3>VS</h3>
+        <p>Escoge a dos y que se den.</p>
+      </div>
       <div class="elegir">
         <select id="vs-a" aria-label="Primer jugador"></select>
         <span class="vs">VS</span>
         <select id="vs-b" aria-label="Segundo jugador"></select>
+        <button class="btn" type="button" id="vs-pelea">¡Pelea!</button>
       </div>
-      <div class="duelo" id="duelo"></div>
     </div>
+  </section>
+
+  <section id="juegos">
+    <div class="cabeza">
+      <span class="eyebrow">JUEGOS</span>
+      <h2>Mini juegos de la 224</h2>
+      <p>Uno nuevo cada día, igual para todos. ¿Qué tanto conoces a la banda?</p>
+    </div>
+    <div id="juegos-caja"></div>
+  </section>
+
+  <section id="estadisticas">
+    <div class="cabeza">
+      <span class="eyebrow">ESTADÍSTICAS</span>
+      <h2>La 224 en gráficas</h2>
+      <p>Cómo va el server completo, día con día.</p>
+    </div>
+    <div id="estadisticas-caja"></div>
+  </section>
+
+  <section id="meses">
+    <div class="cabeza">
+      <span class="eyebrow">MESES</span>
+      <h2>El archivo de la 224</h2>
+      <p>Cada mes guardado: su campeón, su podio, sus récords y sus fotos.</p>
+    </div>
+    <div id="meses-caja"></div>
   </section>
 
   <section id="historia">
@@ -568,19 +557,7 @@ footer{border-top:1px solid var(--linea);padding-block:28px 96px;color:var(--ten
       <h2>Lo mejor de la 224</h2>
       <p>Las mejores capturas de <b>#capturas</b> en el Discord.</p>
     </div>
-    <div class="carrusel">
-      <button class="flecha izq" id="gal-izq" type="button" aria-label="Capturas anteriores">‹</button>
-      <div class="galeria" id="galeria"></div>
-      <button class="flecha der" id="gal-der" type="button" aria-label="Más capturas">›</button>
-    </div>
-    <dialog class="visor" id="visor" aria-label="Captura en grande">
-      <figure><img id="visor-img" alt=""><figcaption id="visor-txt"></figcaption></figure>
-      <div class="controles">
-        <button type="button" id="visor-ant">‹ Anterior</button>
-        <button type="button" id="visor-cerrar">Cerrar</button>
-        <button type="button" id="visor-sig">Siguiente ›</button>
-      </div>
-    </dialog>
+    <div id="capturas-caja"></div>
   </section>
 
   <section id="mapa">
@@ -599,7 +576,8 @@ footer{border-top:1px solid var(--linea);padding-block:28px 96px;color:var(--ten
       <span class="eyebrow">CADA MES</span>
       <h2>Wrapped 224</h2>
       <p>Cada mes, tu resumen tipo historias con música: horas jugadas, diamantes, el mob que más te mató, tu mejor racha y tu título del mes. Con tarjeta para presumir.</p>
-      <button class="btn" id="wrapped-link" type="button" aria-disabled="true">Disponible cuando empiece el server</button>
+      <div class="wrapped-botones"><button class="btn" id="wrapped-link" type="button" aria-disabled="true">Disponible cuando empiece el server</button>
+      <button class="btn secundario" id="wrapped-224" type="button" hidden>Wrapped de toda la 224</button></div>
     </div>
   </section>
 
@@ -659,10 +637,7 @@ footer{border-top:1px solid var(--linea);padding-block:28px 96px;color:var(--ten
 
 <div class="aviso" id="aviso" role="status" hidden>IP copiada</div>
 
-<dialog class="ficha" id="ficha" aria-label="Perfil del jugador">
-  <button class="ficha-x" id="ficha-cerrar" type="button" aria-label="Cerrar">×</button>
-  <div class="ficha-cuerpo" id="ficha-cuerpo"></div>
-</dialog>
+<dialog class="perfil-dlg" id="perfil" aria-label="Perfil del jugador"></dialog>
 
 <div class="creeper" id="creeper" hidden aria-hidden="true"><div class="cara-creeper"></div><p>Sssss…</p></div>
 
@@ -697,13 +672,6 @@ const CONFIG = {
 
   // Link del mapa (BlueMap). Mientras sea null, el botón dice "Disponible al lanzar".
   mapa: null,
-
-  // Rankings del más tonto: jugador y muertes en cada periodo
-  ranking: {
-    semana:  [ { jugador: "explotabuela", muertes: 2 } ],
-    mes:     [ { jugador: "explotabuela", muertes: 2 } ],
-    siempre: [ { jugador: "explotabuela", muertes: 2 } ],
-  },
 
   // Perfiles: agrega un bloque { } por cada jugador
   jugadores: [
@@ -747,28 +715,22 @@ function foto(src, nombre, clase = "foto") {
 }
 
 (async () => {
-/* Stats automáticas: si existe data.json (lo sube el bot), manda sobre la configuración */
-try {
-  const r = await fetch("data.json?v=" + Date.now(), { cache: "no-store" });
-  if (r.ok) {
-    const d = await r.json();
-    if (Array.isArray(d.jugadores) && d.jugadores.length) CONFIG.jugadores = d.jugadores;
-    if (d.ranking) CONFIG.ranking = d.ranking;
-    if (d.wrapped) CONFIG.datosWrapped = d.wrapped;
-    CONFIG.actualizado = d.actualizado;
-  }
-} catch {}
-/* Capturas automáticas: las sube el bot desde el canal de capturas de Discord */
-try {
-  const r = await fetch("capturas.json?v=" + Date.now(), { cache: "no-store" });
-  if (r.ok) {
-    const lista = await r.json();
-    if (Array.isArray(lista)) CONFIG.capturas = [
-      ...lista.map(c => ({ archivo: c.archivo, texto: c.texto ? `${c.texto} · ${c.autor}` : `Por ${c.autor}` })),
-      ...CONFIG.capturas,
-    ];
-  }
-} catch {}
+/* Stats automáticas: data.json lo sube el bot y manda sobre la configuración */
+let DATOS = null, HISTORIAL = {}, CAPTURAS = [];
+const traer = async (archivo) => {
+  try { const r = await fetch(archivo + "?v=" + Date.now(), { cache: "no-store" }); return r.ok ? await r.json() : null; }
+  catch { return null; }
+};
+[DATOS, HISTORIAL, CAPTURAS] = await Promise.all([traer("data.json"), traer("historial.json"), traer("capturas.json")]);
+HISTORIAL = HISTORIAL || {};
+CAPTURAS = Array.isArray(CAPTURAS) ? CAPTURAS : [];
+if (DATOS) {
+  if (Array.isArray(DATOS.jugadores) && DATOS.jugadores.length) CONFIG.jugadores = DATOS.jugadores;
+  if (DATOS.wrapped) CONFIG.datosWrapped = DATOS.wrapped;
+  CONFIG.actualizado = DATOS.actualizado;
+}
+// Capturas que pusiste a mano en CONFIG también cuentan
+CAPTURAS = [...CAPTURAS, ...CONFIG.capturas.map(c => ({ archivo: c.archivo, texto: c.texto || "", autor: "", fecha: c.fecha || "" }))];
 
 /* IP + copiar */
 $("#ip-texto").textContent = CONFIG.ip;
@@ -808,154 +770,6 @@ function pintarReloj() {
 }
 pintarReloj(); setInterval(pintarReloj, 1000);
 
-/* Ranking con pestañas */
-const textos = { semana: "DE LA SEMANA", mes: "DEL MES", siempre: "DE TODA LA 224" };
-function pintarRanking(periodo) {
-  const caja = $("#ranking-caja"); caja.innerHTML = "";
-  const lista = [...(CONFIG.ranking[periodo] || [])].filter(r => r.muertes > 0).sort((a,b) => b.muertes - a.muertes);
-  if (!lista.length) {
-    caja.innerHTML = `<p class="vacio">Nadie se ha muerto en este periodo. Sospechoso.</p>`;
-    return;
-  }
-  const top = lista[0];
-  const c = document.createElement("div"); c.className = "campeon";
-  const et = document.createElement("span"); et.className = "etiqueta"; et.textContent = "★ EL MÁS TONTO " + textos[periodo] + " ★";
-  const nm = document.createElement("span"); nm.className = "nombre"; nm.textContent = top.jugador;
-  const dt = document.createElement("span"); dt.className = "dato";
-  dt.innerHTML = `<b>${top.muertes}</b> ${top.muertes === 1 ? "muerte" : "muertes"} por tonto`;
-  c.append(et, foto(cara(top.jugador), top.jugador), nm, dt);
-
-  const t = document.createElement("div"); t.className = "tabla";
-  lista.slice(0, 5).forEach((r, i) => {
-    const f = document.createElement("div"); f.className = "fila";
-    const p = document.createElement("span"); p.className = "pos"; p.textContent = i + 1;
-    const q = document.createElement("span"); q.className = "quien"; q.textContent = r.jugador;
-    const n = document.createElement("span"); n.className = "cuantas"; n.textContent = `${r.muertes} ☠`;
-    f.append(p, foto(cara(r.jugador), r.jugador), q, n); t.append(f);
-  });
-  caja.append(c, t);
-}
-document.querySelectorAll(".pestanas button").forEach(b => b.addEventListener("click", () => {
-  document.querySelectorAll(".pestanas button").forEach(x => x.setAttribute("aria-selected", String(x === b)));
-  pintarRanking(b.dataset.periodo);
-}));
-pintarRanking("semana");
-
-/* Jugadores + buscador */
-const tarjetas = [];
-(function () {
-  const caja = $("#perfiles");
-  CONFIG.jugadores.forEach(j => {
-    const p = document.createElement("article"); p.className = "perfil";
-    const e = document.createElement("div"); e.className = "escena";
-    e.append(foto(cuerpo(j.nombre), j.nombre, "cuerpo"));
-    const cab = document.createElement("div"); cab.className = "cabecera";
-    const h = document.createElement("h3"); h.textContent = j.nombre;
-    cab.append(foto(cara(j.nombre), j.nombre), h);
-    const dl = document.createElement("dl"); dl.className = "stats";
-    [["MUERTES", num(j.muertes)], ["HORAS", num(j.horas)], ["MINADOS", num(j.minado)],
-     ["METROS", num(j.metros)], ["MOBS", num(j.mobs)], ["RÉCORD", num(j.record) + "m"]]
-      .forEach(([k, v]) => dl.insertAdjacentHTML("beforeend", `<div><dt>${k}</dt><dd>${v}</dd></div>`));
-    p.append(e, cab, dl); caja.append(p);
-    p.tabIndex = 0; p.setAttribute("role", "button"); p.setAttribute("aria-label", "Ver perfil de " + j.nombre);
-    p.addEventListener("click", () => abrirFicha(j.nombre));
-    p.addEventListener("keydown", ev => { if (ev.key === "Enter") abrirFicha(j.nombre); });
-    tarjetas.push({ nombre: j.nombre.toLowerCase(), el: p });
-    $("#sugerencias").append(new Option(j.nombre));
-  });
-  const vacio = document.createElement("p"); vacio.className = "vacio"; vacio.hidden = true;
-  caja.after(vacio);
-  function filtrar() {
-    const q = $("#buscar").value.trim().toLowerCase();
-    let n = 0;
-    tarjetas.forEach(t => { const ok = t.nombre.includes(q); t.el.hidden = !ok; if (ok) n++; });
-    $("#conteo").textContent = `${n} de ${tarjetas.length} ${tarjetas.length === 1 ? "jugador" : "jugadores"}`;
-    vacio.hidden = n > 0;
-    vacio.textContent = q === "herobrine" ? "Herobrine no está en la whitelist… todavía. 👁️" : `Nadie se llama "${$("#buscar").value}" en la 224.`;
-  }
-  $("#buscar").addEventListener("input", filtrar);
-  filtrar();
-})();
-
-/* Comparador */
-(function () {
-  const js = CONFIG.jugadores;
-  const a = $("#vs-a"), b = $("#vs-b"), duelo = $("#duelo");
-  if (js.length < 2) {
-    $(".elegir").hidden = true;
-    duelo.innerHTML = `<p class="vacio">Se necesitan al menos 2 jugadores. Cuando entre la banda, aquí se van a poder comparar.</p>`;
-    return;
-  }
-  js.forEach((j, i) => { a.add(new Option(j.nombre, i)); b.add(new Option(j.nombre, i)); });
-  b.selectedIndex = 1;
-  // "menos es mejor" en muertes
-  const stats = [["MUERTES","muertes",true],["HORAS","horas"],["MINADOS","minado"],["METROS","metros"],["MOBS","mobs"],["RÉCORD","record"]];
-  function pintar() {
-    const A = js[a.value], B = js[b.value]; duelo.innerHTML = "";
-    stats.forEach(([t, k, menos]) => {
-      const va = Number(A[k] || 0), vb = Number(B[k] || 0), max = Math.max(va, vb, 1);
-      const ganaA = menos ? va < vb : va > vb, ganaB = menos ? vb < va : vb > va;
-      const f = document.createElement("div"); f.className = "fila-vs";
-      f.innerHTML = `<div class="lado-a ${ganaA ? "gana" : ""}"><span>${num(va)}</span><span class="barra"><i style="width:${va / max * 100}%"></i></span></div>
-        <div class="stat">${t}${menos ? " ↓" : ""}</div>
-        <div class="lado-b ${ganaB ? "gana" : ""}"><span class="barra"><i style="width:${vb / max * 100}%"></i></span><span>${num(vb)}</span></div>`;
-      duelo.append(f);
-    });
-  }
-  a.addEventListener("change", pintar); b.addEventListener("change", pintar); pintar();
-})();
-
-/* Última actualización de stats */
-if (CONFIG.actualizado) {
-  const min = Math.round((Date.now() - new Date(CONFIG.actualizado)) / 6e4);
-  $("#actualizado").textContent = " Actualizado " + (min < 1 ? "hace un momento" : min < 60 ? `hace ${min} min` : `hace ${Math.round(min / 60)} h`) + ".";
-}
-
-/* Perfil de cada jugador (ficha) */
-function posicion(nombre, k, menos) {
-  const orden = [...CONFIG.jugadores].sort((a, b) => menos ? a[k] - b[k] : b[k] - a[k]);
-  return orden.findIndex(j => j.nombre === nombre) + 1;
-}
-function abrirFicha(nombre) {
-  const j = CONFIG.jugadores.find(x => x.nombre.toLowerCase() === String(nombre).toLowerCase());
-  if (!j) return;
-  const caja = $("#ficha-cuerpo"); caja.innerHTML = "";
-  const izq = document.createElement("div"); izq.className = "ficha-skin";
-  izq.append(foto(`https://mc-heads.net/body/${encodeURIComponent(j.nombre)}/260`, j.nombre, "cuerpo"));
-  const der = document.createElement("div"); der.className = "ficha-datos";
-  const h = document.createElement("h2"); h.textContent = j.nombre;
-  const total = CONFIG.jugadores.length;
-  const sub = document.createElement("p"); sub.className = "ficha-sub";
-  sub.textContent = total > 1 ? `#${posicion(j.nombre, "horas")} en horas jugadas · #${posicion(j.nombre, "muertes")} en muertes de ${total}` : "Jugador de la 224";
-  const dl = document.createElement("dl"); dl.className = "ficha-stats";
-  [["Muertes", num(j.muertes)], ["Horas jugadas", num(j.horas)], ["Bloques minados", num(j.minado)],
-   ["Metros caminados", num(j.metros)], ["Mobs matados", num(j.mobs)], ["Récord sin morir", num(j.record) + " min"],
-   ["Racha actual", num(j.racha) + " días"], ["Mejor racha", num(j.mejorRacha) + " días"]]
-    .forEach(([k, v]) => dl.insertAdjacentHTML("beforeend", `<div><dt>${k}</dt><dd>${v}</dd></div>`));
-  const acciones = document.createElement("div"); acciones.className = "ficha-acciones";
-  const copiar = document.createElement("button"); copiar.type = "button"; copiar.className = "btn"; copiar.textContent = "Copiar link del perfil";
-  copiar.addEventListener("click", async () => {
-    const url = location.href.split("#")[0] + "#j-" + encodeURIComponent(j.nombre);
-    try { await navigator.clipboard.writeText(url); copiar.textContent = "Link copiado ✔"; } catch { copiar.textContent = url; }
-  });
-  const cmp = document.createElement("button"); cmp.type = "button"; cmp.className = "btn secundario"; cmp.textContent = "Comparar";
-  cmp.addEventListener("click", () => {
-    const i = CONFIG.jugadores.indexOf(j); const a = $("#vs-a");
-    if (a.options.length) { a.value = String(i); a.dispatchEvent(new Event("change")); }
-    $("#ficha").close(); $("#comparador").scrollIntoView({ behavior: "smooth" });
-  });
-  acciones.append(copiar); if (CONFIG.jugadores.length > 1) acciones.append(cmp);
-  der.append(h, sub, dl, acciones);
-  caja.append(izq, der);
-  const d = $("#ficha"); if (!d.open) d.showModal ? d.showModal() : d.setAttribute("open", "");
-}
-$("#ficha-cerrar").addEventListener("click", () => $("#ficha").close());
-$("#ficha").addEventListener("click", e => { if (e.target.id === "ficha") $("#ficha").close(); });
-function fichaDesdeLink() {
-  if (location.hash.startsWith("#j-")) abrirFicha(decodeURIComponent(location.hash.slice(3)));
-}
-addEventListener("hashchange", fichaDesdeLink);
-
 /* Wrapped del mes: historias tipo Instagram/Spotify con música */
 (function () {
   const boton = $("#wrapped-link");
@@ -969,7 +783,18 @@ addEventListener("hashchange", fichaDesdeLink);
   const nombreMesLargo = m => { const [a, n] = m.split("-").map(Number); return `${MESES_N[n - 1][0].toUpperCase() + MESES_N[n - 1].slice(1)} ${a}`; };
   boton.textContent = "Ver mi Wrapped"; boton.removeAttribute("aria-disabled");
   boton.addEventListener("click", () => elegir());
-  if (location.hash.startsWith("#wrapped-")) setTimeout(() => abrir(decodeURIComponent(location.hash.slice(9)), meses[0]), 400);
+  const boton224 = $("#wrapped-224");
+  if (boton224) { boton224.hidden = false; boton224.addEventListener("click", () => abrir224(meses[0])); }
+  // Links directos: #wrapped-NOMBRE~2026-12 o #wrapped-224~2026-12 (el de todo el server)
+  function desdeLink() {
+    if (!location.hash.startsWith("#wrapped-")) return;
+    const [quien, mes] = decodeURIComponent(location.hash.slice(9)).split("~");
+    const m = meses.includes(mes) ? mes : meses[0];
+    if (quien === "224") abrir224(m);
+    else abrir(quien, m);
+  }
+  setTimeout(desdeLink, 600);
+  addEventListener("hashchange", desdeLink);
 
   const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   const fecha = f => { if (!f) return ""; const [, m, d] = f.split("-").map(Number); return `${d} de ${MESES[m - 1]}`; };
@@ -990,6 +815,15 @@ addEventListener("hashchange", fichaDesdeLink);
     const e = encodeURIComponent(n);
     const respaldo = [`https://visage.surgeplay.com/full/384/${e}`, cuerpo(n)];
     return `<img class="skin" alt="" src="https://starlightskins.lunareclipse.studio/render/${pose}/${e}/full" data-r='${JSON.stringify(respaldo)}' onerror="const r=JSON.parse(this.dataset.r);if(r.length){this.src=r.shift();this.dataset.r=JSON.stringify(r)}else this.remove()">`;
+  };
+  const svgI = (p, t = 22) => `<svg width="${t}" height="${t}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${p}</svg>`;
+  const IC = {
+    llama: svgI('<path d="M12 3c1 3 6 5 6 10a6 6 0 0 1-12 0c0-3 2-4.5 2-7 2 1 3 3 3.5 4C12 8 12 5 12 3z"/>'),
+    portal: svgI('<rect x="6" y="3" width="12" height="18" rx="1"/><path d="M9 7h6v10H9z"/>'),
+    dragon: svgI('<path d="M3 20c4-1 6-4 7-8l3 2 2-3 3 1 3-5-5 1-2-3-3 3-4-2c0 4-1 8-4 10"/>'),
+    gema: svgI('<path d="M6 3h12l4 6-10 12L2 9z"/><path d="M2 9h20M12 21 8 9l4-6 4 6z"/>'),
+    bajar: svgI('<path d="M12 4v11M7 10l5 5 5-5"/><path d="M5 20h14"/>', 18),
+    corona: svgI('<path d="m3 8 4 4 5-7 5 7 4-4-2 11H5z"/>', 18),
   };
   const flotan = lista => lista.map(([e, x, y, t, d, r]) => `<span class="flota" style="--x:${x}%;--y:${y}%;--t:${t}rem;--d:${d}s;--r:${r}deg">${e}</span>`).join("");
   const confeti = () => `<div class="confeti">${Array.from({ length: 28 }, (_, k) =>
@@ -1094,9 +928,9 @@ addEventListener("hashchange", fichaDesdeLink);
 
     const km = j.metros / 1000;
     const viajes = [];
-    if (w.Nether) viajes.push(`<span>🔥</span><span>Llegaste al Nether el <b>${fecha(w.Nether)}</b>${P.nether?.Jugador === j.nombre ? " (¡el primero!)" : ""}.</span>`);
-    if (w.End) viajes.push(`<span>🌌</span><span>Llegaste al End el <b>${fecha(w.End)}</b>${P.end?.Jugador === j.nombre ? " (¡el primero!)" : ""}.</span>`);
-    if (P.dragon?.Jugador === j.nombre && enMes(P.dragon.Fecha, mes)) viajes.push(`<span>🐉</span><span><b>Tú mataste al Ender Dragon.</b> Leyenda.</span>`);
+    if (w.Nether) viajes.push(`<span>${IC.llama}</span><span>Llegaste al Nether el <b>${fecha(w.Nether)}</b>${P.nether?.Jugador === j.nombre ? " (¡el primero!)" : ""}.</span>`);
+    if (w.End) viajes.push(`<span>${IC.portal}</span><span>Llegaste al End el <b>${fecha(w.End)}</b>${P.end?.Jugador === j.nombre ? " (¡el primero!)" : ""}.</span>`);
+    if (P.dragon?.Jugador === j.nombre && enMes(P.dragon.Fecha, mes)) viajes.push(`<span>${IC.dragon}</span><span><b>Tú mataste al Ender Dragon.</b> Leyenda.</span>`);
     L.push(lam(skin(j.nombre, POSES[4]),
       `<span class="ojo anim">Aventura</span>
        <h3 class="anim">Caminaste</h3>
@@ -1125,7 +959,7 @@ addEventListener("hashchange", fichaDesdeLink);
     L.push(lam(`<img class="tarjeta-mini" alt="Tu tarjeta del Wrapped">`,
       `<span class="ojo anim">Para presumir</span>
        <div class="acciones anim">
-         <button type="button" data-acc="bajar">⬇ Descargar tarjeta</button>
+         <button type="button" data-acc="bajar">${IC.bajar} Descargar tarjeta</button>
          <button type="button" class="sec" data-acc="compartir" hidden>Compartir</button>
          <button type="button" class="sec" data-acc="otra">Ver de nuevo</button>
        </div>`, "lam-tarjeta"));
@@ -1162,6 +996,11 @@ addEventListener("hashchange", fichaDesdeLink);
       titulo: { bpm: 112, len: 32, ev: [[0, [60, 64, 67], "metal", 2], [3, [60, 64, 67], "metal", 1], [4, [60, 64, 67], "metal", 2], [6, [65, 69, 72], "metal", 2], [8, [67, 71, 74], "metal", 8],
         [16, [72, 76, 79], "metal", 14], [0, 36, "bajo", 6], [6, 41, "bajo", 2], [8, 43, "bajo", 8], [16, 48, "bajo", 16],
         [16, 96, "campana"], [18, 100, "campana"], [20, 103, "campana"], [22, 108, "campana"]] },
+      creditos: { bpm: 70, len: 32, ev: [[0, [48, 52, 55], "pad", 8, .45], [8, [45, 48, 52], "pad", 8, .45], [16, [41, 45, 48], "pad", 8, .45], [24, [43, 47, 50], "pad", 8, .45],
+        [0, 36, "bajo", 8], [8, 33, "bajo", 8], [16, 29, "bajo", 8], [24, 31, "bajo", 8],
+        [0, 60, "piano"], [2, 64, "piano"], [4, 67, "piano"], [6, 72, "piano"], [8, 57, "piano"], [10, 60, "piano"], [12, 64, "piano"], [14, 69, "piano"],
+        [16, 53, "piano"], [18, 57, "piano"], [20, 60, "piano"], [22, 65, "piano"], [24, 55, "piano"], [26, 59, "piano"], [28, 62, "piano"], [30, 67, "piano"],
+        [0, 84, "campana"], [16, 81, "campana"]] },
     };
     const ORDEN = ["intro", "todos", "tiempo", "mina", "muerte", "aventura", "racha", "titulo", "intro"];
 
@@ -1235,7 +1074,7 @@ addEventListener("hashchange", fichaDesdeLink);
         if (ctx.state === "suspended") ctx.resume();
         if (grupo) { const g = grupo; g.gain.setTargetAtTime(0, ctx.currentTime, .15); setTimeout(() => g.disconnect(), 1500); }
         grupo = ctx.createGain(); grupo.connect(salida); grupo.connect(eco);
-        escena = E[ORDEN[i] || "intro"];
+        escena = E[typeof i === "string" ? i : ORDEN[i]] || E.intro;
         t0 = siguiente = ctx.currentTime + .08;
         clearInterval(reloj); reloj = setInterval(programar, 50); programar();
       },
@@ -1260,10 +1099,11 @@ addEventListener("hashchange", fichaDesdeLink);
     caja.className = "wr-elegir";
     caja.innerHTML = `<div class="wr-caja" role="dialog" aria-modal="true" aria-label="Elige tu Wrapped">
       <h3>Wrapped del mes</h3><p>Escoge el mes y tu jugador.</p>
-      <div class="wr-meses"></div><div class="wr-lista"></div>
+      <div class="wr-meses"></div><button class="wr-224" type="button"><span class="hist-logo">224</span><span><b>Wrapped de toda la 224</b><small>El mes de toda la banda, con créditos</small></span></button><div class="wr-lista"></div>
       <button class="btn secundario wr-cerrar" type="button">Cerrar</button></div>`;
     let mes = meses[0];
     const cajaMeses = caja.querySelector(".wr-meses"), lista = caja.querySelector(".wr-lista");
+    caja.querySelector(".wr-224").addEventListener("click", () => { caja.remove(); abrir224(mes); });
     function pintar() {
       cajaMeses.innerHTML = "";
       meses.forEach(m => {
@@ -1293,16 +1133,21 @@ addEventListener("hashchange", fichaDesdeLink);
   function abrir(nombre, mes) {
     const d = datos(nombre, mes || meses[0]);
     if (!d) { avisar("Ese jugador no jugó ese mes"); return; }
-    Musica.iniciar();
     const { L, t } = laminas(d);
+    historia({ L, etiqueta: "Wrapped de " + d.j.nombre, quien: `<img src="${cara(d.j.nombre)}" alt="" onerror="this.remove()">${esc(d.j.nombre)}`,
+      tarjeta: () => tarjeta(d, t), archivo: `wrapped-224-${d.j.nombre}-${d.mes}.png`, titulo: "Mi Wrapped 224" });
+  }
+
+  function historia({ L, etiqueta, quien, tarjeta: hacerTarjeta, archivo: nombreArchivo, titulo: tituloCompartir }) {
+    Musica.iniciar();
     const h = document.createElement("div");
     h.className = "hist";
-    h.setAttribute("role", "dialog"); h.setAttribute("aria-modal", "true"); h.setAttribute("aria-label", "Wrapped de " + d.j.nombre);
+    h.setAttribute("role", "dialog"); h.setAttribute("aria-modal", "true"); h.setAttribute("aria-label", etiqueta);
     h.innerHTML = `<div class="hist-marco"><div class="hist-barras">${L.map(() => "<i><b></b></i>").join("")}</div>
-      <div class="hist-quien"><img src="${cara(d.j.nombre)}" alt="" onerror="this.remove()">${esc(d.j.nombre)}</div>
+      <div class="hist-quien">${quien}</div>
       <button class="hist-boton hist-sonido" type="button" aria-label="Música" aria-pressed="${!Musica.callado}">${Musica.callado ? ICONO_MUTE : ICONO_SONIDO}</button>
       <button class="hist-boton hist-cerrar" type="button" aria-label="Cerrar">✕</button>
-      ${L.map((l, i) => `<section class="lam ${l.clase}" style="--g:${GRADS[i % GRADS.length]}">${l.html}</section>`).join("")}</div>`;
+      ${L.map((l, i) => `<section class="lam ${l.clase}" style="--g:${l.grad || GRADS[i % GRADS.length]}">${l.html}</section>`).join("")}</div>`;
     document.body.append(h);
     document.body.style.overflow = "hidden";
     const lams = [...h.querySelectorAll(".lam")], barras = [...h.querySelectorAll(".hist-barras i")];
@@ -1316,11 +1161,11 @@ addEventListener("hashchange", fichaDesdeLink);
       lams.forEach((l, k) => l.classList.toggle("activa", k === i));
       barras.forEach((b, k) => { b.classList.toggle("hecha", k < i); b.firstChild.style.width = k < i ? "100%" : "0"; });
       animar(lams[i]);
-      Musica.cambiar(i);
+      Musica.cambiar(L[i].musica ?? i);
     }
     function paso(ahora) {
       if (!pausa && i < lams.length - 1) {
-        const p = Math.min(1, (transcurrido + ahora - inicio) / DUR);
+        const p = Math.min(1, (transcurrido + ahora - inicio) / (L[i].dur || DUR));
         barras[i].firstChild.style.width = p * 100 + "%";
         if (p >= 1) ir(i + 1);
       } else if (i === lams.length - 1) barras[i].firstChild.style.width = "100%";
@@ -1343,11 +1188,13 @@ addEventListener("hashchange", fichaDesdeLink);
       Musica.despertar();
       if (e.target.closest("button")) return;
       tocado = performance.now(); pausa = true; transcurrido += performance.now() - inicio;
+      lams[i] && lams[i].classList.add("en-pausa");
     });
-    marco.addEventListener("pointercancel", () => { pausa = false; inicio = performance.now(); });
+    const seguir = () => { pausa = false; inicio = performance.now(); lams[i] && lams[i].classList.remove("en-pausa"); };
+    marco.addEventListener("pointercancel", seguir);
     marco.addEventListener("pointerup", e => {
       if (e.target.closest("button")) return;
-      pausa = false; inicio = performance.now();
+      seguir();
       if (performance.now() - tocado < 250) {
         const r = marco.getBoundingClientRect();
         ir(e.clientX - r.left < r.width / 3 ? i - 1 : i + 1);
@@ -1356,24 +1203,224 @@ addEventListener("hashchange", fichaDesdeLink);
 
     const ultima = lams[lams.length - 1];
     let png = null;
-    tarjeta(d, t).then(blob => {
+    hacerTarjeta().then(blob => {
       png = blob;
       ultima.querySelector(".tarjeta-mini").src = URL.createObjectURL(blob);
-      const archivo = new File([blob], `wrapped-224-${d.j.nombre}-${d.mes}.png`, { type: "image/png" });
+      const archivo = new File([blob], nombreArchivo, { type: "image/png" });
       if (navigator.canShare && navigator.canShare({ files: [archivo] })) {
         const b = ultima.querySelector('[data-acc="compartir"]'); b.hidden = false;
-        b.addEventListener("click", () => navigator.share({ files: [archivo], title: "Mi Wrapped 224" }).catch(() => {}));
+        b.addEventListener("click", () => navigator.share({ files: [archivo], title: tituloCompartir }).catch(() => {}));
       }
     }).catch(() => {});
     ultima.querySelector('[data-acc="bajar"]').addEventListener("click", () => {
       if (!png) return;
-      const a = document.createElement("a"); a.href = URL.createObjectURL(png); a.download = `wrapped-224-${d.j.nombre}-${d.mes}.png`; a.click();
+      const a = document.createElement("a"); a.href = URL.createObjectURL(png); a.download = nombreArchivo; a.click();
     });
     ultima.querySelector('[data-acc="otra"]').addEventListener("click", () => ir(0));
 
     ir(0);
     raf = requestAnimationFrame(paso);
     h.querySelector(".hist-cerrar").focus();
+  }
+
+  // =====================================================
+  // WRAPPED DE TODA LA 224 (con créditos al final)
+  // =====================================================
+  function datos224(mes) {
+    const M = W.Meses[mes] || {};
+    const nombres = [...new Set([...Object.keys(M.Stats || {}), ...Object.keys(M.Jugadores || {})])];
+    const ds = nombres.map(n => datos(n, mes)).filter(Boolean);
+    if (!ds.length) return null;
+    const todos = ds[0].todos;
+    const sum = c => todos.reduce((s, x) => s + (x[c] || 0), 0);
+    const top = c => todos.filter(x => (x[c] || 0) > 0).sort((a, b) => b[c] - a[c] || a.nombre.localeCompare(b.nombre));
+    const causas = {};
+    nombres.forEach(n => Object.entries(M.Jugadores?.[n]?.Muertes || {}).forEach(([c, v]) => { const k = limpia(c); causas[k] = (causas[k] || 0) + v; }));
+    const diasActivos = new Set();
+    nombres.forEach(n => (M.Jugadores?.[n]?.Dias || []).forEach(x => diasActivos.add(x)));
+    const titulos = ds.map(d => ({ nombre: d.j.nombre, ...titulo(d), horas: d.j.horas })).sort((a, b) => b.horas - a.horas || a.nombre.localeCompare(b.nombre));
+    const liga = (typeof DATOS !== "undefined" && DATOS && DATOS.liga) || {};
+    const tabla = (liga.finales && liga.finales[mes]) || (liga.mes === mes ? liga.tabla : null) || [];
+    const campeon = (liga.campeones && liga.campeones[mes]) || null;
+    return { mes, todos, sum, top, causas: Object.entries(causas).sort((a, b) => b[1] - a[1]), dias: diasActivos.size, titulos, n: todos.length, tabla, campeon, ds };
+  }
+
+  function laminas224(d) {
+    const { mes, sum, top } = d;
+    const nm = nombreMes(mes), P = W.Primeros || {};
+    const enCurso = mes === hoyMes;
+    const L = [];
+    const lam = (decoHtml, cuerpo, musica, clase = "", extra = {}) => ({ html: `<div class="deco">${decoHtml}</div><div class="contenido">${cuerpo}</div>`, clase, musica, ...extra });
+    const podio = (lista, c, f) => `<ol class="wr-podio anim">${lista.slice(0, 3).map((x, k) =>
+      `<li class="p${k + 1}"><span class="wr-podio-lugar">${k + 1}</span><img src="${cara(x.nombre)}" alt="" onerror="this.style.visibility='hidden'"><b>${esc(x.nombre)}</b><em>${f(x[c])}</em></li>`).join("")}</ol>`;
+    const skinDe = (lista, pose) => lista[0] ? skin(lista[0].nombre, pose) : `<div class="caras">${d.todos.slice(0, 6).map(x => `<img src="${cara(x.nombre)}" alt="" onerror="this.remove()">`).join("")}</div>`;
+
+    L.push(lam(`<div class="caras caras-grandes">${d.todos.slice(0, 24).map((x, k) => `<img src="${cara(x.nombre)}" alt="" style="animation-delay:${k * .05}s" onerror="this.remove()">`).join("")}</div>`,
+      `<span class="ojo anim">Wrapped de la 224 · ${esc(nombreMesLargo(mes))}${enCurso ? " (va en curso)" : ""}</span>
+       <h3 class="anim">Así fue ${nm} en la 224</h3>
+       <p class="anim">El mes de toda la banda: récords, muertes, títulos y créditos. Toca para seguir →</p>`, "intro"));
+
+    L.push(lam(`<div class="numero-fondo">${d.n}</div>`,
+      `<span class="ojo anim">Entre todos</span>
+       <h3 class="anim">En ${nm} la banda le metió</h3>
+       <div class="grande anim"><span data-num="${sum("horas")}" data-dec="1">0</span> <span class="unidad">horas</span></div>
+       <p class="anim">${sum("horas") >= 24 ? `Son <b>${num(Math.floor(sum("horas") / 24))} días completos</b> sin parar de jugar.` : "Un buen arranque."}</p>
+       <div class="cuad anim">
+         <div><b data-num="${d.n}">0</b><span>jugadores</span></div>
+         <div><b data-num="${d.dias}">0</b><span>días con alguien conectado</span></div>
+       </div>`, "todos"));
+
+    const hrs = top("horas");
+    L.push(lam(skinDe(hrs, POSES[1]),
+      `<span class="ojo anim">Los más viciados</span>
+       <h3 class="anim">${hrs[0] ? `${esc(hrs[0].nombre)} casi vive en la 224` : "Nadie jugó todavía"}</h3>
+       ${podio(hrs, "horas", v => `${v.toLocaleString("es-MX", { maximumFractionDigits: 1 })} h`)}`, "tiempo"));
+
+    const min = top("minado"), dia = top("diamantes");
+    const primerDiamante = P.diamante && enMes(P.diamante.Fecha, mes) ? P.diamante.Jugador : null;
+    L.push(lam(skinDe(min, POSES[2]),
+      `<span class="ojo anim">Bajo tierra</span>
+       <h3 class="anim">Entre todos minamos</h3>
+       <div class="grande anim"><span data-num="${sum("minado")}">0</span> <span class="unidad">bloques</span></div>
+       <div class="cuad anim">
+         <div><b data-num="${sum("diamantes")}">0</b><span>diamantes</span></div>
+         <div><b>${min[0] ? esc(min[0].nombre) : "Nadie"}</b><span>el mejor topo</span></div>
+       </div>
+       ${dia[0] ? `<p class="anim">El que más diamantes sacó: <b>${esc(dia[0].nombre)}</b>, con ${num(dia[0].diamantes)}.</p>` : ""}
+       ${primerDiamante ? `<span class="chip oro anim">${IC.gema} ${esc(primerDiamante)} sacó el primer diamante de la 224</span>` : ""}`, "mina"));
+
+    const mue = top("muertes"), maxC = d.causas[0]?.[1] || 1;
+    L.push(lam(skinDe(mue, POSES[3]),
+      `<span class="ojo anim">Muertes</span>
+       <h3 class="anim">Entre todos nos morimos</h3>
+       <div class="grande anim"><span data-num="${sum("muertes")}">0</span> <span class="unidad">veces</span></div>
+       ${mue[0] ? `<span class="chip oro anim">El más tonto: ${esc(mue[0].nombre)} (${num(mue[0].muertes)})</span>` : ""}
+       ${d.causas.length ? `<div class="barras-causa anim">${d.causas.slice(0, 4).map(([c, v]) =>
+         `<div><span><em>${esc(c)}</em><em>${v}</em></span><i><b data-ancho="${Math.round(v / maxC * 100)}"></b></i></div>`).join("")}</div>` : ""}`, "muerte"));
+
+    const cam = top("metros"), mob = top("mobs");
+    const viajes = [];
+    if (P.nether && enMes(P.nether.Fecha, mes)) viajes.push(`<span>${IC.llama}</span><span><b>${esc(P.nether.Jugador)}</b> fue el primero en llegar al Nether (${fecha(P.nether.Fecha)}).</span>`);
+    if (P.end && enMes(P.end.Fecha, mes)) viajes.push(`<span>${IC.portal}</span><span><b>${esc(P.end.Jugador)}</b> fue el primero en llegar al End (${fecha(P.end.Fecha)}).</span>`);
+    if (P.dragon && enMes(P.dragon.Fecha, mes)) viajes.push(`<span>${IC.dragon}</span><span><b>${esc(P.dragon.Jugador)}</b> mató al Ender Dragon. Leyenda.</span>`);
+    L.push(lam(skinDe(cam, POSES[4]),
+      `<span class="ojo anim">Aventura</span>
+       <h3 class="anim">Caminamos</h3>
+       <div class="grande anim"><span data-num="${sum("metros") / 1000}" data-dec="1">0</span> <span class="unidad">km</span></div>
+       <div class="cuad anim">
+         <div><b data-num="${sum("mobs")}">0</b><span>mobs matados</span></div>
+         <div><b>${mob[0] ? esc(mob[0].nombre) : "Nadie"}</b><span>el más asesino</span></div>
+       </div>
+       ${cam[0] ? `<p class="anim">El explorador del mes: <b>${esc(cam[0].nombre)}</b>, con ${(cam[0].metros / 1000).toLocaleString("es-MX", { maximumFractionDigits: 1 })} km.</p>` : ""}
+       ${viajes.map(v => `<p class="anim viaje">${v}</p>`).join("")}`, "aventura"));
+
+    const men = top("mensajes"), rac = top("racha");
+    L.push(lam(skinDe(men, POSES[5]),
+      `<span class="ojo anim">La banda</span>
+       <h3 class="anim">En el chat se mandaron</h3>
+       <div class="grande anim"><span data-num="${sum("mensajes")}">0</span> <span class="unidad">mensajes</span></div>
+       <div class="cuad anim">
+         <div><b>${men[0] ? esc(men[0].nombre) : "Nadie"}</b><span>el más chismoso</span></div>
+         <div><b>${rac[0] ? esc(rac[0].nombre) : "Nadie"}</b><span>mejor racha${rac[0] ? ` (${rac[0].racha} días)` : ""}</span></div>
+       </div>`, "racha"));
+
+    L.push(lam(confeti(),
+      `<span class="ojo anim">Los títulos de ${nm}</span>
+       <h3 class="anim">Cada quien con lo suyo</h3>
+       <ul class="wr-titulos anim">${d.titulos.slice(0, 8).map(x => `<li><img src="${cara(x.nombre)}" alt="" onerror="this.style.visibility='hidden'"><b>${esc(x.nombre)}</b><em>${esc(x.t)}</em></li>`).join("")}</ul>
+       ${d.titulos.length > 8 ? `<p class="anim">Y ${d.titulos.length - 8} más. Todos salen en los créditos.</p>` : ""}`, "titulo"));
+
+    const lider = d.campeon || (d.tabla[0] && d.tabla[0].nombre);
+    if (lider) {
+      const fila = d.tabla.find(x => x.nombre === lider);
+      L.push(lam(confeti() + skin(lider, POSES[6]),
+        `<span class="ojo anim centro">${d.campeon ? `Campeón de ${nombreMesLargo(mes)}` : "Va ganando la liga"}</span>
+         <h3 class="anim titulo-grande">${esc(lider)}</h3>
+         ${fila ? `<p class="anim centro" style="text-align:center"><b>${num(fila.puntos)} puntos</b> en la liga${d.tabla[1] ? `. Segundo: ${esc(d.tabla[1].nombre)}${d.tabla[2] ? `, tercero: ${esc(d.tabla[2].nombre)}` : ""}.` : "."}</p>` : ""}
+         ${!d.campeon && enCurso ? `<p class="anim centro" style="text-align:center">El mes todavía no acaba. Esto puede cambiar.</p>` : ""}`, "titulo", "lam-campeon", { grad: "linear-gradient(160deg,#1b1206,#6b4a12 45%,#f5c451)" }));
+    }
+
+    // Créditos estilo película
+    const filas = [];
+    filas.push(`<div class="cr-titulo">MINECRAFT 224</div><div class="cr-sub">${esc(nombreMesLargo(mes))}</div>`);
+    filas.push(`<div class="cr-seccion">Con la actuación de</div>`);
+    d.titulos.forEach(x => filas.push(`<div class="cr-persona"><img src="${cara(x.nombre)}" alt="" onerror="this.style.visibility='hidden'"><b>${esc(x.nombre)}</b><span>como ${esc(x.t)}</span></div>`));
+    const papel = (t, lista, c, f) => lista[0] ? filas.push(`<div class="cr-par"><span>${t}</span><b>${esc(lista[0].nombre)}</b>${f ? `<em>${f(lista[0][c])}</em>` : ""}</div>`) : 0;
+    filas.push(`<div class="cr-seccion">Reparto especial</div>`);
+    papel("Más horas en pantalla", hrs, "horas", v => `${v.toLocaleString("es-MX", { maximumFractionDigits: 1 })} h`);
+    papel("Doble de riesgo", mue, "muertes", v => `${num(v)} muertes`);
+    papel("Excavación", min, "minado", v => `${num(v)} bloques`);
+    papel("Joyería", dia, "diamantes", v => `${num(v)} diamantes`);
+    papel("Escenas de acción", mob, "mobs", v => `${num(v)} mobs`);
+    papel("Locaciones", cam, "metros", v => `${(v / 1000).toLocaleString("es-MX", { maximumFractionDigits: 1 })} km`);
+    papel("Diálogos", men, "mensajes", v => `${num(v)} mensajes`);
+    filas.push(`<div class="cr-seccion">Durante el rodaje</div>`);
+    filas.push(`<div class="cr-nota">${num(sum("mobs"))} mobs fueron lastimados</div>`);
+    if (d.causas[0]) filas.push(`<div class="cr-nota">${esc(d.causas[0][0])} se llevó a ${num(d.causas[0][1])} ${d.causas[0][1] === 1 ? "jugador" : "jugadores"}</div>`);
+    filas.push(`<div class="cr-nota">Ningún aldeano fue lastimado. Bueno, a lo mejor sí.</div>`);
+    filas.push(`<div class="cr-seccion">Server y producción</div><div class="cr-par"><span>Dueño del server</span><b>${esc(CONFIG.admin || "Dylan")}</b></div>`);
+    const [aa, mm] = mes.split("-").map(Number), sig = `${mm === 12 ? aa + 1 : aa}-${String(mm === 12 ? 1 : mm + 1).padStart(2, "0")}`;
+    filas.push(`<div class="cr-fin">Gracias por jugar</div><div class="cr-sub">${enCurso ? "El mes sigue. A darle." : `Nos vemos en ${nombreMes(sig)}`}</div>`);
+    const durCreditos = Math.max(16000, filas.length * 1100);
+    L.push({ html: `<div class="creditos" style="--dur:${durCreditos}ms"><div class="creditos-rollo">${filas.join("")}</div></div>`, clase: "lam-creditos", musica: "creditos", dur: durCreditos + 1200, grad: "linear-gradient(180deg,#05080a,#0b1210)" });
+
+    L.push({ html: `<div class="deco"><img class="tarjeta-mini" alt="Tarjeta del Wrapped de la 224"></div><div class="contenido">
+      <span class="ojo anim">Para el grupo</span>
+       <div class="acciones anim">
+         <button type="button" data-acc="bajar">${IC.bajar} Descargar tarjeta</button>
+         <button type="button" class="sec" data-acc="compartir" hidden>Compartir</button>
+         <button type="button" class="sec" data-acc="otra">Ver de nuevo</button>
+       </div></div>`, clase: "lam-tarjeta", musica: "intro" });
+    return L;
+  }
+
+  function abrir224(mes) {
+    const d = datos224(mes || meses[0]);
+    if (!d) { avisar("Todavía no hay datos de ese mes"); return; }
+    const L = laminas224(d);
+    historia({ L, etiqueta: "Wrapped de la 224", quien: `<span class="hist-logo">224</span>La 224`,
+      tarjeta: () => tarjeta224(d), archivo: `wrapped-224-${d.mes}.png`, titulo: "Wrapped de la 224" });
+  }
+
+  async function tarjeta224(d) {
+    const W_ = 1080, H = 1350, c = document.createElement("canvas");
+    c.width = W_; c.height = H;
+    const g = c.getContext("2d");
+    try { await Promise.all([document.fonts.load('800 80px "Unbounded"'), document.fonts.load('600 40px "Figtree"'), document.fonts.load('40px "Silkscreen"')]); } catch {}
+    const fondo = g.createLinearGradient(0, 0, W_, H);
+    fondo.addColorStop(0, "#0f3d2e"); fondo.addColorStop(.5, "#1f7a35"); fondo.addColorStop(1, "#2b5fd9");
+    g.fillStyle = fondo; g.fillRect(0, 0, W_, H);
+    g.fillStyle = "#ffffff12";
+    for (let x = 0; x < W_; x += 40) g.fillRect(x, 0, 2, H);
+    for (let y = 0; y < H; y += 40) g.fillRect(0, y, W_, 2);
+    g.fillStyle = "#ffffff1c"; g.font = '800 420px "Unbounded", sans-serif'; g.textAlign = "right"; g.fillText("224", W_ + 30, H - 20);
+    g.textAlign = "left";
+    g.fillStyle = "#ffffffcc"; g.font = '34px "Silkscreen", monospace'; g.fillText(`WRAPPED 224 · ${nombreMesLargo(d.mes).toUpperCase()}`, 80, 120);
+    g.fillStyle = "#fff"; g.font = '800 92px "Unbounded", sans-serif'; g.fillText("La 224", 80, 250);
+    g.font = '600 44px "Figtree", sans-serif'; g.fillText(`${d.n} jugadores · ${d.dias} días con alguien jugando`, 80, 320);
+    const stats = [
+      ["Horas entre todos", d.sum("horas").toLocaleString("es-MX", { maximumFractionDigits: 0 })], ["Muertes por tonto", num(d.sum("muertes"))],
+      ["Bloques minados", num(d.sum("minado"))], ["Diamantes", num(d.sum("diamantes"))],
+      ["Km caminados", (d.sum("metros") / 1000).toLocaleString("es-MX", { maximumFractionDigits: 0 })], ["Mobs matados", num(d.sum("mobs"))],
+    ];
+    stats.forEach(([etq, val], k) => {
+      const x = 80 + (k % 2) * 470, y = 400 + Math.floor(k / 2) * 210;
+      g.fillStyle = "#00000038"; redondo(g, x, y, 450, 180, 28); g.fill();
+      g.fillStyle = "#fff"; g.font = '800 64px "Unbounded", sans-serif';
+      let v = val; while (g.measureText(v).width > 400) g.font = g.font.replace(/\d+px/, m => (parseInt(m) - 4) + "px");
+      g.fillText(v, x + 34, y + 95);
+      g.fillStyle = "#ffffffcc"; g.font = '600 32px "Figtree", sans-serif'; g.fillText(etq, x + 34, y + 145);
+    });
+    const lider = d.campeon || (d.tabla[0] && d.tabla[0].nombre);
+    const lineas = [];
+    if (lider) lineas.push(`${d.campeon ? "Campeón" : "Va ganando"}: ${lider}`);
+    const h = d.top("horas")[0], m = d.top("muertes")[0];
+    if (h) lineas.push(`Más viciado: ${h.nombre}`);
+    if (m) lineas.push(`Más tonto: ${m.nombre}`);
+    g.fillStyle = "#fff"; g.font = '600 38px "Figtree", sans-serif';
+    lineas.slice(0, 3).forEach((e, k) => g.fillText(e, 80, 1075 + k * 56));
+    g.fillStyle = "#ffffffaa"; g.font = '28px "Silkscreen", monospace'; g.fillText("explotabuela.github.io/Minecraft-224", 80, H - 60);
+    return await new Promise((res, rej) => { try { c.toBlob(b => b ? res(b) : rej(), "image/png"); } catch (e) { rej(e); } });
   }
 
   function animar(lam) {
@@ -1446,6 +1493,7 @@ addEventListener("hashchange", fichaDesdeLink);
     g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + h, r); g.arcTo(x + w, y + h, x, y + h, r);
     g.arcTo(x, y + h, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath();
   }
+  window.__wrapped = { abrir, abrir224, elegir, meses, nombreMesLargo, datos, titulo, tarjeta, Musica, GRADS, skin, POSES };
 })();
 
 /* 🥚 */
@@ -1508,49 +1556,6 @@ function avisar(texto) {
   });
 })();
 
-/* Capturas en carrusel + visor */
-(function () {
-  const caja = $("#galeria"), izq = $("#gal-izq"), der = $("#gal-der");
-  if (!CONFIG.capturas.length) {
-    caja.outerHTML = `<p class="vacio">Todavía no hay capturas. Las mejores de #capturas van a salir aquí.</p>`;
-    izq.hidden = der.hidden = true;
-    return;
-  }
-  CONFIG.capturas.forEach((c, n) => {
-    const f = document.createElement("figure");
-    const i = document.createElement("img"); i.src = c.archivo; i.alt = c.texto || "Captura de la 224"; i.loading = "lazy";
-    f.append(i);
-    if (c.texto) { const fc = document.createElement("figcaption"); fc.textContent = c.texto; f.append(fc); }
-    f.tabIndex = 0;
-    f.addEventListener("click", () => abrir(n));
-    f.addEventListener("keydown", e => { if (e.key === "Enter") abrir(n); });
-    caja.append(f);
-  });
-  const mover = d => caja.scrollBy({ left: d * caja.clientWidth, behavior: "smooth" });
-  izq.addEventListener("click", () => mover(-1));
-  der.addEventListener("click", () => mover(1));
-  function flechas() {
-    const max = caja.scrollWidth - caja.clientWidth - 2;
-    izq.hidden = caja.scrollLeft <= 2; der.hidden = caja.scrollLeft >= max;
-  }
-  caja.addEventListener("scroll", flechas, { passive: true });
-  addEventListener("resize", flechas); flechas();
-
-  const visor = $("#visor"); let actual = 0;
-  function mostrar(n) {
-    actual = (n + CONFIG.capturas.length) % CONFIG.capturas.length;
-    const c = CONFIG.capturas[actual];
-    $("#visor-img").src = c.archivo; $("#visor-img").alt = c.texto || "Captura de la 224";
-    $("#visor-txt").textContent = c.texto || "";
-  }
-  function abrir(n) { mostrar(n); visor.showModal ? visor.showModal() : visor.setAttribute("open", ""); }
-  $("#visor-cerrar").addEventListener("click", () => visor.close());
-  $("#visor-ant").addEventListener("click", () => mostrar(actual - 1));
-  $("#visor-sig").addEventListener("click", () => mostrar(actual + 1));
-  visor.addEventListener("click", e => { if (e.target === visor) visor.close(); });
-  visor.addEventListener("keydown", e => { if (e.key === "ArrowLeft") mostrar(actual - 1); if (e.key === "ArrowRight") mostrar(actual + 1); });
-})();
-
 /* Mapa */
 if (CONFIG.mapa) {
   const a = $("#mapa-link"); a.href = CONFIG.mapa; a.textContent = "Abrir mapa"; a.removeAttribute("aria-disabled");
@@ -1568,50 +1573,10 @@ if (CONFIG.mapa) {
   });
 })();
 
-/* Menú: resalta el apartado donde vas */
-const links = [...document.querySelectorAll(".menu nav a")];
-const obs = new IntersectionObserver(es => es.forEach(e => {
-  if (e.isIntersecting) links.forEach(l => l.classList.toggle("activo", l.getAttribute("href") === "#" + e.target.id));
-}), { rootMargin: "-45% 0px -50% 0px" });
-document.querySelectorAll("#inicio, section").forEach(s => obs.observe(s));
-
-/* Estado del server en vivo (api.mcsrvstat.us) */
-const estado = $("#estado"), pastilla = $("#pastilla"), listaEl = $("#lista");
-pastilla.addEventListener("click", () => {
-  const abrir = listaEl.hidden;
-  listaEl.hidden = !abrir;
-  pastilla.setAttribute("aria-expanded", String(abrir));
-});
-async function revisar() {
-  try {
-    const r = await fetch(`https://api.mcsrvstat.us/3/${encodeURIComponent(CONFIG.ip)}`);
-    const d = await r.json();
-    if (d.online) {
-      const n = d.players?.online ?? 0;
-      estado.dataset.estado = "on";
-      $("#estado-texto").textContent = `Server activo · ${n}`;
-      listaEl.innerHTML = `<p>${n === 1 ? "1 JUGANDO" : n + " JUGANDO"}</p>`;
-      const ul = document.createElement("ul");
-      (d.players?.list || []).forEach(p => {
-        const li = document.createElement("li");
-        const s = document.createElement("span"); s.textContent = p.name;
-        li.append(foto(cara(p.name), p.name), s); ul.append(li);
-      });
-      if (!ul.children.length) ul.innerHTML = `<li><span>Nadie conectado ahorita</span></li>`;
-      listaEl.append(ul);
-    } else {
-      estado.dataset.estado = "off";
-      $("#estado-texto").textContent = "Server apagado";
-      listaEl.innerHTML = `<p>EL SERVER ESTÁ APAGADO</p>`;
-    }
-  } catch {
-    estado.dataset.estado = "off";
-    $("#estado-texto").textContent = "Sin conexión";
-    listaEl.innerHTML = `<p>NO SE PUDO REVISAR EL SERVER</p>`;
-  }
-}
-revisar(); setInterval(revisar, 60000);
-fichaDesdeLink();
+/* Lo demás (liga, rankings, perfiles, juegos...) vive en app/*.js y arranca con esto */
+window.M224 = { CONFIG, datos: DATOS, historial: HISTORIAL, capturas: CAPTURAS, $, cara, cuerpo, num, foto, avisar,
+  wrapped: window.__wrapped || null };
+window.dispatchEvent(new Event("m224:listo"));
 })();
 
 // App instalable
@@ -1631,5 +1596,6 @@ fichaDesdeLink();
   addEventListener("appinstalled", () => { b.hidden = true; avisar("¡Listo! Ya tienes la app de la 224"); });
 })();
 </script>
+
 
 </html>
