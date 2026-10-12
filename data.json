@@ -1,13 +1,13 @@
 {
-  "actualizado": "2026-10-11T19:13",
+  "actualizado": "2026-10-11T19:23",
   "jugadores": [
     {
       "nombre": "explotabuela",
-      "muertes": 5,
+      "muertes": 6,
       "horas": 0.6,
       "minado": 4,
-      "metros": 1093,
-      "mobs": 6,
+      "metros": 1237,
+      "mobs": 10,
       "record": 12,
       "racha": 1,
       "mejorRacha": 1
@@ -17,14 +17,19 @@
     "semana": [
       {
         "jugador": "explotabuela",
-        "muertes": 5
+        "muertes": 6
       }
     ],
-    "mes": [],
+    "mes": [
+      {
+        "jugador": "explotabuela",
+        "muertes": 1
+      }
+    ],
     "siempre": [
       {
         "jugador": "explotabuela",
-        "muertes": 5
+        "muertes": 6
       }
     ]
   }
