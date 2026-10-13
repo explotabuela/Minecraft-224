@@ -262,9 +262,19 @@
     }).slice(1);
     App.porDia = porDia;
 
+    // La medalla que menos gente tiene en todo el server
+    function medallaRara() {
+      const cuenta = {};
+      App.jugadores.forEach(j => (j.medallas || []).forEach(m => { if (m.nivel > 0) { const k = m.id + (m.especial ? "" : ":" + m.nivel); (cuenta[k] = cuenta[k] || { m, n: 0, quien: [] }).n++; cuenta[k].quien.push(j.nombre); } }));
+      const lista = Object.values(cuenta).sort((a, b) => a.n - b.n || (b.m.nivel - a.m.nivel));
+      if (!lista.length) return null;
+      const r = lista[0], NIVS = ["", "Bronce", "Plata", "Oro", "Diamante"];
+      return [r.m.icono || "estrella", "La medalla más rara", r.m.nombre + (r.m.especial ? "" : " de " + NIVS[r.m.nivel]), r.n === 1 ? r.quien[0] : "", r.n === 1 ? "solo la tiene él" : `la tienen ${r.n}`];
+    }
+
     (function estadisticas() {
       const caja = document.getElementById("estadisticas-caja");
-      if (!porDia.length) { caja.append(el("p", { class: "vacio", text: "Las gráficas salen cuando el bot junte datos de unos días." })); return; }
+      const sinDias = !porDia.length;
       const ult = porDia.slice(-30);
       const etq = ult.map(x => fecha(x.dia).replace(/ \d{4}$/, ""));
       const sum = (x, k) => Object.values(x.r).reduce((s, v) => s + (v[k] || 0), 0);
@@ -286,7 +296,7 @@
       if (top.length > 6) partes.push({ nombre: "Otras", valor: top.slice(6).reduce((s, x) => s + x[1], 0) });
 
       const tarjeta = (titulo, sub, cuerpo, clase = "") => el("div", { class: "caja-grafica " + clase }, el("h3", { text: titulo }), el("p", { text: sub }), cuerpo);
-      const rejilla = el("div", { class: "graficas" },
+      const rejilla = sinDias ? el("p", { class: "vacio", text: "Las gráficas salen cuando el bot junte datos de dos días o más. Los récords ya se ven abajo." }) : el("div", { class: "graficas" },
         tarjeta("Horas jugadas por día", "Entre todos, los últimos 30 días", App.graficaLinea(horas, { etiquetas: etq, formato: v => dec(v) + " h", ancho: 1000, alto: 220 }), "ancha"),
         tarjeta("Jugadores activos por día", "Cuántos entraron cada día", App.graficaBarras(activos, { etiquetas: etq, formato: v => num(Math.round(v)) })),
         tarjeta("Muertes por semana", "Por tonto, todas", App.graficaBarras(semanas.map(s => s.v), { etiquetas: semanas.map(s => s.etq), formato: v => num(Math.round(v)) })),
@@ -309,12 +319,14 @@
         rm && ["calavera", "Más muertes en un día", num(rm.v), rm.n, fecha(rm.dia)],
         masRacha && masRacha.mejorRacha && ["llama", "Racha más larga", num(masRacha.mejorRacha) + " días", masRacha.nombre, ""],
         masRecord && masRecord.record && ["escudo", "Más tiempo sin morir", App.tiempo(masRecord.record), masRecord.nombre, ""],
-        rec && rec.conectados && ["gente", "Más conectados a la vez", num(rec.conectados), "", fecha(rec.fecha)],
+        rec && rec.conectados && ["gente", "Más conectados a la vez", num(rec.conectados) + (rec.conectados === 1 ? " jugador" : " jugadores"), "", fecha(rec.fecha), rec.quienes || []],
+        medallaRara(),
       ].filter(Boolean);
       caja.append(rejilla, el("h3", { class: "sub-titulo", text: "Récords de la 224" }),
-        el("div", { class: "records" }, recs.map(([ic, t, v, quien, f]) => el("div", { class: "record-t" },
+        el("div", { class: "records" }, recs.map(([ic, t, v, quien, f, varios]) => el("div", { class: "record-t" },
           el("span", { class: "record-ico", html: icono(ic, 20) }), el("small", { text: t }), el("b", { text: v }),
-          el("span", { class: "record-quien" }, quien ? imgCara(quien, "", 32) : null, el("span", { text: [quien, f].filter(Boolean).join(" · ") }))))));
+          el("span", { class: "record-quien" }, quien ? imgCara(quien, "", 32) : null, el("span", { text: [quien, f].filter(Boolean).join(" · ") })),
+          varios && varios.length ? el("span", { class: "record-varios", title: varios.join(", ") }, varios.slice(0, 12).map(n => imgCara(n, "", 28)), el("small", { text: varios.join(", ") })) : null))));
     })();
 
     // =====================================================
@@ -381,7 +393,10 @@
       const puntos = el("div", { class: "tv-puntos" });
       const cont = el("div", { class: "tv" },
         el("div", { class: "tv-cabeza" }, el("img", { src: document.querySelector(".marca img")?.src, alt: "" }), el("b", { text: "MINECRAFT 224" }), reloj), pantalla, puntos);
-      const vistas = [vistaLiga, vistaPodio, vistaVivo, vistaNumeros, vistaFoto].filter(v => v.puede());
+      // Las capturas salen entre cada vista para que se vean más
+      const base = [vistaLiga, vistaPodio, vistaVivo, vistaNumeros].filter(v => v.puede());
+      const vistas = vistaFoto.puede() ? base.flatMap(v => [v, vistaFoto]) : base;
+      if (!vistas.length && vistaFoto.puede()) vistas.push(vistaFoto);
       let k = 0, intervalo, relojI;
       const { cerrar } = App.cine(cont, { pantallaCompleta: true, alCerrar: () => { clearInterval(intervalo); clearInterval(relojI); } });
       puntos.append(...vistas.map(() => el("i")));
@@ -430,7 +445,8 @@
     vistaNumeros.puede = () => Object.keys((W.Meses[App.mesActual] || {}).Stats || {}).length > 0;
     function vistaFoto() {
       const fotos = App.M.capturas || [], f = fotos[Math.floor(Math.random() * fotos.length)];
-      return el("div", { class: "tv-vista tv-foto", style: `--img:url("${f.archivo}")` }, el("img", { src: f.archivo, alt: f.texto || "" }), el("p", { text: [f.texto, f.autor].filter(Boolean).join(" · ") }));
+      return el("div", { class: "tv-vista tv-foto", style: `--img:url("${f.archivo}")` }, el("span", { class: "etq-mini", text: "CAPTURAS DE LA 224" }), el("img", { src: f.archivo, alt: f.texto || "" }),
+        el("p", { text: [f.texto, f.jugador || f.autor, f.fecha ? fecha(f.fecha) : ""].filter(Boolean).join(" · ") }));
     }
     vistaFoto.puede = () => (App.M.capturas || []).length > 0;
   });

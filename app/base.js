@@ -97,6 +97,33 @@
     rayo: '<path d="M13 2 4 14h7l-1 8 9-12h-7z"/>',
     link: '<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>',
     estrella: '<path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/>',
+    pez: '<path d="M3 12c3-5 9-6 13-2l5-3v10l-5-3c-4 4-10 3-13-2z"/><circle cx="8" cy="11" r=".8"/>',
+    trigo: '<path d="M12 21V8"/><path d="M12 8c-2-1-3-3-3-5 2 0 3 2 3 5zm0 0c2-1 3-3 3-5-2 0-3 2-3 5zM12 13c-2-1-3.5-2.5-3.5-4.5 2 0 3.5 2 3.5 4.5zm0 0c2-1 3.5-2.5 3.5-4.5-2 0-3.5 2-3.5 4.5zM12 18c-2-1-3.5-2.5-3.5-4.5 2 0 3.5 2 3.5 4.5zm0 0c2-1 3.5-2.5 3.5-4.5-2 0-3.5 2-3.5 4.5z"/>',
+    corazon: '<path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/>',
+    esmeralda: '<path d="M8 3h8l4 6-8 12L4 9z"/><path d="M8 3l4 6 4-6M4 9h16"/>',
+    ladrillo: '<rect x="3" y="5" width="18" height="14" rx="1"/><path d="M3 10h18M3 15h18M9 5v5M15 10v5M9 15v4"/>',
+    ola: '<path d="M2 14c2.5 0 2.5-2 5-2s2.5 2 5 2 2.5-2 5-2 2.5 2 5 2"/><path d="M2 19c2.5 0 2.5-2 5-2s2.5 2 5 2 2.5-2 5-2 2.5 2 5 2"/><path d="M8 9a4 4 0 0 1 8 0"/>',
+    ala: '<path d="M3 20c2-8 7-14 18-16-1 6-4 10-9 12l3-4c-3 1-6 4-8 8z"/>',
+    herradura: '<path d="M7 20V11a5 5 0 0 1 10 0v9"/><path d="M5 20h4M15 20h4"/>',
+    barco: '<path d="M3 15h18l-3 5H6z"/><path d="M12 15V3l6 9h-6"/>',
+    cama: '<path d="M3 18V7M3 13h18v5M21 18v-4a3 3 0 0 0-3-3h-7v2"/><circle cx="7" cy="11" r="2"/>',
+    olla: '<path d="M4 10h16v5a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5z"/><path d="M2 10h20M9 6c0-1 1-2 1-3M14 6c0-1 1-2 1-3"/>',
+    lingote: '<path d="M6 9h12l3 8H3z"/><path d="M8 9l1-3h6l1 3"/>',
+    cofre: '<rect x="3" y="6" width="18" height="14" rx="2"/><path d="M3 11h18M11 10h2v3h-2z"/>',
+    torre: '<path d="M8 21V8l4-5 4 5v13M5 21h14M10 12h4"/>',
+    tridente: '<path d="M12 22V6M6 4v4a6 6 0 0 0 12 0V4M12 2v4"/>',
+    totem: '<rect x="7" y="3" width="10" height="7" rx="1"/><path d="M5 12h14l-2 9H7z"/><path d="M10 6h.01M14 6h.01"/>',
+    campana: '<path d="M6 16V11a6 6 0 0 1 12 0v5l2 2H4z"/><path d="M10 21h4"/>',
+    pata: '<circle cx="7" cy="9" r="1.8"/><circle cx="11" cy="6" r="1.8"/><circle cx="15" cy="6.5" r="1.8"/><circle cx="18" cy="10" r="1.8"/><path d="M8 17c0-3 2-6 4.5-6s4.5 3 4.5 6c0 2-2 3-4.5 3S8 19 8 17z"/>',
+    abeja: '<ellipse cx="12" cy="13" rx="5" ry="6"/><path d="M7 11h10M7 15h10M9 7 7 4M15 7l2-3"/>',
+    huevo: '<path d="M12 3c4 0 7 6 7 11a7 7 0 0 1-14 0c0-5 3-11 7-11z"/>',
+    luna: '<path d="M20 14A8 8 0 1 1 10 4a6 6 0 0 0 10 10z"/>',
+    copiar: '<rect x="8" y="8" width="13" height="13" rx="2"/><path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3"/>',
+    video: '<rect x="3" y="6" width="13" height="12" rx="2"/><path d="m16 10 5-3v10l-5-3"/>',
+    java: '<path d="M8 17c3 1 6 1 8 0M7 20c4 1.5 8 1.5 10 0M10 14c-1-2 3-3 1-6s2-4 2-6"/>',
+    bedrock: '<rect x="7" y="3" width="10" height="18" rx="2"/><path d="M11 18h2"/>',
+    historia: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2M3 12h2"/>',
+    tarjeta: '<rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8.5" cy="11" r="2"/><path d="M5.5 16c.5-1.5 1.7-2 3-2s2.5.5 3 2M14 10h4M14 13h3"/>',
   };
   const icono = (n, tam = 18, extra = "") => `<svg width="${tam}" height="${tam}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" ${extra}>${P[n] || P.estrella}</svg>`;
 
@@ -138,11 +165,19 @@
     }));
     return skinsLocales.get(k);
   }
+  // En diciembre (y hasta reyes) todos traen gorrito navideño
+  const gorrito = () => { try { if (localStorage.getItem("m224-ajuste-temporada") === "false") return false; } catch {} const d = new Date(); return d.getMonth() === 11 || (d.getMonth() === 0 && d.getDate() <= 6); };
+  function ponerGorrito(g, x0, y0, px) {
+    const R = "#c62828", r = "#9e1c1c", W = "#f5f5f5";
+    const filas = ["..RRRR.W", ".RRRRrRW", "RRRrRRR.", "WWWWWWWW"];
+    filas.forEach((f, y) => [...f].forEach((ch, x) => { if (ch === ".") return; g.fillStyle = ch === "R" ? R : ch === "r" ? r : W; g.fillRect(x0 + x * px, y0 + (y - 1) * px, px, px); }));
+  }
   function dibujarCara(im, tam = 128) {
     const c = document.createElement("canvas"); c.width = c.height = tam;
     const g = c.getContext("2d"); g.imageSmoothingEnabled = false;
     g.drawImage(im, 8, 8, 8, 8, 0, 0, tam, tam);
     g.drawImage(im, 40, 8, 8, 8, 0, 0, tam, tam);
+    if (gorrito()) ponerGorrito(g, 0, 0, tam / 8);
     return c.toDataURL();
   }
   function dibujarCuerpo(im, slim, alto = 320) {
@@ -164,6 +199,7 @@
     // Capas de encima (chamarra, mangas, pantalón, sombrero)
     if (nueva) { p(4, 36, 4, 12, 4, 20); p(4, 52, 4, 12, 8, 20); p(20, 36, 8, 12, 4, 8); p(44, 36, aw, 12, 4 - aw, 8); p(52, 52, aw, 12, 12, 8); }
     p(40, 8, 8, 8, 4, 0);
+    if (gorrito()) ponerGorrito(g, 4 * e, 0, e);
     return c.toDataURL();
   }
   // Prepara cara y cuerpo de cada jugador; regresa la imagen lista o null
@@ -498,14 +534,20 @@
     const rej = el("div", { class: "hoja-rejilla" },
       items.map(([h, i, t]) => el("a", { href: h, html: icono(i, 22) + t })),
       el("button", { type: "button", html: icono("buscar", 22) + "Buscar", "data-accion": "buscar" }),
-      el("button", { type: "button", html: icono("tv", 22) + "Modo TV", "data-accion": "tv" }));
+      el("button", { type: "button", html: icono("tv", 22) + "Modo TV", "data-accion": "tv" }),
+      el("button", { type: "button", html: icono("actualizar", 22) + "Datos nuevos", "data-accion": "recargar" }),
+      el("button", { type: "button", html: icono("reglas", 22) + "Ajustes", "data-accion": "ajustes" }));
     const caja = el("div", { class: "hoja-caja", role: "dialog", "aria-label": "Más apartados" }, rej);
     const hoja = el("div", { class: "hoja" }, caja);
     const cerrar = () => { hoja.classList.remove("abierta"); setTimeout(() => hoja.remove(), 280); };
     hoja.addEventListener("click", e => {
       const b = e.target.closest("[data-accion]");
       if (e.target === hoja || e.target.closest("a")) cerrar();
-      if (b) { cerrar(); setTimeout(() => b.dataset.accion === "tv" ? App.tv && App.tv() : abrirBuscador(), 200); }
+      if (b) {
+        cerrar();
+        const acc = b.dataset.accion;
+        setTimeout(() => acc === "tv" ? App.tv && App.tv() : acc === "ajustes" ? App.ajustes && App.ajustes() : acc === "recargar" ? App.recargarDatos && App.recargarDatos(true) : abrirBuscador(), 200);
+      }
     });
     // Deslizar hacia abajo para cerrar
     let y0 = null;

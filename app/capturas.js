@@ -34,8 +34,10 @@
       const ant = el("button", { class: "visor-flecha izq", type: "button", "aria-label": "Anterior", html: `<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="m15 6-6 6 6 6"/></svg>` });
       const sig = el("button", { class: "visor-flecha der", type: "button", "aria-label": "Siguiente", html: `<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>` });
       const zoomBtn = el("button", { class: "boton-icono", type: "button", html: icono("buscar", 16) + "Zoom" });
+      // Pantalla completa: en el cel, al girarlo se ve la foto a todo lo ancho
+      const completaBtn = el("button", { class: "boton-icono", type: "button", "aria-label": "Pantalla completa", html: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>` });
       const cont = el("div", { class: "visor" }, fondo, marco, ant, sig,
-        el("div", { class: "visor-pie" }, el("div", { class: "visor-info" }, texto, meta), el("div", { class: "visor-botones" }, cuenta, zoomBtn, descargar)));
+        el("div", { class: "visor-pie" }, el("div", { class: "visor-info" }, texto, meta), el("div", { class: "visor-botones" }, cuenta, zoomBtn, completaBtn, descargar)));
 
       const aplicar = () => { img.style.transform = `translate(${px}px, ${py}px) scale(${zoom})`; cont.classList.toggle("con-zoom", zoom > 1); };
       const sinZoom = () => { zoom = 1; px = py = 0; aplicar(); };
@@ -57,7 +59,7 @@
         // Precarga las de al lado
         [i - 1, i + 1].forEach(k => { const x = lista[(k + lista.length) % lista.length]; if (x) new Image().src = x.archivo; });
       }
-      const v = App.cine(cont, { alCerrar: () => removeEventListener("keydown", teclas) });
+      const v = App.cine(cont, { alCerrar: () => { removeEventListener("keydown", teclas); removeEventListener("resize", girado); if (document.fullscreenElement) document.exitFullscreen().catch(() => {}); } });
       function teclas(e) {
         if (e.key === "ArrowRight") mostrar(i + 1, 1);
         else if (e.key === "ArrowLeft") mostrar(i - 1, -1);
@@ -68,6 +70,19 @@
       ant.onclick = () => mostrar(i - 1, -1);
       sig.onclick = () => mostrar(i + 1, 1);
       zoomBtn.onclick = () => { if (zoom > 1) sinZoom(); else { zoom = 2.2; aplicar(); } };
+      completaBtn.onclick = async () => {
+        try {
+          if (document.fullscreenElement) { await document.exitFullscreen(); return; }
+          await cont.requestFullscreen();
+          if (screen.orientation && screen.orientation.lock && matchMedia("(pointer:coarse)").matches) screen.orientation.lock("landscape").catch(() => {});
+        } catch { App.M.avisar("Gira el cel para verla más grande"); }
+      };
+      // Al girar el cel, se esconden los botones para que la foto use toda la pantalla
+      const girado = () => cont.classList.toggle("apaisado", matchMedia("(orientation: landscape) and (max-height: 520px)").matches);
+      girado(); addEventListener("resize", girado);
+      let ocultar = null;
+      const mostrarPie = () => { cont.classList.add("pie-visible"); clearTimeout(ocultar); ocultar = setTimeout(() => cont.classList.remove("pie-visible"), 2500); };
+      cont.addEventListener("pointerdown", () => { if (cont.classList.contains("apaisado")) mostrarPie(); });
 
       // Doble clic / doble toque: zoom donde tocaste
       let ultimoToque = 0;

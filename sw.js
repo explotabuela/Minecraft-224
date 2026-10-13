@@ -1,5 +1,5 @@
 // App de la 224: siempre intenta traer lo más nuevo; si no hay internet, usa lo guardado.
-const CACHE = "m224-v6";
+const CACHE = "m224-v7";
 const BASICOS = ["./", "./index.html", "./manifest.json", "./iconos/icono-192.png", "./iconos/icono-512.png"];
 
 self.addEventListener("install", e => {

@@ -16,10 +16,8 @@
     const { el, num, dec, icono, imgCara, urlCuerpo, fecha, guardar, leer, aleatorio, D } = App;
     const js = App.jugadores.filter(j => j && j.nombre);
 
-    if (js.length < 3) {
-      caja.append(el("p", { class: "vacio", text: "Los juegos se activan cuando haya al menos 3 jugadores en la 224." }));
-      return;
-    }
+    // Los juegos de la banda necesitan al menos 3 jugadores; los demás funcionan siempre
+    const hayBanda = js.length >= 3;
 
     // ---------- Herramientas ----------
     const hoyClave = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`; };
@@ -114,12 +112,12 @@
     }
     const GENERADORES = [pSkin, pMuerte, pQuienTieneMas, pNumero, pAntiguo];
 
-    function preguntasDelDia() {
-      const r = aleatorio("224-" + hoyClave());
+    function preguntasDelDia(cuantas = 5, semilla = "224-") {
+      const r = aleatorio(semilla + hoyClave());
       // Rota el orden de los tipos según el día, para que cada día empiece distinto
       const lista = [], usados = new Set();
       const base = barajar(GENERADORES, r);
-      for (let i = 0; lista.length < 5 && i < 40; i++) {
+      for (let i = 0; lista.length < cuantas && i < 80; i++) {
         const q = base[i % base.length](r);
         if (q && !usados.has(q.titulo)) { usados.add(q.titulo); lista.push(q); }
       }
@@ -127,7 +125,7 @@
     }
 
     // ---------- Pantalla de una pregunta ----------
-    function pintarPregunta(q, alResponder, { pie = null } = {}) {
+    function pintarPregunta(q, alResponder, { pie = null, tiempo = 0 } = {}) {
       const visual = q.skin ? el("div", { class: "juego-skin" }, skinMisterio(q.skin, "juego-skin-img"))
         : q.cara ? el("div", { class: "juego-cara" }, imgCara(q.cara, "", 96)) : null;
       const botones = q.opciones.map(o => el("button", { class: "juego-op", type: "button" },
@@ -137,8 +135,23 @@
         el("span", { class: "juego-tipo", html: icono(q.ic || "pregunta", 14) + q.tipo }),
         el("h3", { text: q.titulo }), visual,
         el("div", { class: "juego-ops" + (q.opciones.length > 4 ? " muchas" : "") }, botones), nota, pie);
+      // Con tiempo: barra que se acaba; si llega a cero, cuenta como error
+      let reloj = null;
+      if (tiempo) {
+        const barra = el("span", { class: "juego-tiempo" }, el("i", { style: `animation-duration:${tiempo}s` }));
+        cont.prepend(barra);
+        reloj = setTimeout(() => {
+          if (cont.classList.contains("respondida") || !cont.isConnected) return;
+          cont.classList.add("respondida");
+          botones.forEach((x, k) => { x.disabled = true; if (q.opciones[k].texto === q.correcta) x.classList.add("bien"); });
+          if (visual && q.skin) visual.classList.add("revelada");
+          nota.textContent = "Se acabó el tiempo. " + q.explicar; nota.className = "juego-nota baja";
+          alResponder(false);
+        }, tiempo * 1000);
+      }
       botones.forEach((b, i) => b.addEventListener("click", () => {
         if (cont.classList.contains("respondida")) return;
+        clearTimeout(reloj);
         cont.classList.add("respondida");
         const bien = q.opciones[i].texto === q.correcta;
         botones.forEach((x, k) => { x.disabled = true; if (q.opciones[k].texto === q.correcta) x.classList.add("bien"); });
@@ -186,7 +199,8 @@
         el("div", { class: "juego-dia-lado" },
           el("div", { class: "juego-racha" }, el("span", { html: icono("llama", 22) }), el("b", { text: num(racha) }), el("small", { text: racha === 1 ? "día de racha" : "días de racha" })),
           r ? el("button", { class: "btn juego-btn", type: "button", html: icono("compartir", 16) + "Compartir", onclick: () => compartirTexto(textoCompartir(r)) })
-            : el("button", { class: "btn juego-btn", type: "button", html: icono("play", 16) + "Jugar", onclick: jugarDia })));
+            : el("button", { class: "btn juego-btn", type: "button", html: icono("play", 16) + "Jugar", onclick: jugarDia }),
+          botonDificil()));
       return t;
     }
 
@@ -369,6 +383,109 @@
     }
 
     // =====================================================
+    // MODO DIFÍCIL DEL JUEGO DEL DÍA (10 preguntas con tiempo)
+    // =====================================================
+    const estadoDificil = () => leer("juego-dificil", { dias: {} });
+    function botonDificil() {
+      const r = estadoDificil().dias[hoyClave()];
+      return el("button", { class: "boton-icono juego-dificil-btn", type: "button", html: icono("llama", 16) + (r ? `Difícil: ${r.aciertos}/${r.total}` : "Modo difícil"), disabled: !!r, title: "10 preguntas, 12 segundos cada una", onclick: jugarDificil });
+    }
+    function jugarDificil() {
+      const hoy = hoyClave();
+      if (estadoDificil().dias[hoy]) return;
+      const qs = preguntasDelDia(10, "224-dificil-");
+      if (qs.length < 5) { App.M.avisar("Todavía no hay datos para el modo difícil"); return; }
+      const marcas = [];
+      const zona = el("div", { class: "juego-zona" });
+      const prog = el("div", { class: "juego-progreso" }, qs.map(() => el("i")));
+      let terminado = false;
+      const v = App.capa(el("div", { class: "juego-ventana" }, el("div", { class: "juego-cabeza" }, el("b", { text: "Modo difícil del día" }), prog), zona), { ancho: 620, etiqueta: "Modo difícil", alCerrar: () => { if (marcas.length && !terminado) terminar(true); pintar(); } });
+      function terminar(abandono = false) {
+        if (terminado) return; terminado = true;
+        while (marcas.length < qs.length) marcas.push(false);
+        const e = estadoDificil(), aciertos = marcas.filter(Boolean).length;
+        e.dias[hoy] = { aciertos, total: qs.length, marcas };
+        const ll = Object.keys(e.dias).sort(); while (ll.length > 60) delete e.dias[ll.shift()];
+        guardar("juego-dificil", e);
+        if (abandono) return;
+        const texto = `Modo difícil de la 224 #${numeroDia()}\n${aciertos}/${qs.length} ${marcas.map(b => b ? "■" : "□").join("")}\n${urlJuegos()}`;
+        zona.replaceChildren(el("div", { class: "juego-final" },
+          el("span", { class: "etq-mini", text: "MODO DIFÍCIL" }),
+          el("b", { class: "juego-final-num", text: `${aciertos}/${qs.length}` }),
+          el("div", { class: "juego-marcas grande" }, marcas.map(b => el("i", { class: b ? "si" : "no" }))),
+          el("p", { text: aciertos >= 9 ? "Leyenda. Conoces la 224 de memoria." : aciertos >= 6 ? "Muy bien, contra el reloj no es fácil." : "El reloj ganó esta vez." }),
+          el("div", { class: "juego-acciones" },
+            el("button", { class: "btn juego-btn", type: "button", html: icono("compartir", 16) + "Compartir", onclick: () => compartirTexto(texto) }),
+            el("button", { class: "boton-icono", type: "button", text: "Cerrar", onclick: v.cerrar }))));
+      }
+      function siguiente(i) {
+        prog.children[i] && prog.children[i].classList.add("actual");
+        if (i >= qs.length) { terminar(); return; }
+        const pie = el("button", { class: "btn juego-btn juego-sig", type: "button", hidden: true, text: i === qs.length - 1 ? "Ver resultado" : "Siguiente", onclick: () => siguiente(i + 1) });
+        zona.replaceChildren(pintarPregunta(qs[i], bien => {
+          marcas.push(bien); prog.children[i].className = bien ? "si" : "no";
+          pie.hidden = false; pie.focus();
+        }, { pie, tiempo: 12 }));
+      }
+      siguiente(0);
+    }
+
+    // =====================================================
+    // SPEEDRUN DE PREGUNTAS (60 segundos)
+    // =====================================================
+    function speedrun() {
+      const banco = () => {
+        const opciones = [];
+        if (App.trivia && App.trivia.length) opciones.push(() => App.triviaPregunta());
+        if (hayBanda) opciones.push(() => GENERADORES[Math.floor(Math.random() * GENERADORES.length)](Math.random));
+        for (let k = 0; k < 10; k++) { const q = opciones[Math.floor(Math.random() * opciones.length)](); if (q) return q; }
+        return null;
+      };
+      if (!banco()) { App.M.avisar("Todavía no hay preguntas"); return; }
+      let puntos = 0, fallas = 0, fin = 0, reloj = null, jugando = false;
+      const marcador = el("b", { text: "0" }), tiempoEl = el("b", { text: "60" }), mejor = el("b", { text: num(leer("record-speedrun", 0)) });
+      const zona = el("div", { class: "juego-zona" });
+      const v = App.capa(el("div", { class: "juego-ventana" },
+        el("div", { class: "juego-cabeza" }, el("b", { text: "Speedrun de preguntas" }),
+          el("div", { class: "juego-score" }, el("span", {}, "Tiempo ", tiempoEl), el("span", {}, "Puntos ", marcador), el("span", {}, "Récord ", mejor))), zona),
+        { ancho: 620, etiqueta: "Speedrun", alCerrar: () => clearInterval(reloj) });
+      function inicio() {
+        zona.replaceChildren(el("div", { class: "juego-final" },
+          el("span", { class: "etq-mini", text: "60 SEGUNDOS" }), el("p", { text: "Responde todas las que puedas. Cada acierto suma 1. Cada error te quita 3 segundos." }),
+          el("button", { class: "btn juego-btn", type: "button", html: icono("play", 16) + "Empezar", onclick: empezar })));
+      }
+      function empezar() {
+        puntos = 0; fallas = 0; marcador.textContent = "0"; jugando = true;
+        fin = performance.now() + 60000;
+        clearInterval(reloj);
+        reloj = setInterval(() => { const r = Math.max(0, Math.ceil((fin - performance.now()) / 1000)); tiempoEl.textContent = r; if (r <= 0) terminar(); }, 200);
+        otra();
+      }
+      function otra() {
+        if (!jugando) return;
+        const q = banco(); if (!q) { terminar(); return; }
+        zona.replaceChildren(pintarPregunta(q, bien => {
+          if (!jugando) return;
+          if (bien) { puntos++; marcador.textContent = num(puntos); } else { fallas++; fin -= 3000; }
+          setTimeout(otra, bien ? 350 : 900);
+        }));
+      }
+      function terminar() {
+        if (!jugando) return; jugando = false; clearInterval(reloj); tiempoEl.textContent = "0";
+        const nuevo = puntos > leer("record-speedrun", 0);
+        if (nuevo) { guardar("record-speedrun", puntos); mejor.textContent = num(puntos); }
+        zona.replaceChildren(el("div", { class: "juego-final" },
+          el("span", { class: "etq-mini", text: "SE ACABÓ EL TIEMPO" }),
+          el("b", { class: "juego-final-num", text: num(puntos) }),
+          el("p", { text: `${puntos === 1 ? "acierto" : "aciertos"} y ${fallas} ${fallas === 1 ? "error" : "errores"}.${nuevo ? " ¡Nuevo récord!" : ""}` }),
+          el("div", { class: "juego-acciones" },
+            el("button", { class: "btn juego-btn", type: "button", html: icono("actualizar", 16) + "Otra vez", onclick: empezar }),
+            el("button", { class: "boton-icono", type: "button", html: icono("compartir", 16) + "Compartir", onclick: () => compartirTexto(`Hice ${puntos} en el speedrun de preguntas de la 224. ¿Me ganas?\n${urlJuegos()}`) }))));
+      }
+      inicio();
+    }
+
+    // =====================================================
     // PINTAR EL APARTADO
     // =====================================================
     function arcade(titulo, texto, ic, record, fn) {
@@ -378,19 +495,25 @@
         el("span", { class: "juego-arcade-record", text: record }));
     }
     function pintar() {
-      const rMejor = leer("record-mejor", 0), rSkin = leer("record-skin", 0), rMemo = leer("record-memo-" + Math.min(8, js.length), 0);
+      const rMejor = leer("record-mejor", 0), rSkin = leer("record-skin", 0), rMemo = leer("record-memo-" + Math.min(8, js.length), 0), rSpeed = leer("record-speedrun", 0);
+      const rec = (v, f = num) => v ? `Tu récord: ${f(v)}` : "Sin récord todavía";
+      const grupos = { banda: [], saber: [], clasicos: [] };
+      if (hayBanda) grupos.banda.push(
+        arcade("¿Quién tiene más?", "Dos jugadores, un dato. Atínale las que puedas seguidas.", "podio", rec(rMejor), quienEsMejor),
+        arcade("Adivina la skin", "Sale una skin borrosa. ¿De quién es? Tienes 3 vidas.", "ojo", rec(rSkin), adivinaSkin),
+        arcade("Memorama", "Encuentra las parejas de caras contra el reloj.", "mando", rec(rMemo, v => dec(v) + " s"), memorama));
+      grupos.saber.push(arcade("Speedrun de preguntas", "60 segundos para contestar todas las que puedas.", "reloj", rec(rSpeed), speedrun));
+      (App.juegosExtra || []).forEach(x => (grupos[x.grupo] || grupos.clasicos).push(arcade(x.titulo, x.texto, x.icono, rec(leer(x.record, 0), x.formato || num), x.abrir)));
+      const seccion = (t, lista) => lista.length ? [el("h3", { class: "sub-titulo juego-grupo", text: t }), el("div", { class: "juego-arcades" }, lista)] : [];
       caja.replaceChildren(
-        tarjetaDia(),
-        el("div", { class: "juego-arcades" },
-          arcade("¿Quién tiene más?", "Dos jugadores, un dato. Atínale las que puedas seguidas.", "podio", rMejor ? `Tu récord: ${num(rMejor)}` : "Sin récord todavía", quienEsMejor),
-          arcade("Adivina la skin", "Sale una skin borrosa. ¿De quién es? Tienes 3 vidas.", "ojo", rSkin ? `Tu récord: ${num(rSkin)}` : "Sin récord todavía", adivinaSkin),
-          arcade("Memorama", "Encuentra las parejas de caras contra el reloj.", "mando", rMemo ? `Tu récord: ${dec(rMemo)} s` : "Sin récord todavía", memorama)));
+        hayBanda ? tarjetaDia() : el("p", { class: "vacio", text: "El juego del día y los juegos de la banda salen cuando haya al menos 3 jugadores en la 224. Mientras, juega los de abajo." }),
+        ...seccion("De la banda", grupos.banda), ...seccion("Qué tanto sabes de Minecraft", grupos.saber), ...seccion("Clásicos con estilo Minecraft", grupos.clasicos));
     }
     pintar();
     // Si cambia el día con la página abierta, se actualiza solo
     setInterval(() => { if (!document.querySelector(".juego-ventana")) pintar(); }, 60000);
 
-    App.juegos = { jugarDia, quienEsMejor, adivinaSkin, memorama, preguntasDelDia };
-    App.ruta("#juego-dia", () => { document.getElementById("juegos").scrollIntoView(); if (!estado().dias[hoyClave()]) jugarDia(); });
+    App.juegos = { jugarDia, jugarDificil, quienEsMejor, adivinaSkin, memorama, speedrun, preguntasDelDia, repintar: pintar, pintarPregunta, compartirTexto, urlJuegos, barajar };
+    App.ruta("#juego-dia", () => { document.getElementById("juegos").scrollIntoView(); if (hayBanda && !estado().dias[hoyClave()]) jugarDia(); });
   });
 })();
