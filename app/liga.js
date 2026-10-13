@@ -359,9 +359,9 @@
           el("button", { class: "boton-icono lleno", type: "button", html: icono("regalo") + "Wrapped de la 224", onclick: () => window.M224?.wrapped?.abrir224 ? window.M224.wrapped.abrir224(actual) : App.M.avisar("El Wrapped sale cuando haya datos") }),
           LIGA && LIGA.carrera && LIGA.carrera[actual] ? el("button", { class: "boton-icono", type: "button", html: icono("play") + "Carrera del mes", onclick: () => carrera(actual) }) : null,
           tabla.length ? el("button", { class: "boton-icono", type: "button", html: icono("descargar") + "Podio", onclick: () => Compartir.mostrar(f => Compartir.podio({ titulo: "Liga de " + nombreMes(actual), sub: campeon ? "Resultado final" : "Así va", filas: tabla.map(t => ({ nombre: t.nombre, n: t.puntos, valor: num(t.puntos) + " pts" })), formato: f }), "podio-" + actual, { formatos: [["cuadrado", "Cuadrado"], ["historia", "Historia"]], titulo: "Podio del mes" }) }) : null);
-        zona.append(cab, tabla.length ? el("h3", { class: "sub-titulo", text: "Podio de la liga" }) : null, tabla.length ? podio : null,
+        zona.append(...[cab, tabla.length ? el("h3", { class: "sub-titulo", text: "Podio de la liga" }) : null, tabla.length ? podio : null,
           mejores.length ? el("h3", { class: "sub-titulo", text: "Lo mejor del mes" }) : null, lo,
-          galeria ? el("h3", { class: "sub-titulo", text: "Fotos del mes" }) : null, galeria, acciones);
+          galeria ? el("h3", { class: "sub-titulo", text: "Fotos del mes" }) : null, galeria, acciones].filter(Boolean));
         App.contarAlVer(zona);
       }
       chips.addEventListener("click", e => { const b = e.target.closest("button"); if (b) App.transicion(() => { actual = b.dataset.m; pintar(); }); });

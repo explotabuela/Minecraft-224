@@ -380,14 +380,15 @@
 /* =========================================================
    CARTAS DE JUGADORES (se voltean, las del top 3 brillan)
    ========================================================= */
-.cartas{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:18px;perspective:1200px}
+.cartas{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:18px;perspective:1200px}
 .carta{--rx:0deg;--ry:0deg;--mx:50%;--my:50%;position:relative;aspect-ratio:5/7;cursor:pointer;outline-offset:4px;border-radius:18px}
 .carta-int{position:absolute;inset:0;transform-style:preserve-3d;transition:transform .6s cubic-bezier(.2,.8,.2,1);transform:rotateX(var(--rx)) rotateY(var(--ry))}
 .carta.volteada .carta-int{transform:rotateY(180deg)}
 .carta-cara{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:18px;overflow:hidden;
   background:linear-gradient(170deg,var(--capa-2),var(--capa) 55%);border:2px solid color-mix(in srgb,var(--rango) 55%,var(--linea));
   box-shadow:0 18px 40px -22px var(--sombra);display:flex;flex-direction:column}
-.carta-atras{transform:rotateY(180deg);padding:16px;gap:10px}
+.carta-atras{transform:rotateY(180deg);padding:14px;gap:8px}
+.carta-atras>.carta-nombre{white-space:normal;overflow-wrap:anywhere;line-height:1.15;font-size:.98rem}
 .carta-arriba{display:flex;justify-content:space-between;align-items:center;padding:12px 14px 0;position:relative;z-index:2}
 .carta-num{font-family:var(--f-pixel);font-size:.7rem;color:var(--tenue)}
 .carta-nivel{display:grid;place-items:center;width:44px;height:44px;border-radius:12px;background:var(--rango);color:#0b0f0c;font-family:var(--f-display);font-weight:800;font-size:1.1rem;line-height:1}
@@ -397,16 +398,16 @@
 .carta-escena .sin-cara{width:90px;height:90px;border-radius:18px;margin-bottom:24px;font-size:2rem}
 .carta:hover .carta-skin{transform:translateY(-4px) scale(1.03)}
 .carta-info{padding:10px 14px 14px;display:grid;gap:2px;border-top:1px solid var(--linea);background:var(--capa)}
-.carta-nombre{font-family:var(--f-display);font-size:1.02rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.carta-nombre{font-family:var(--f-display);font-size:1.02rem;overflow-wrap:anywhere;line-height:1.15}
 .carta-sub{font-size:.78rem;color:var(--tenue);font-weight:600}
 .carta-mini{display:flex;gap:12px;margin-top:6px;font-weight:700;font-size:.85rem;font-variant-numeric:tabular-nums}
 .carta-mini span{display:inline-flex;align-items:center;gap:4px;color:var(--texto)}
 .carta-mini svg{color:var(--tenue)}
 .carta-top{position:absolute;top:62px;left:14px;font-family:var(--f-pixel);font-size:.66rem;background:var(--oro);color:#2a1d00;padding:3px 7px;border-radius:6px;z-index:3}
-.carta-atras dl{margin:0;display:grid;grid-template-columns:1fr 1fr;gap:8px;flex:1;align-content:start}
-.carta-atras dl div{background:var(--capa-2);border-radius:10px;padding:7px 9px;display:grid}
-.carta-atras dt{font-size:.66rem;font-weight:700;color:var(--tenue);letter-spacing:.03em}
-.carta-atras dd{margin:0;font-weight:800;font-size:.92rem;font-variant-numeric:tabular-nums;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.carta-atras dl{margin:0;display:grid;gap:4px;flex:1;min-height:0;align-content:center}
+.carta-atras dl div{display:flex;align-items:center;justify-content:space-between;gap:8px;background:var(--capa-2);border-radius:9px;padding:6px 9px}
+.carta-atras dt{display:inline-flex;align-items:center;gap:6px;font-size:.76rem;font-weight:700;color:var(--tenue);white-space:nowrap}
+.carta-atras dd{margin:0;font-weight:800;font-size:.86rem;font-variant-numeric:tabular-nums;white-space:nowrap}
 .carta-botones{display:grid;grid-template-columns:1fr auto;gap:8px}
 .carta-botones .btn{border-radius:10px;padding:10px 12px}
 .carta.r-leyenda .carta-frente{box-shadow:0 0 0 1px #f5c45188,0 20px 50px -20px #f5c45188}
@@ -601,9 +602,14 @@
   .carta-info{padding:8px 10px 10px}
   .carta-nombre{font-size:.86rem}
   .carta-mini{gap:7px;font-size:.74rem}
-  .carta-atras{padding:10px}
-  .carta-atras dl{gap:5px}
-  .carta-atras dd{font-size:.8rem}
+  .carta-atras{padding:9px;gap:6px}
+  .carta-atras dl{gap:3px}
+  .carta-atras dl div{padding:4px 7px}
+  .carta-atras dt{font-size:.66rem;gap:4px}.carta-atras dt svg{display:none}
+  .carta-atras dd{font-size:.74rem}
+  .carta-botones .btn{padding:8px 6px;font-size:.8rem}
+  .carta-atras dl div:nth-child(n+5){display:none}
+  .carta-atras>.carta-nombre{font-size:.84rem}
 }
 .herramientas{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:18px}
 .campo{flex:1 1 260px;max-width:380px;display:flex;align-items:center;gap:10px;background:var(--capa);border:1px solid var(--linea);border-radius:12px;padding:0 14px}
@@ -748,3 +754,7 @@
 .juego-ventana{padding:22px}
 .juego-nota.sube{color:#4ade5c}.juego-nota.baja{color:var(--rojo)}
 @media (max-width:600px){.juego-ventana{padding:18px 14px}}
+/* Nombres largos: siempre completos */
+.perfil-nombre,.cine-titulo h2,.vs-nombre,.mejor-nombre,.wr-podio b,.wr-titulos b,.liga-nombre,.rank-nombre{overflow-wrap:anywhere}
+.perfil-nombre{font-size:clamp(1.5rem,6vw,2.6rem);line-height:1.05}
+.mejor-nombre{white-space:normal;text-overflow:clip;text-align:center}

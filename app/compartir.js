@@ -16,7 +16,12 @@
 
   // Imágenes de otras páginas (caras). Si no dejan dibujarlas, se hace sin ellas.
   const cache = new Map();
-  function cargar(url) {
+  // Prueba varias direcciones hasta que una sirva
+  async function cargar(url) {
+    if (Array.isArray(url)) { for (const u of url) { const im = await cargar(u); if (im) return im; } return null; }
+    return cargarUna(url);
+  }
+  function cargarUna(url) {
     if (cache.has(url)) return cache.get(url);
     const p = new Promise(res => {
       const im = new Image(); im.crossOrigin = "anonymous";
@@ -61,13 +66,18 @@
     g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + h, r); g.arcTo(x + w, y + h, x, y + h, r);
     g.arcTo(x, y + h, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath();
   }
+  // Escribe el texto completo: si no cabe, la letra se hace más chiquita (y solo si es enorme se recorta)
   function texto(g, t, x, y, maxAncho) {
+    const fuente = g.font, tam = parseFloat((fuente.match(/(\d+(?:\.\d+)?)px/) || [, 40])[1]);
+    let t2 = tam;
+    while (g.measureText(String(t)).width > maxAncho && t2 > tam * .4) { t2 -= 2; g.font = fuente.replace(/\d+(?:\.\d+)?px/, t2 + "px"); }
     let s = String(t); while (g.measureText(s).width > maxAncho && s.length > 2) s = s.slice(0, -1);
     if (s !== String(t)) s = s.slice(0, -1) + "…";
     g.fillText(s, x, y);
+    g.font = fuente;
   }
   async function cara(g, nombre, x, y, t, conImagenes) {
-    const im = conImagenes ? await cargar(A().urlCara(nombre, 256)) : null;
+    const im = conImagenes ? await cargar(A().urlsCara(nombre, 256)) : null;
     g.save(); redondo(g, x, y, t, t, t * .16); g.clip();
     if (im) { g.imageSmoothingEnabled = false; g.drawImage(im, x, y, t, t); }
     else { g.fillStyle = "#26322e"; g.fillRect(x, y, t, t); g.fillStyle = VERDE; g.font = `800 ${t * .45}px "Unbounded", sans-serif`; g.textAlign = "center"; g.textBaseline = "middle"; g.fillText((nombre.replace(/^\./, "")[0] || "?").toUpperCase(), x + t / 2, y + t / 2); g.textAlign = "left"; g.textBaseline = "alphabetic"; }
@@ -80,7 +90,7 @@
     fondo(g, w, h);
     await marca(g, w, h, conImagenes);
     const alto = formato === "historia";
-    const cuerpo = conImagenes ? await cargar(A().urlCuerpo(j.nombre, 600)) : null;
+    const cuerpo = conImagenes ? await cargar(A().urlsCuerpo(j.nombre, 600)) : null;
     if (alto) {
       if (cuerpo) { g.imageSmoothingEnabled = false; const ch = 720, cw = ch * cuerpo.width / cuerpo.height; g.drawImage(cuerpo, (w - cw) / 2, 200, cw, ch); }
       g.textAlign = "center";

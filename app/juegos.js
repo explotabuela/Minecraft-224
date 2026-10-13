@@ -48,8 +48,9 @@
     // Skin sin pistas: si no carga, sale un signo de pregunta (no la inicial)
     function skinMisterio(nombre, clase = "") {
       const i = el("img", { class: "pixel " + clase, alt: "Skin misteriosa", decoding: "async" });
-      i.onerror = () => i.replaceWith(el("div", { class: clase + " skin-nada", html: icono("pregunta", 48) }));
-      i.src = urlCuerpo(nombre, 260);
+      const urls = App.urlsCuerpo(nombre, 260); let k = 0;
+      i.onerror = () => { k++; if (k < urls.length) i.src = urls[k]; else i.replaceWith(el("div", { class: clase + " skin-nada", html: icono("pregunta", 48) })); };
+      i.src = urls[0];
       return i;
     }
 

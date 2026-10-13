@@ -696,8 +696,10 @@ const CONFIG = {
 /* ===================================================== */
 
 const $ = s => document.querySelector(s);
-const cara = n => `https://mc-heads.net/avatar/${encodeURIComponent(n)}/128`;
-const cuerpo = n => `https://mc-heads.net/body/${encodeURIComponent(n)}/180`;
+// Con el UUID que manda el bot, la skin siempre es la correcta
+const idSkin = n => { const j = (CONFIG.jugadores || []).find(x => x && x.nombre && x.nombre.toLowerCase() === String(n).toLowerCase()); return (j && j.uuid) || n; };
+const cara = n => `https://mc-heads.net/avatar/${encodeURIComponent(idSkin(n))}/128`;
+const cuerpo = n => `https://mc-heads.net/body/${encodeURIComponent(idSkin(n))}/180`;
 const num = v => Number(v || 0).toLocaleString("es-MX");
 
 // Imagen con respaldo: si la foto no carga, sale la inicial
@@ -1358,7 +1360,6 @@ pintarReloj(); setInterval(pintarReloj, 1000);
     filas.push(`<div class="cr-nota">${num(sum("mobs"))} mobs fueron lastimados</div>`);
     if (d.causas[0]) filas.push(`<div class="cr-nota">${esc(d.causas[0][0])} se llevó a ${num(d.causas[0][1])} ${d.causas[0][1] === 1 ? "jugador" : "jugadores"}</div>`);
     filas.push(`<div class="cr-nota">Ningún aldeano fue lastimado. Bueno, a lo mejor sí.</div>`);
-    filas.push(`<div class="cr-seccion">Server y producción</div><div class="cr-par"><span>Dueño del server</span><b>${esc(CONFIG.admin || "Dylan")}</b></div>`);
     const [aa, mm] = mes.split("-").map(Number), sig = `${mm === 12 ? aa + 1 : aa}-${String(mm === 12 ? 1 : mm + 1).padStart(2, "0")}`;
     filas.push(`<div class="cr-fin">Gracias por jugar</div><div class="cr-sub">${enCurso ? "El mes sigue. A darle." : `Nos vemos en ${nombreMes(sig)}`}</div>`);
     const durCreditos = Math.max(16000, filas.length * 1100);
@@ -1456,13 +1457,16 @@ pintarReloj(); setInterval(pintarReloj, 1000);
     const cabeza = !conCabeza ? null : await new Promise(res => {
       const im = new Image(); im.crossOrigin = "anonymous";
       im.onload = () => res(im); im.onerror = () => res(null);
-      im.src = `https://mc-heads.net/avatar/${encodeURIComponent(d.j.nombre)}/240`;
+      const urls = [`https://mc-heads.net/avatar/${encodeURIComponent(idSkin(d.j.nombre))}/240`, `https://minotar.net/helm/${encodeURIComponent(idSkin(d.j.nombre))}/240.png`];
+      im.onerror = () => { urls.shift(); if (urls.length) { const otra = new Image(); otra.crossOrigin = "anonymous"; otra.onload = () => res(otra); otra.onerror = () => res(null); otra.src = urls[0]; } else res(null); };
+      im.src = urls[0];
     });
     if (cabeza) { g.imageSmoothingEnabled = false; g.drawImage(cabeza, 80, 170, 220, 220); }
     const xTexto = cabeza ? 340 : 80;
     g.fillStyle = "#fff"; g.font = '800 72px "Unbounded", sans-serif';
-    let nom = d.j.nombre; while (g.measureText(nom).width > W_ - xTexto - 70 && nom.length > 3) nom = nom.slice(0, -1);
-    g.fillText(nom, xTexto, 270);
+    // El nombre siempre completo: si es largo, se hace más chiquito
+    let tamNom = 72; while (g.measureText(d.j.nombre).width > W_ - xTexto - 70 && tamNom > 30) { tamNom -= 2; g.font = `800 ${tamNom}px "Unbounded", sans-serif`; }
+    g.fillText(d.j.nombre, xTexto, 270);
     g.font = '600 46px "Figtree", sans-serif'; g.fillText(t.t, xTexto, 350);
 
     const stats = [

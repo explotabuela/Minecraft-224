@@ -48,7 +48,9 @@
           holo ? el("span", { class: "carta-top", text: "TOP " + (top3.indexOf(j.nombre) + 1) }) : null);
         const atras = el("div", { class: "carta-cara carta-atras" },
           el("b", { class: "carta-nombre", text: j.nombre }),
-          el("dl", {}, STATS.slice(0, 8).map(([k, t, , f]) => el("div", {}, el("dt", { text: t }), el("dd", { text: f(j[k] || 0) })))),
+          el("dl", {}, [["horas", "Horas", "reloj", v => dec(v) + " h"], ["diamantes", "Diamantes", "gema", num], ["minado", "Bloques", "pico", num],
+            ["mobs", "Mobs", "espada", num], ["muertes", "Muertes", "calavera", num], ["mejorRacha", "Mejor racha", "llama", v => num(v) + (v === 1 ? " día" : " días")]]
+            .map(([k, t, ic, f]) => el("div", {}, el("dt", { html: icono(ic, 14) + t }), el("dd", { text: f(j[k] || 0) })))),
           el("div", { class: "carta-botones" },
             el("button", { class: "btn", type: "button", text: "Ver perfil", onclick: e => { e.stopPropagation(); abrirPerfil(j.nombre); } }),
             el("button", { class: "btn secundario", type: "button", text: "VS", onclick: e => { e.stopPropagation(); prepararVs(j.nombre); } })));
@@ -98,11 +100,11 @@
     async function skin3d(caja, nombre, { ancho = 240, alto = 320, animacion = "idle", rotar = true, zoom = .9 } = {}) {
       try {
         const sv = await skinview();
-        const urls = [`https://mc-heads.net/skin/${encodeURIComponent(nombre)}`, `https://minotar.net/skin/${encodeURIComponent(nombre)}`];
+        const urls = App.urlsSkinPng(nombre);
         const canvas = el("canvas", { class: "skin3d", "aria-label": "Skin de " + nombre + " en 3D", role: "img" });
         const v = new sv.SkinViewer({ canvas, width: ancho, height: alto });
         let ok = false;
-        for (const u of urls) { try { await v.loadSkin(u); ok = true; break; } catch {} }
+        for (const u of urls) { try { await Promise.race([v.loadSkin(u), new Promise((_, no) => setTimeout(() => no(new Error("lento")), 7000))]); ok = true; break; } catch {} }
         if (!ok) { v.dispose(); return null; }
         v.autoRotate = rotar && !matchMedia("(prefers-reduced-motion: reduce)").matches;
         v.autoRotateSpeed = .6;

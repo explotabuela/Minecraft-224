@@ -102,23 +102,47 @@
 
   // Skins: cara, cuerpo y poses (con respaldos si una página no carga)
   const POSE_CLASE = { Minero: "lunging", Guerrero: "kicking", Explorador: "marching", Viciado: "relaxing", Novato: "cowering" };
-  const urlCara = (n, t = 128) => `https://mc-heads.net/avatar/${encodeURIComponent(n)}/${t}`;
-  const urlCuerpo = (n, t = 220) => `https://mc-heads.net/body/${encodeURIComponent(n)}/${t}`;
+  // Varias páginas de skins: si una no carga (caída, bloqueada o lenta), se usa la siguiente
+  // Con el UUID (lo manda el bot) la skin sale siempre la correcta; si no hay, se usa el nombre
+  const uuidDe = n => { const j = App.porNombre && App.porNombre.get(String(n).toLowerCase()); return j && j.uuid ? j.uuid : null; };
+  const urlCara = (n, t = 128) => `https://mc-heads.net/avatar/${encodeURIComponent(uuidDe(n) || n)}/${t}`;
+  const urlCuerpo = (n, t = 220) => `https://mc-heads.net/body/${encodeURIComponent(uuidDe(n) || n)}/${t}`;
+  const urlsCara = (n, t = 128) => {
+    const u = uuidDe(n), e = encodeURIComponent(u || n);
+    return [u ? `https://crafatar.com/avatars/${u}?size=${Math.min(t, 512)}&overlay` : null, urlCara(n, t), `https://minotar.net/helm/${e}/${t}.png`, u ? null : `https://mineskin.eu/helm/${e}/${t}.png`].filter(Boolean);
+  };
+  const urlsCuerpo = (n, t = 220) => {
+    const u = uuidDe(n), e = encodeURIComponent(u || n);
+    return [urlCuerpo(n, t), u ? `https://crafatar.com/renders/body/${u}?scale=10&overlay` : null, `https://minotar.net/armor/body/${e}/${t}.png`, u ? null : `https://mineskin.eu/armor/body/${e}/${t}.png`].filter(Boolean);
+  };
+  const urlsSkinPng = n => {
+    const u = uuidDe(n), e = encodeURIComponent(u || n);
+    return u ? [`https://crafatar.com/skins/${u}`, `https://mc-heads.net/skin/${e}`, `https://minotar.net/skin/${e}`] : [`https://minotar.net/skin/${e}`, `https://mc-heads.net/skin/${e}`, `https://mineskin.eu/skin/${e}`];
+  };
   function imgSkin(nombre, { pose = null, clase = "", tam = 220, tipo = "cuerpo" } = {}) {
     const e = encodeURIComponent(nombre);
-    const urls = tipo === "cara" ? [urlCara(nombre, tam)]
-      : [pose ? `https://starlightskins.lunareclipse.studio/render/${pose}/${e}/full` : null, `https://visage.surgeplay.com/full/${tam}/${e}`, urlCuerpo(nombre, tam)].filter(Boolean);
-    const i = el("img", { class: clase + " pixel", alt: "", loading: "lazy", decoding: "async" });
-    let k = 0;
-    i.onerror = () => {
+    const urls = tipo === "cara" ? urlsCara(nombre, tam)
+      : [pose ? `https://starlightskins.lunareclipse.studio/render/${pose}/${e}/full` : null, ...urlsCuerpo(nombre, tam)].filter(Boolean);
+    const i = el("img", { class: clase + " pixel", alt: "", decoding: "async" });
+    let k = 0, reloj = null;
+    const probar = () => {
+      clearTimeout(reloj);
+      i.src = urls[k];
+      // Si en 7 segundos no cargó, pasa a la siguiente página
+      reloj = setTimeout(() => { if (!i.complete || !i.naturalWidth) siguiente(); }, 7000);
+    };
+    const siguiente = () => {
+      clearTimeout(reloj);
       k++;
-      if (k < urls.length) i.src = urls[k];
+      if (k < urls.length) probar();
       else {
         const d = el("div", { class: clase + " sin-cara", role: "img", "aria-label": nombre, text: (nombre.replace(/^\./, "")[0] || "?").toUpperCase() });
         i.replaceWith(d);
       }
     };
-    i.src = urls[0];
+    i.onload = () => clearTimeout(reloj);
+    i.onerror = siguiente;
+    probar();
     return i;
   }
   const imgCara = (nombre, clase = "", tam = 64) => imgSkin(nombre, { tipo: "cara", clase, tam });
@@ -279,10 +303,23 @@
     return () => { s = (s + 0x6D2B79F5) >>> 0; let t = s; t = Math.imul(t ^ t >>> 15, t | 1); t ^= t + Math.imul(t ^ t >>> 7, t | 61); return ((t ^ t >>> 14) >>> 0) / 4294967296; };
   }
 
+  // Si mc-heads no carga una cara o cuerpo en cualquier parte de la página, se pide a minotar
+  document.addEventListener("error", e => {
+    const i = e.target;
+    if (!i || i.tagName !== "IMG" || i.dataset.respaldo) return;
+    const m = (i.currentSrc || i.src || "").match(/mc-heads\.net\/(avatar|body)\/([^/?#]+)(?:\/(\d+))?/);
+    if (!m) return;
+    if (i.onerror && i.closest("[data-sin-respaldo]")) return;
+    i.dataset.respaldo = "1";
+    e.stopImmediatePropagation();
+    const t = m[3] || 128;
+    i.src = m[1] === "avatar" ? `https://minotar.net/helm/${m[2]}/${t}.png` : `https://minotar.net/armor/body/${m[2]}/${t}.png`;
+  }, true);
+
   // Lo que usan los demás archivos
   const App = window.App = {
     listo, esc, num, dec, el, icono, mesDe, nombreMes, mesCorto, fecha, hace, duracion, tiempo, POSE_CLASE,
-    imgSkin, imgCara, urlCara, urlCuerpo, contar, contarAlVer, transicion, capa, cine, graficaLinea, graficaBarras, graficaDona,
+    imgSkin, imgCara, urlCara, urlCuerpo, urlsCara, urlsCuerpo, urlsSkinPng, contar, contarAlVer, transicion, capa, cine, graficaLinea, graficaBarras, graficaDona,
     COLORES, indicador, ruta, seguirRuta, guardar, leer, aleatorio,
   };
 
