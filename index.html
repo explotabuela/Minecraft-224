@@ -698,8 +698,9 @@ const CONFIG = {
 const $ = s => document.querySelector(s);
 // Con el UUID que manda el bot, la skin siempre es la correcta
 const idSkin = n => { const j = (CONFIG.jugadores || []).find(x => x && x.nombre && x.nombre.toLowerCase() === String(n).toLowerCase()); return (j && j.uuid) || n; };
-const cara = n => `https://mc-heads.net/avatar/${encodeURIComponent(idSkin(n))}/128`;
-const cuerpo = n => `https://mc-heads.net/body/${encodeURIComponent(idSkin(n))}/180`;
+// Si el bot ya subió la skin, se usa la cara y el cuerpo dibujados aquí mismo
+const cara = n => (window.App && App.caraLocal && App.caraLocal(n)) || `https://mc-heads.net/avatar/${encodeURIComponent(idSkin(n))}/128`;
+const cuerpo = n => (window.App && App.cuerpoLocal && App.cuerpoLocal(n)) || `https://mc-heads.net/body/${encodeURIComponent(idSkin(n))}/180`;
 const num = v => Number(v || 0).toLocaleString("es-MX");
 
 // Imagen con respaldo: si la foto no carga, sale la inicial
@@ -815,7 +816,8 @@ pintarReloj(); setInterval(pintarReloj, 1000);
   const POSES = ["cheering", "relaxing", "lunging", "dead", "marching", "pointing", "ultimate"];
   const skin = (n, pose) => {
     const e = encodeURIComponent(n);
-    const respaldo = [`https://visage.surgeplay.com/full/384/${e}`, cuerpo(n)];
+    const local = window.App && App.cuerpoLocal && App.cuerpoLocal(n);
+    const respaldo = local ? [local] : [`https://visage.surgeplay.com/full/384/${e}`, cuerpo(n)];
     return `<img class="skin" alt="" src="https://starlightskins.lunareclipse.studio/render/${pose}/${e}/full" data-r='${JSON.stringify(respaldo)}' onerror="const r=JSON.parse(this.dataset.r);if(r.length){this.src=r.shift();this.dataset.r=JSON.stringify(r)}else this.remove()">`;
   };
   const svgI = (p, t = 22) => `<svg width="${t}" height="${t}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${p}</svg>`;
@@ -1152,6 +1154,8 @@ pintarReloj(); setInterval(pintarReloj, 1000);
       ${L.map((l, i) => `<section class="lam ${l.clase}" style="--g:${l.grad || GRADS[i % GRADS.length]}">${l.html}</section>`).join("")}</div>`;
     document.body.append(h);
     document.body.style.overflow = "hidden";
+    // Si una imagen se tarda mucho, pasa a la siguiente opción
+    h.querySelectorAll("img").forEach(im => setTimeout(() => { if (im.isConnected && (!im.complete || !im.naturalWidth) && im.onerror) im.onerror(); }, 6000));
     const lams = [...h.querySelectorAll(".lam")], barras = [...h.querySelectorAll(".hist-barras i")];
     const DUR = 7000;
     let i = -1, inicio = 0, pausa = false, transcurrido = 0, raf;

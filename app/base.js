@@ -109,21 +109,94 @@
   const urlCuerpo = (n, t = 220) => `https://mc-heads.net/body/${encodeURIComponent(uuidDe(n) || n)}/${t}`;
   const urlsCara = (n, t = 128) => {
     const u = uuidDe(n), e = encodeURIComponent(u || n);
-    return [u ? `https://crafatar.com/avatars/${u}?size=${Math.min(t, 512)}&overlay` : null, urlCara(n, t), `https://minotar.net/helm/${e}/${t}.png`, u ? null : `https://mineskin.eu/helm/${e}/${t}.png`].filter(Boolean);
+    return [caraLocal(n), u ? `https://crafatar.com/avatars/${u}?size=${Math.min(t, 512)}&overlay` : null, urlCara(n, t), `https://minotar.net/helm/${e}/${t}.png`, u ? null : `https://mineskin.eu/helm/${e}/${t}.png`].filter(Boolean);
   };
   const urlsCuerpo = (n, t = 220) => {
     const u = uuidDe(n), e = encodeURIComponent(u || n);
-    return [urlCuerpo(n, t), u ? `https://crafatar.com/renders/body/${u}?scale=10&overlay` : null, `https://minotar.net/armor/body/${e}/${t}.png`, u ? null : `https://mineskin.eu/armor/body/${e}/${t}.png`].filter(Boolean);
+    return [cuerpoLocal(n), urlCuerpo(n, t), u ? `https://crafatar.com/renders/body/${u}?scale=10&overlay` : null, `https://minotar.net/armor/body/${e}/${t}.png`, u ? null : `https://mineskin.eu/armor/body/${e}/${t}.png`].filter(Boolean);
   };
   const urlsSkinPng = n => {
+    const j = App.porNombre && App.porNombre.get(String(n).toLowerCase());
     const u = uuidDe(n), e = encodeURIComponent(u || n);
+    if (j && j.skin) return [j.skin, ...(u ? [`https://crafatar.com/skins/${u}`, `https://mc-heads.net/skin/${e}`] : [`https://minotar.net/skin/${e}`, `https://mc-heads.net/skin/${e}`])];
     return u ? [`https://crafatar.com/skins/${u}`, `https://mc-heads.net/skin/${e}`, `https://minotar.net/skin/${e}`] : [`https://minotar.net/skin/${e}`, `https://mc-heads.net/skin/${e}`, `https://mineskin.eu/skin/${e}`];
   };
+  // ---------- Skins guardadas por el bot en la página (skins/NOMBRE.png) ----------
+  // Se dibujan aquí mismo la cara y el cuerpo, así no dependemos de otras páginas.
+  const skinsLocales = new Map(), carasLocales = new Map(), cuerposLocales = new Map();
+  const datosJugador = n => App.porNombre && App.porNombre.get(String(n).toLowerCase());
+  function skinLocal(n) {
+    const j = datosJugador(n);
+    if (!j || !j.skin) return Promise.resolve(null);
+    const k = j.nombre.toLowerCase();
+    if (!skinsLocales.has(k)) skinsLocales.set(k, new Promise(res => {
+      const im = new Image();
+      im.onload = () => res(im.naturalWidth === 64 ? im : null);
+      im.onerror = () => res(null);
+      im.src = j.skin;
+      setTimeout(() => res(null), 10000);
+    }));
+    return skinsLocales.get(k);
+  }
+  function dibujarCara(im, tam = 128) {
+    const c = document.createElement("canvas"); c.width = c.height = tam;
+    const g = c.getContext("2d"); g.imageSmoothingEnabled = false;
+    g.drawImage(im, 8, 8, 8, 8, 0, 0, tam, tam);
+    g.drawImage(im, 40, 8, 8, 8, 0, 0, tam, tam);
+    return c.toDataURL();
+  }
+  function dibujarCuerpo(im, slim, alto = 320) {
+    const e = Math.max(1, Math.round(alto / 32)), aw = slim ? 3 : 4, nueva = im.naturalHeight === 64;
+    const c = document.createElement("canvas"); c.width = 16 * e; c.height = 32 * e;
+    const g = c.getContext("2d"); g.imageSmoothingEnabled = false;
+    const p = (sx, sy, w, h, dx, dy, espejo = false) => {
+      if (!espejo) { g.drawImage(im, sx, sy, w, h, dx * e, dy * e, w * e, h * e); return; }
+      g.save(); g.translate((dx + w) * e, dy * e); g.scale(-1, 1); g.drawImage(im, sx, sy, w, h, 0, 0, w * e, h * e); g.restore();
+    };
+    // Piernas
+    p(4, 20, 4, 12, 4, 20); if (nueva) p(20, 52, 4, 12, 8, 20); else p(4, 20, 4, 12, 8, 20, true);
+    // Cuerpo
+    p(20, 20, 8, 12, 4, 8);
+    // Brazos
+    p(44, 20, aw, 12, 4 - aw, 8); if (nueva) p(36, 52, aw, 12, 12, 8); else p(44, 20, aw, 12, 12, 8, true);
+    // Cabeza
+    p(8, 8, 8, 8, 4, 0);
+    // Capas de encima (chamarra, mangas, pantalón, sombrero)
+    if (nueva) { p(4, 36, 4, 12, 4, 20); p(4, 52, 4, 12, 8, 20); p(20, 36, 8, 12, 4, 8); p(44, 36, aw, 12, 4 - aw, 8); p(52, 52, aw, 12, 12, 8); }
+    p(40, 8, 8, 8, 4, 0);
+    return c.toDataURL();
+  }
+  // Prepara cara y cuerpo de cada jugador; regresa la imagen lista o null
+  async function caraLocalAsync(n) {
+    const k = String(n).toLowerCase();
+    if (carasLocales.has(k)) return carasLocales.get(k);
+    const im = await skinLocal(n); if (!im) return null;
+    try { const u = dibujarCara(im, 128); carasLocales.set(k, u); return u; } catch { return null; }
+  }
+  async function cuerpoLocalAsync(n) {
+    const k = String(n).toLowerCase();
+    if (cuerposLocales.has(k)) return cuerposLocales.get(k);
+    const im = await skinLocal(n); if (!im) return null;
+    try { const u = dibujarCuerpo(im, !!(datosJugador(n) || {}).slim, 320); cuerposLocales.set(k, u); return u; } catch { return null; }
+  }
+  const caraLocal = n => carasLocales.get(String(n).toLowerCase()) || null;
+  const cuerpoLocal = n => cuerposLocales.get(String(n).toLowerCase()) || null;
+
   function imgSkin(nombre, { pose = null, clase = "", tam = 220, tipo = "cuerpo" } = {}) {
     const e = encodeURIComponent(nombre);
     const urls = tipo === "cara" ? urlsCara(nombre, tam)
       : [pose ? `https://starlightskins.lunareclipse.studio/render/${pose}/${e}/full` : null, ...urlsCuerpo(nombre, tam)].filter(Boolean);
     const i = el("img", { class: clase + " pixel", alt: "", decoding: "async" });
+    // Si el bot ya subió la skin, se usa esa (es la más confiable)
+    const local = tipo === "cara" ? caraLocal(nombre) : cuerpoLocal(nombre);
+    if (local) { i.src = local; return i; }
+    const j = datosJugador(nombre);
+    if (j && j.skin) {
+      (tipo === "cara" ? caraLocalAsync(nombre) : cuerpoLocalAsync(nombre)).then(u => { if (u) { i.onerror = null; i.src = u; } else probarFuera(); });
+      return i;
+    }
+    return probarFuera();
+    function probarFuera() {
     let k = 0, reloj = null;
     const probar = () => {
       clearTimeout(reloj);
@@ -144,6 +217,7 @@
     i.onerror = siguiente;
     probar();
     return i;
+    }
   }
   const imgCara = (nombre, clase = "", tam = 64) => imgSkin(nombre, { tipo: "cara", clase, tam });
 
@@ -319,7 +393,7 @@
   // Lo que usan los demás archivos
   const App = window.App = {
     listo, esc, num, dec, el, icono, mesDe, nombreMes, mesCorto, fecha, hace, duracion, tiempo, POSE_CLASE,
-    imgSkin, imgCara, urlCara, urlCuerpo, urlsCara, urlsCuerpo, urlsSkinPng, contar, contarAlVer, transicion, capa, cine, graficaLinea, graficaBarras, graficaDona,
+    imgSkin, imgCara, urlCara, urlCuerpo, urlsCara, urlsCuerpo, urlsSkinPng, caraLocal, cuerpoLocal, caraLocalAsync, cuerpoLocalAsync, contar, contarAlVer, transicion, capa, cine, graficaLinea, graficaBarras, graficaDona,
     COLORES, indicador, ruta, seguirRuta, guardar, leer, aleatorio,
   };
 
@@ -334,6 +408,8 @@
     App.mesActual = (D.liga && D.liga.mes) || mesDe();
     App.paginaUrl = D.pagina || location.href.split("#")[0];
 
+    // Prepara las caras y cuerpos de las skins que subió el bot
+    App.skinsListas = Promise.all(App.jugadores.filter(j => j.skin).map(j => Promise.all([caraLocalAsync(j.nombre), cuerpoLocalAsync(j.nombre)]))).catch(() => {});
     quitarCarga();
     revelar();
     menu();
