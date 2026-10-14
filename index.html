@@ -19,6 +19,7 @@
 <meta property="og:image" content="iconos/icono-512.png">
 <meta property="og:type" content="website">
 <link rel="stylesheet" href="app/app.css">
+<script src="app/skin3d.js" defer></script>
 <script src="app/base.js" defer></script>
 <script src="app/compartir.js" defer></script>
 <script src="app/liga.js" defer></script>
@@ -168,6 +169,7 @@ h2{font-family:var(--f-display);font-weight:800;font-size:clamp(1.7rem,4vw,2.4re
 /* Botón de tema */
 .tema{flex:none;width:38px;height:38px;border-radius:999px;border:1px solid var(--linea);background:var(--capa);color:var(--texto);cursor:pointer;font-size:1.05rem;display:grid;place-items:center}
 .tema:hover{border-color:var(--verde)}
+.cuenta-fecha{display:block;margin-top:8px;color:var(--tenue);font-weight:600;font-size:.82rem;text-align:center}
 .instalar{width:auto;padding:0 14px;font-family:var(--f-body);font-weight:700;font-size:.85rem;color:var(--sobre-verde);background:var(--verde);border-color:var(--verde)}
 
 /* La 224 en números */
@@ -436,6 +438,7 @@ footer{border-top:1px solid var(--linea);padding-block:28px 96px;color:var(--ten
       <div class="cuenta" id="cuenta">
         <span class="etiqueta" id="cuenta-etiqueta">INAUGURACIÓN EN</span>
         <div class="reloj" id="reloj"></div>
+        <small class="cuenta-fecha" id="cuenta-fecha"></small>
       </div>
     </div>
   </div>
@@ -454,7 +457,7 @@ footer{border-top:1px solid var(--linea);padding-block:28px 96px;color:var(--ten
     </div>
     <ol class="pasos">
       <li><b>Únete al Discord</b><span>Ahí están los avisos, las reglas y el chat del server en vivo.</span><a class="btn-discord chico" id="discord-paso" target="_blank" rel="noopener">Unirme al Discord</a></li>
-      <li><b>Pasa tu usuario</b><span>Mándale a <b class="v-admin">Dylan</b> tu usuario de <b>Minecraft Java</b>, o tu <b>gamertag de Xbox</b> si juegas en Bedrock. Escríbelo exacto, con mayúsculas y todo, porque la whitelist lo distingue.</span></li>
+      <li><b>Pasa tu usuario</b><span>En el Discord usa <code>/entrar</code> (o mándaselo a <b class="v-admin">Dylan</b>): tu usuario de <b>Minecraft Java</b>, tu <b>gamertag de Xbox</b> si juegas en Bedrock, o <b>los dos</b> si juegas en los dos. Escríbelo exacto, con mayúsculas y todo.</span></li>
       <li><b>Espera a que te agreguen</b><span>Te meten a la whitelist y te avisan en el Discord.</span></li>
       <li><b>Copia la IP y a jugar</b><span><b>Java <span class="v-version">26.3</span>:</b> Multijugador → Agregar servidor → pega la IP.</span><span class="bedrock"><b>Bedrock:</b> Servidores → Agregar servidor → pega la IP y en puerto pon <b class="puerto">19132</b>.</span></li>
     </ol>
@@ -603,7 +606,7 @@ footer{border-top:1px solid var(--linea);padding-block:28px 96px;color:var(--ten
     <div class="faq">
       <details open>
         <summary>¿Cuánto cuesta y a quién le pago?</summary>
-        <p>Por ahora son <b><span class="v-cuota">30</span> pesos</b>. Se le pagan a <b class="v-admin">Dylan</b> en la escuela. Con eso se paga el server para que esté prendido 24/7.</p>
+        <p>Son <b><span class="v-cuota">50</span> pesos <span class="v-cuota-periodo">por dos meses</span></b>. Se le pagan a <b class="v-admin">Dylan</b> en la escuela, a más tardar la primera o segunda semana de noviembre. Con eso se paga el server para que esté prendido 24/7. Si quieren seguir después, se puede pagar desde antes o al regresar de vacaciones.</p>
       </details>
       <details>
         <summary>¿Puedo entrar con Minecraft pirata?</summary>
@@ -648,7 +651,7 @@ footer{border-top:1px solid var(--linea);padding-block:28px 96px;color:var(--ten
       </details>
       <details>
         <summary>Juego en Java y en Bedrock, ¿se juntan mis stats?</summary>
-        <p>Sí. Dile a Dylan cuáles son tus dos cuentas y las une con <code>/unir</code>. Desde ahí todo se suma en tu perfil, la liga y el Wrapped. En tu perfil salen las dos cuentas.</p>
+        <p>Sí. Pon las dos cuando uses <code>/entrar</code> (o pásale las dos a Dylan) y quedan unidas desde antes de que entres. Todo se suma en tu perfil, la liga y el Wrapped, y en tu perfil salen las dos cuentas.</p>
       </details>
       <details>
         <summary>¿Por qué no sale mi skin?</summary>
@@ -708,8 +711,9 @@ const CONFIG = {
   // A quién le pagan y le mandan su usuario
   admin: "Dylan",
 
-  // Cuánto cuesta entrar (pesos)
-  cuota: 30,
+  // Cuánto cuesta entrar (pesos) y por cuánto tiempo
+  cuota: 50,
+  cuotaPeriodo: "por dos meses",
 
   // Bedrock (celular, consola, Windows). Pon false para ocultar las instrucciones de Bedrock.
   bedrock: true,
@@ -721,7 +725,9 @@ const CONFIG = {
   // Fecha y hora de la inauguración. Formato: "AAAA-MM-DDTHH:MM"
   // Mientras sea null dice "Fecha por anunciar".
   // Cuando la fecha pase, el reloj cambia solo a "LA 224 LLEVA ..."
-  inauguracion: null, // ejemplo: "2026-12-20T18:00"
+  // El -07:00 es la hora de Sinaloa (Culiacán), así sale bien en cualquier celular.
+  inauguracion: "2026-11-14T16:00:00-07:00",
+  inauguracionTexto: "Sábado 14 de noviembre, 4:00 pm (hora de Sinaloa)",
 
   // Link del mapa (BlueMap). Mientras sea null, el botón dice "Disponible al lanzar".
   mapa: null,
@@ -793,6 +799,7 @@ $("#ip-texto").textContent = CONFIG.ip;
 $("#version").textContent = CONFIG.version;
 document.querySelectorAll(".v-admin").forEach(e => e.textContent = CONFIG.admin);
 document.querySelectorAll(".v-cuota").forEach(e => e.textContent = CONFIG.cuota);
+document.querySelectorAll(".v-cuota-periodo").forEach(e => e.textContent = CONFIG.cuotaPeriodo || "");
 document.querySelectorAll(".bedrock").forEach(e => e.hidden = !CONFIG.bedrock);
 document.querySelectorAll(".puerto").forEach(e => e.textContent = CONFIG.puertoBedrock);
 document.querySelectorAll(".v-version").forEach(e => e.textContent = CONFIG.version);
@@ -818,6 +825,8 @@ function pintarReloj() {
   }
   const falta = new Date(CONFIG.inauguracion) - new Date();
   $("#cuenta-etiqueta").textContent = falta <= 0 ? "LA 224 LLEVA" : "INAUGURACIÓN EN";
+  const fechaEl = $("#cuenta-fecha");
+  if (fechaEl) fechaEl.textContent = falta > 0 ? (CONFIG.inauguracionTexto || "") : "Desde el " + (CONFIG.inauguracionTexto || "").replace(/^\S+ /, "").replace(/,.*/, "");
   const t = Math.abs(falta);
   const d = Math.floor(t / 864e5), h = Math.floor(t / 36e5) % 24,
         m = Math.floor(t / 6e4) % 60, s = Math.floor(t / 1e3) % 60;

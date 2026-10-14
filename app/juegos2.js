@@ -28,6 +28,30 @@
       const v = App.capa(el("div", { class: "juego-ventana" }, el("div", { class: "juego-cabeza" }, el("b", { text: titulo }), score), zona), { ancho, etiqueta: titulo, alCerrar: () => { alCerrar && alCerrar(); App.juegos.repintar(); } });
       return { zona, vals, cerrar: v.cerrar, caja: v.caja };
     }
+    // ---------- Texturas del juego (las sube el bot con el comando "texturas") ----------
+    // Si no están, todo se dibuja como antes.
+    const TEX = {};
+    let texCargando = null;
+    function cargarTexturas() {
+      if (!texCargando) texCargando = (async () => {
+        try {
+          const r = await fetch("texturas/texturas.json?v=" + Date.now(), { cache: "no-store" });
+          if (!r.ok) return;
+          const d = await r.json();
+          const v = encodeURIComponent(d.version || "1");
+          await Promise.all((d.texturas || []).map(k => new Promise(res => {
+            const i = new Image();
+            i.onload = () => { TEX[k] = i; res(); }; i.onerror = () => res();
+            i.src = `texturas/${k}.png?v=${v}`;
+          })));
+        } catch {}
+      })();
+      // Si el internet va lento, el juego abre igual a los 4 segundos
+      return Promise.race([texCargando, new Promise(r => setTimeout(r, 4000))]);
+    }
+    const conTexturas = fn => (...a) => cargarTexturas().then(() => fn(...a));
+    const lienzoPixel = (w, h) => { const c = document.createElement("canvas"); c.width = w; c.height = h; const g = c.getContext("2d"); g.imageSmoothingEnabled = false; return [c, g]; };
+
     const record = (llave, valor, menor = false) => {
       const ant = leer(llave, 0);
       const nuevo = menor ? (!ant || valor < ant) : valor > ant;
@@ -113,6 +137,135 @@
       ["¿Qué hace un riel detector?", "Da señal cuando pasa una vagoneta", ["Acelera la vagoneta", "Frena la vagoneta", "Cambia de vía"], "Sirve para estaciones automáticas."],
       ["¿Qué se necesita para craftear un comparador?", "Cuarzo del Nether", ["Diamante", "Oro", "Esmeralda"], "Tres antorchas de redstone, cuarzo y piedra."],
     ];
+    // Más preguntas (se suman a la trivia normal)
+    const TRIVIA_MAS = [
+      ["¿Qué ingrediente convierte una botella de agua en poción rara, la base de casi todas?", "Verruga del Nether", ["Polvo de blaze", "Azúcar", "Ojo de araña"], "Casi todas las pociones empiezan con verruga del Nether."],
+      ["¿Qué combustible usa el soporte para pociones?", "Polvo de blaze", ["Carbón", "Redstone", "Lava"], "Cada polvo de blaze aguanta 20 tandas."],
+      ["¿Con qué ingrediente se hace la poción de visión nocturna?", "Zanahoria dorada", ["Ojo de araña", "Azúcar", "Crema de magma"], "Verruga del Nether + zanahoria dorada."],
+      ["¿Qué ingrediente da la poción de respiración acuática?", "Pez globo", ["Bacalao", "Algas", "Corazón del mar"], "Con pez globo puedes respirar bajo el agua."],
+      ["¿Qué ingrediente da la poción de resistencia al fuego?", "Crema de magma", ["Polvo de blaze", "Lágrima de ghast", "Carbón"], "Con ella puedes nadar en lava un rato."],
+      ["¿Qué ingrediente da la poción de velocidad?", "Azúcar", ["Pluma", "Conejo", "Redstone"], "Verruga del Nether + azúcar."],
+      ["¿Qué ingrediente da la poción de curación?", "Rodaja de sandía reluciente", ["Manzana dorada", "Lágrima de ghast", "Pan"], "La sandía reluciente se hace con pepitas de oro."],
+      ["¿Qué ingrediente da la poción de caída lenta?", "Membrana de phantom", ["Pluma", "Fragmento de amatista", "Seda"], "La membrana la sueltan los phantoms."],
+      ["¿Qué ingrediente da la poción de regeneración?", "Lágrima de ghast", ["Polvo de blaze", "Manzana", "Hueso"], "Las lágrimas las sueltan los ghasts."],
+      ["¿Qué ingrediente da la poción de fuerza?", "Polvo de blaze", ["Hueso", "Hierro", "Pólvora"], "El polvo de blaze sirve de combustible y de ingrediente."],
+      ["¿Qué ingrediente echa a perder una poción y la vuelve 'mala'?", "Ojo de araña fermentado", ["Carne podrida", "Pólvora", "Tinta"], "Por ejemplo, convierte la velocidad en lentitud."],
+      ["¿Qué le agregas a una poción para que se pueda aventar?", "Pólvora", ["Redstone", "Piedra luminosa", "Aliento de dragón"], "Así se hace poción arrojadiza."],
+      ["¿Qué le agregas a una poción para que dure más tiempo?", "Redstone", ["Piedra luminosa", "Pólvora", "Azúcar"], "La piedra luminosa la hace más fuerte pero más corta."],
+      ["¿Qué hace el aliento de dragón en una poción arrojadiza?", "La vuelve persistente (deja una nube)", ["La hace más fuerte", "La hace durar 1 hora", "La vuelve invisible"], "Se junta con una botella al pegarle al dragón."],
+      ["¿Qué mob suelta las varas de blaze?", "El blaze", ["El ghast", "El esqueleto del Wither", "El cubo de magma"], "Viven en las fortalezas del Nether."],
+      ["¿Qué suelta el ghast?", "Lágrimas de ghast y pólvora", ["Perlas de ender", "Varas de blaze", "Huesos"], "Las lágrimas sirven para pociones y para el cristal del End."],
+      ["¿Qué bloque te deja reaparecer en el Nether?", "Ancla de reaparición", ["Cama", "Faro", "Magnetita"], "Las camas explotan en el Nether."],
+      ["¿Con qué se carga el ancla de reaparición?", "Piedra luminosa", ["Redstone", "Lava", "Polvo de blaze"], "Aguanta hasta 4 cargas."],
+      ["¿De qué mineral sale la netherita?", "Escombros ancestrales", ["Cuarzo del Nether", "Oro del Nether", "Bloque de magma"], "Se funden y dan fragmentos de netherita."],
+      ["¿Cuántos fragmentos de netherita se necesitan para un lingote?", "4", ["2", "8", "9"], "4 fragmentos y 4 lingotes de oro."],
+      ["¿Dónde se mejora algo de diamante a netherita?", "En la mesa de herrería", ["En el yunque", "En la mesa de crafteo", "En la mesa de encantamientos"], "Con la plantilla y un lingote de netherita."],
+      ["¿Dónde se encuentra la plantilla de mejora de netherita?", "En los bastiones", ["En las fortalezas del Nether", "En las aldeas", "En los templos del desierto"], "Se puede duplicar con diamantes y netherrack."],
+      ["¿Cuántos corazones de vida tiene el jugador normalmente?", "10", ["5", "15", "20"], "Son 20 puntos de vida, o sea 10 corazones."],
+      ["¿Cuántos bloques mide de ancho un chunk?", "16", ["8", "32", "64"], "Un chunk es de 16 x 16 bloques."],
+      ["¿Qué pasa si a un aldeano le cae un rayo?", "Se vuelve bruja", ["Se vuelve zombi", "Se vuelve gólem", "Nada"], "Por eso hay que ponerles pararrayos."],
+      ["¿Qué pasa si a un cerdo le cae un rayo?", "Se vuelve piglin zombificado", ["Se vuelve hoglin", "Se hace cerdo cargado", "Se muere y ya"], "El rayo transforma al cerdo."],
+      ["¿Qué bloques forman el cuerpo del Wither?", "Arena o tierra de almas", ["Obsidiana", "Bloques de hierro", "Piedra del End"], "4 de arena o tierra de almas y 3 calaveras de esqueleto del Wither."],
+      ["¿Cuántos bloques de hierro lleva un gólem de hierro?", "4", ["3", "5", "9"], "En forma de T, con una calabaza de cabeza."],
+      ["¿Cuántos bloques de nieve lleva un gólem de nieve?", "2", ["1", "3", "4"], "Dos bloques de nieve y una calabaza arriba."],
+      ["¿Con qué se reproducen las gallinas?", "Semillas", ["Pan", "Zanahorias", "Pescado"], "Cualquier tipo de semilla."],
+      ["¿Con qué se reproducen los cerdos?", "Zanahorias", ["Trigo", "Semillas", "Manzanas"], "También con papas o betabel."],
+      ["¿Dónde se encuentran las élitras?", "En los barcos de las ciudades del End", ["Las suelta el Ender Dragon", "En los bastiones", "En las fortalezas"], "Están en el marco de un barco flotante."],
+      ["¿Qué suelta el shulker?", "Su caparazón", ["Una perla", "Una élitra", "Un huevo"], "Dos caparazones y un cofre hacen una caja de shulker."],
+      ["¿Qué mob suelta el tótem de la inmortalidad?", "El evocador", ["La bruja", "El vindicador", "El saqueador"], "Salen en las mansiones del bosque y en las invasiones."],
+      ["¿Qué invoca el evocador?", "Vexes", ["Phantoms", "Murciélagos", "Zombis"], "Los vexes atraviesan paredes."],
+      ["¿Qué mob jefe protege los monumentos oceánicos?", "El guardián anciano", ["El ahogado", "El calamar", "El delfín"], "Hay 3 en cada monumento y te dan fatiga minera."],
+      ["¿En qué bioma aparece el warden?", "La oscuridad profunda", ["Las cuevas frondosas", "El pantano", "El desierto"], "Es donde están las ciudades antiguas."],
+      ["¿Qué bloque llama al warden si lo activas varias veces?", "El chillador de sculk", ["El sensor de sculk", "El catalizador de sculk", "La vena de sculk"], "Si lo activas varias veces, sale el warden."],
+      ["¿Qué desentierra el sniffer?", "Semillas antiguas", ["Diamantes", "Huesos", "Huevos"], "La antorcha flor y la planta jarra salen de ahí."],
+      ["¿Con qué se limpia la arena sospechosa?", "Con un pincel", ["Con una pala", "Con tijeras", "Con un pico"], "Así salen los fragmentos de cerámica."],
+      ["¿Para qué sirven las escamas de armadillo?", "Para hacer armadura de lobo", ["Para pociones", "Para reparar élitras", "Para encantar"], "Se sacan cepillando al armadillo."],
+      ["¿Qué arma salió en la 1.21 con las cámaras de prueba?", "El mazo", ["La lanza", "El hacha doble", "La ballesta"], "Pega más fuerte mientras más alto caes."],
+      ["¿Con qué se craftea el mazo?", "Núcleo pesado y vara de breeze", ["Bloque de hierro y palo", "Obsidiana y vara de blaze", "Netherita y diamante"], "El núcleo pesado sale de las bóvedas ominosas."],
+      ["¿Qué mob aparece en las cámaras de prueba y avienta ráfagas de viento?", "El breeze", ["El blaze", "El ghast", "El vex"], "Suelta varas de breeze."],
+      ["¿Qué se abre con una llave de prueba?", "Una bóveda", ["Un cofre", "Un barril", "Un spawner"], "Cada jugador puede abrir cada bóveda una vez."],
+      ["¿Cuántos bloques de lana lleva una cama?", "3", ["2", "4", "6"], "3 de lana y 3 tablas."],
+      ["¿Qué maderas no se queman con el fuego?", "Carmesí y distorsionada", ["Roble y abedul", "Jungla y acacia", "Mangle y cerezo"], "Son las maderas del Nether."],
+      ["¿Qué se necesita para hacer un conducto?", "Corazón del mar", ["Estrella del Nether", "Perla de ender", "Tridente"], "Y 8 conchas de nautilo."],
+      ["¿Dónde se encuentra el corazón del mar?", "En los tesoros enterrados", ["En los barcos hundidos", "En los monumentos", "En las aldeas"], "Se encuentran con un mapa del tesoro."],
+      ["¿Cuántos libreros necesitas para encantar al nivel 30?", "15", ["10", "20", "30"], "Con un bloque de aire entre la mesa y los libreros."],
+      ["¿Qué necesitas, además de experiencia, para encantar en la mesa?", "Lapislázuli", ["Diamantes", "Redstone", "Esmeraldas"], "De 1 a 3 lapislázulis."],
+      ["¿Qué encantamiento de botas congela el agua al caminar?", "Paso helado", ["Agilidad acuática", "Caída de pluma", "Velocidad del alma"], "Frost Walker."],
+      ["¿Qué encantamiento te deja aguantar más bajo el agua?", "Respiración", ["Afinidad acuática", "Agilidad acuática", "Protección"], "Va en el casco."],
+      ["¿Qué encantamiento NO se puede juntar con Infinidad en un arco?", "Reparación", ["Poder", "Fuego", "Retroceso"], "Infinidad y Mending no son compatibles."],
+      ["¿Qué encantamiento de tridente te lanza cuando llueve o estás en el agua?", "Propulsión", ["Lealtad", "Canalización", "Empalamiento"], "Riptide."],
+      ["¿Qué encantamiento hace que el tridente regrese solo?", "Lealtad", ["Propulsión", "Canalización", "Reparación"], "Loyalty."],
+      ["¿Qué encantamiento invoca rayos con el tridente en tormenta?", "Canalización", ["Lealtad", "Propulsión", "Fuego"], "Channeling."],
+      ["¿Cuál es el nivel máximo de Fortuna?", "III", ["II", "IV", "V"], "Fortuna III."],
+      ["¿Cuál es el nivel máximo de Filo (Sharpness)?", "V", ["III", "IV", "X"], "Filo V."],
+      ["¿Cuál es el nivel máximo de Protección?", "IV", ["III", "V", "II"], "Protección IV."],
+      ["¿Cuál es el nivel máximo de Eficiencia?", "V", ["III", "IV", "X"], "Eficiencia V."],
+      ["¿Qué encantamiento de pantalón te deja caminar rápido agachado?", "Sigilo veloz", ["Velocidad del alma", "Agilidad acuática", "Paso helado"], "Swift Sneak; solo sale en las ciudades antiguas."],
+      ["¿Qué hace la Maldición de ligamiento?", "No te puedes quitar esa armadura", ["La armadura desaparece al morir", "Te hace más lento", "Te quita vida"], "Solo se quita si mueres o se rompe."],
+      ["¿Qué hace la Maldición de desaparición?", "El objeto desaparece al morir", ["No te lo puedes quitar", "Se rompe más rápido", "No se puede reparar"], "No lo sueltas al morir: se borra."],
+      ["¿A qué mob le tienen miedo los esqueletos?", "Al lobo", ["Al gato", "Al gólem", "A la abeja"], "Los esqueletos huyen de los lobos."],
+      ["¿Qué mob no se quema con el sol?", "El husk", ["El zombi", "El esqueleto", "El stray"], "El zombi del desierto aguanta el sol."],
+      ["¿Qué mob se divide en otros más chiquitos al morir?", "El slime", ["El creeper", "La lepisma", "El ghast"], "El cubo de magma también."],
+      ["¿Qué mob sale de los bloques infestados?", "La lepisma", ["El endermite", "La araña de cueva", "El murciélago"], "Salen en fortalezas y montañas."],
+      ["¿Cuántos puntos de vida tiene el Ender Dragon?", "200", ["100", "300", "500"], "Son 100 corazones."],
+      ["¿Cuántos puntos de vida tiene el Wither?", "300", ["200", "150", "500"], "En Java son 150 corazones."],
+      ["¿Qué le recupera la vida al Ender Dragon en la pelea?", "Los cristales del End", ["Las perlas de ender", "Los endermans", "El huevo de dragón"], "Hay que romper los cristales de las torres."],
+      ["¿Qué deja el Ender Dragon la primera vez que lo matas?", "Un huevo de dragón", ["Una élitra", "Un tótem", "Una estrella del Nether"], "Aparece arriba del portal de salida."],
+      ["¿Cómo se llega a las islas lejanas del End?", "Con un portal de acceso y una perla de ender", ["Nadando", "Con élitras desde el inicio", "Con un portal del Nether"], "Los portales de acceso salen después de matar al dragón."],
+      ["¿Qué fruta te teletransporta al comerla?", "Fruta coral", ["Manzana", "Baya dulce", "Sandía"], "Crece en las islas del End."],
+      ["¿Qué comida te da más saturación?", "Zanahoria dorada", ["Filete cocido", "Pan", "Manzana"], "Por eso es la favorita para aguantar más sin hambre."],
+      ["¿Qué comida te puede dar el efecto de hambre?", "Carne podrida", ["Pan", "Galleta", "Papa cocida"], "Tiene 80% de probabilidad de darte hambre."],
+      ["¿Cómo se consigue la manzana dorada encantada?", "Solo en cofres", ["Con bloques de oro", "En la mesa de encantamientos", "Comerciando con piglins"], "Ya no se puede craftear desde la 1.9."],
+      ["¿Cuántos lingotes de oro lleva una manzana dorada?", "8", ["4", "9", "1"], "8 lingotes alrededor de la manzana."],
+      ["¿Qué bloque convierte a un aldeano en bibliotecario?", "Atril", ["Librero", "Mesa de encantamientos", "Cofre"], "Los bibliotecarios venden libros encantados."],
+      ["¿Qué bloque convierte a un aldeano en granjero?", "Compostador", ["Bloque de heno", "Cultivo de trigo", "Barril"], "Es su mesa de trabajo."],
+      ["¿Qué bloque convierte a un aldeano en clérigo?", "Soporte para pociones", ["Atril", "Caldero", "Faro"], "Los clérigos venden perlas de ender."],
+      ["¿Qué bloque convierte a un aldeano en pescador?", "Barril", ["Caldero", "Cofre", "Caña de pescar"], "Vende y compra cosas de pesca."],
+      ["¿Qué bloque convierte a un aldeano en armero?", "Alto horno", ["Yunque", "Horno", "Mesa de herrería"], "Vende armadura."],
+      ["¿Qué usan los aldeanos como dinero?", "Esmeraldas", ["Oro", "Diamantes", "Hierro"], "Comerciar con aldeanos da experiencia."],
+      ["¿Qué mob comercia contigo si le das oro?", "El piglin", ["El aldeano", "El piglin bruto", "El hoglin"], "Te avienta algo a cambio del lingote."],
+      ["¿Qué necesitas traer puesto para que los piglins no te ataquen?", "Una pieza de armadura de oro", ["Armadura de netherita", "Una calabaza", "Nada"], "Basta con una pieza."],
+      ["¿Qué piglin no se deja calmar con oro?", "El piglin bruto", ["El piglin bebé", "El piglin zombificado", "El piglin normal"], "Vive en los bastiones y pega fuerte."],
+      ["¿De qué huyen los hoglins?", "De los hongos distorsionados", ["De los hongos carmesí", "Del oro", "Del agua"], "También de los portales y del ancla de reaparición."],
+      ["¿Qué mob del Nether puedes montar caminando sobre la lava?", "El strider", ["El hoglin", "El ghast", "El cubo de magma"], "Con silla y un hongo distorsionado en un palo."],
+      ["¿Cuál es la altura máxima del mundo desde la 1.18?", "Y 320", ["Y 256", "Y 255", "Y 512"], "Se puede construir hasta ahí."],
+      ["¿Cuál es la altura más baja del mundo desde la 1.18?", "Y -64", ["Y 0", "Y -32", "Y -128"], "Abajo está la bedrock."],
+      ["¿Cuántos ticks tiene un segundo en Minecraft?", "20", ["10", "30", "60"], "Un tick es 1/20 de segundo."],
+      ["¿Qué pasa si echas agua en el Nether?", "Se evapora", ["Se congela", "Se vuelve lava", "Funciona normal"], "No se puede poner agua en el Nether."],
+      ["¿Qué se forma cuando el agua le cae a una fuente de lava?", "Obsidiana", ["Roca", "Piedra", "Basalto"], "Si la lava está corriendo, sale roca."],
+      ["¿Qué bloque se forma con lava, hielo azul y tierra de almas abajo?", "Basalto", ["Obsidiana", "Piedra negra", "Magma"], "Así se hacen granjas de basalto."],
+      ["¿Qué bloque bajo el agua hace burbujas que te suben?", "Arena de almas", ["Bloque de magma", "Hielo", "Esponja"], "El bloque de magma hace lo contrario: te jala hacia abajo."],
+      ["¿Qué otro mob, además de la vaca, da leche?", "La cabra", ["La oveja", "El cerdo", "La llama"], "Con una cubeta."],
+      ["¿Qué te quita todos los efectos de pociones de golpe?", "Tomar leche", ["Comer pan", "Dormir", "Meterte al agua"], "Quita los buenos y los malos."],
+      ["¿Qué herramienta sirve para recoger hojas sin romperlas?", "Tijeras", ["Hacha", "Azada", "Pala"], "O cualquier herramienta con toque de seda."],
+      ["¿Qué pico mina más rápido sin encantar?", "El de oro", ["El de diamante", "El de netherita", "El de hierro"], "Es el más rápido, pero se rompe luego luego."],
+      ["¿Qué le pasa a una flecha si se la disparas a un enderman?", "No le pega: se teletransporta", ["Le baja el doble", "Lo prende en fuego", "Rebota y te pega a ti"], "Hay que pegarle cuerpo a cuerpo."],
+      ["¿Qué mineral salió en la 1.17 y crece en geodas?", "La amatista", ["El cobre", "La esmeralda", "El cuarzo"], "Las geodas tienen capa de calcita y basalto liso."],
+      ["¿Qué se necesita para hacer un catalejo?", "Cobre y fragmento de amatista", ["Vidrio y hierro", "Oro y diamante", "Vidrio y cobre"], "Un fragmento de amatista y dos lingotes de cobre."],
+      ["¿Qué evita que el cobre se oxide?", "Ponerle cera (panal)", ["Ponerle agua", "Ponerle redstone", "Taparlo con lana"], "El cobre encerado ya no cambia de color."],
+      ["¿Con qué se hace un pararrayos?", "Cobre", ["Hierro", "Oro", "Redstone"], "Tres lingotes de cobre en línea."],
+      ["¿Con qué se alimenta a un ajolote?", "Cubeta con pez tropical", ["Bacalao cocido", "Algas", "Semillas"], "Así se reproducen."],
+      ["¿Cuál es el ajolote más raro?", "El azul", ["El rosa", "El dorado", "El café"], "Sale muy de vez en cuando al criar."],
+      ["¿Qué mob te trae los items iguales al que le das?", "El allay", ["El vex", "El zorro", "El loro"], "Y le gusta la música de los bloques de notas."],
+      ["¿Qué sale cuando una rana se come un cubo de magma chiquito?", "Una luz de rana", ["Una crema de magma", "Un huevo de rana", "Un bloque de slime"], "El color depende del tipo de rana."],
+      ["¿Cuántos jugadores se pueden subir a un camello?", "2", ["1", "3", "4"], "Por eso son buenos para viajar con alguien."],
+      ["¿Qué tiene de especial el cofre de ender?", "Es tu mismo inventario en todos los cofres de ender", ["Guarda el doble", "No se puede romper", "Lo comparten todos los jugadores"], "Cada jugador ve sus propias cosas."],
+      ["¿Qué suelta un cofre de ender si lo rompes sin toque de seda?", "Obsidiana", ["Nada", "Una perla de ender", "Tablas"], "Suelta 8 de obsidiana."],
+      ["¿Qué hace la brújula en el Nether?", "Gira sin sentido", ["Apunta al portal", "Apunta a la fortaleza", "Funciona normal"], "Solo funciona allá si la conectas a una magnetita."],
+      ["¿A qué bloque puede apuntar una brújula en cualquier dimensión?", "A la magnetita", ["Al faro", "A la cama", "Al cofre"], "Lodestone."],
+      ["Si caminas 1 bloque en el Nether, ¿cuántos avanzas en el mundo normal?", "8", ["2", "4", "16"], "Por eso los portales sirven de atajo."],
+      ["¿En qué estructura está el portal al End?", "En la fortaleza", ["En la fortaleza del Nether", "En el bastión", "En la ciudad antigua"], "Se encuentra con ojos de ender."],
+      ["¿Qué estructura del Nether tiene generadores de blazes?", "La fortaleza del Nether", ["El bastión", "El portal en ruinas", "El fósil"], "Ahí también salen los esqueletos del Wither."],
+      ["¿Qué trampa tiene el templo del desierto?", "TNT debajo de una placa de presión", ["Lava en el techo", "Flechas en las paredes", "Un spawner de arañas"], "No pises la placa del centro."],
+      ["¿Qué mob de cueva te asusta con su chillido y vuela?", "El murciélago", ["El phantom", "El vex", "El allay"], "No hace daño."],
+      ["¿Qué mob se puede ordeñar con un bol para sacar sopa de hongos?", "La champiñaca", ["La vaca", "La cabra", "La oveja"], "Mooshroom."],
+      ["¿Qué item hace que un loro se muera si se lo das?", "Galleta", ["Semillas", "Pan", "Manzana"], "Nunca le des galletas a un loro."],
+      ["¿Qué pasa si le das una zanahoria en un palo a un cerdo con silla?", "Lo puedes manejar", ["Se duerme", "Se hace más grande", "Se escapa"], "Así se controla al cerdo."],
+      ["¿Qué mob sale de los huevos de tortuga?", "Tortugas bebé", ["Ranas", "Ajolotes", "Peces"], "Los huevos se rompen si los pisas."],
+      ["¿Qué suelta una tortuga bebé cuando crece?", "Un caparazón (escama de tortuga)", ["Un huevo", "Algas", "Una perla"], "Con 5 se hace el casco de tortuga."],
+      ["¿Qué te da el casco de tortuga?", "Respirar más tiempo bajo el agua", ["Nadar más rápido", "Ver en la oscuridad", "No hundirte"], "Te da respiración acuática unos segundos."],
+    ];
+    TRIVIA.push(...TRIVIA_MAS);
     const aPregunta = ([p, c, malas, x], tipo = "Trivia", ic = "pregunta") => ({ tipo, ic, titulo: p, opciones: barajar([c, ...malas]).map(t => ({ texto: t })), correcta: c, explicar: x });
     App.trivia = TRIVIA.concat(REDSTONE);
     App.triviaPregunta = () => aPregunta(App.trivia[Math.floor(Math.random() * App.trivia.length)]);
@@ -153,7 +306,30 @@
       "Gólem de hierro": { c: { I: "#d8d3cb", i: "#bab3a8", R: "#a83a2b", N: "#a8957f" }, p: ["IIIIIIII", "IiiiiiiI", "IIIIIIII", "IRIIIIRI", "IIINNIII", "IIINNIII", "IiIIIIiI", "IIIIIIII"] },
       "Esqueleto del Wither": { c: { D: "#2b2b2b", d: "#3d3d3d", K: "#0b0b0b" }, p: ["DDDDDDDD", "DdDDDDdD", "DDDDDDDD", "DKKDDKKD", "DDDddDDD", "DDDKKDDD", "DdKKKKdD", "DDDDDDDD"] },
     };
+    // Caras con la textura del juego: [textura, ancho base, x, y, ancho, alto, x destino, y destino, (ancho destino, alto destino)]
+    const MOBS_TEX = {"Creeper": {"w": 8, "h": 8, "capas": [["creeper", 64, 8, 8, 8, 8, 0, 0]]}, "Zombi": {"w": 8, "h": 8, "capas": [["zombie", 64, 8, 8, 8, 8, 0, 0], ["zombie", 64, 40, 8, 8, 8, 0, 0]]}, "Esqueleto": {"w": 8, "h": 8, "capas": [["skeleton", 64, 8, 8, 8, 8, 0, 0]]}, "Enderman": {"w": 8, "h": 8, "capas": [["enderman", 64, 8, 8, 8, 8, 0, 0], ["enderman_ojos", 64, 8, 8, 8, 8, 0, 0]]}, "Cerdo": {"w": 8, "h": 8, "capas": [["pig", 64, 8, 8, 8, 8, 0, 0], ["pig", 64, 17, 17, 4, 3, 2, 4]]}, "Oveja": {"w": 8, "h": 8, "capas": [["sheep_lana", 64, 6, 6, 6, 6, 0, 0, 8, 8], ["sheep", 64, 8, 8, 6, 6, 1, 1]]}, "Gallina": {"w": 4, "h": 6, "capas": [["chicken", 64, 3, 3, 4, 6, 0, 0], ["chicken", 64, 16, 2, 4, 2, 0, 2]]}, "Araña": {"w": 8, "h": 8, "capas": [["spider", 64, 40, 12, 8, 8, 0, 0], ["spider_ojos", 64, 40, 12, 8, 8, 0, 0]]}, "Slime": {"w": 8, "h": 8, "capas": [["slime", 64, 6, 22, 6, 6, 1, 1], ["slime", 64, 34, 2, 2, 2, 0.75, 2], ["slime", 64, 34, 6, 2, 2, 5.25, 2], ["slime", 64, 33, 9, 1, 1, 4, 5], ["slime", 64, 8, 8, 8, 8, 0, 0]]}, "Blaze": {"w": 8, "h": 8, "capas": [["blaze", 64, 8, 8, 8, 8, 0, 0]]}, "Aldeano": {"w": 8, "h": 10, "capas": [["villager", 64, 8, 8, 8, 10, 0, 0], ["villager", 64, 26, 2, 2, 4, 3, 7]]}, "Ghast": {"w": 16, "h": 16, "capas": [["ghast", 64, 16, 16, 16, 16, 0, 0]]}, "Vaca": {"w": 8, "h": 8, "capas": [["cow", 64, 6, 6, 8, 8, 0, 0], ["cow", 64, 2, 34, 4, 3, 2, 5]]}, "Gólem de hierro": {"w": 8, "h": 10, "capas": [["iron_golem", 128, 8, 8, 8, 10, 0, 0], ["iron_golem", 128, 26, 2, 2, 4, 3, 7]]}, "Esqueleto del Wither": {"w": 8, "h": 8, "capas": [["wither_skeleton", 64, 8, 8, 8, 8, 0, 0]]}, "Bruja": {"w": 8, "h": 10, "capas": [["witch", 64, 8, 8, 8, 10, 0, 0], ["witch", 64, 26, 2, 2, 4, 3, 7]]}, "Piglin": {"w": 10, "h": 8, "capas": [["piglin", 64, 8, 8, 10, 8, 0, 0], ["piglin", 64, 32, 2, 4, 4, 3, 4]]}, "Ahogado": {"w": 8, "h": 8, "capas": [["drowned", 64, 8, 8, 8, 8, 0, 0], ["drowned_capa", 64, 8, 8, 8, 8, 0, 0]]}, "Husk": {"w": 8, "h": 8, "capas": [["husk", 64, 8, 8, 8, 8, 0, 0], ["husk", 64, 40, 8, 8, 8, 0, 0]]}, "Stray": {"w": 8, "h": 8, "capas": [["stray", 64, 8, 8, 8, 8, 0, 0], ["stray_capa", 64, 8, 8, 8, 8, 0, 0]]}};
+    const mobConTextura = n => MOBS_TEX[n] && MOBS_TEX[n].capas.every(c => TEX["mob_" + c[0]]);
+    const mobsDisponibles = () => [...new Set([...Object.keys(MOBS), ...Object.keys(MOBS_TEX)])].filter(n => mobConTextura(n) || MOBS[n]);
+    const celdasMob = n => mobConTextura(n) ? MOBS_TEX[n].w * MOBS_TEX[n].h : 64;
+    function caraMobTex(nombre, tam, oculto) {
+      const m = MOBS_TEX[nombre], px = tam / Math.max(m.w, m.h);
+      const [c, g] = lienzoPixel(Math.round(m.w * px), Math.round(m.h * px));
+      for (const [t, base, sx, sy, sw, sh, dx, dy, dw = sw, dh = sh] of m.capas) {
+        const im = TEX["mob_" + t], k = im.naturalWidth / base;
+        g.drawImage(im, sx * k, sy * k, sw * k, sh * k, dx * px, dy * px, dw * px, dh * px);
+      }
+      if (oculto) for (const n of oculto) {
+        const x = n % m.w, y = Math.floor(n / m.w);
+        g.fillStyle = "#2a3430"; g.fillRect(x * px, y * px, Math.ceil(px), Math.ceil(px));
+        g.fillStyle = "#33403b"; g.fillRect(x * px + 2, y * px + 2, px - 4, px - 4);
+      }
+      c.className = "pixel mob-cara" + (m.w !== m.h ? " no-cuadrada" : "");
+      return c;
+    }
+    // El creeper del buscaminas y de los reflejos, con la textura del juego si está
+    const creeperTex = () => mobConTextura("Creeper") ? `<img class="pixel" alt="" style="width:100%;height:100%;image-rendering:pixelated" src="${caraMobTex("Creeper", 64).toDataURL()}">` : null;
     function caraMob(nombre, tam = 160, oculto = null) {
+      if (mobConTextura(nombre)) return caraMobTex(nombre, tam, oculto);
       const m = MOBS[nombre], c = document.createElement("canvas"); c.width = c.height = tam;
       const g = c.getContext("2d"), px = tam / 8;
       m.p.forEach((fila, y) => [...fila].forEach((ch, x) => {
@@ -167,7 +343,7 @@
     }
 
     function adivinaMob() {
-      const nombres = Object.keys(MOBS), ronda = barajar(nombres).slice(0, 10);
+      const nombres = mobsDisponibles(), ronda = barajar(nombres).slice(0, 10);
       let i = 0, puntos = 0, reloj = null;
       const v = ventana("Adivina el mob", [["p", "Ronda", "1/10"], ["a", "Puntos", "0"], ["r", "Récord", num(leer("record-mob", 0))]], { alCerrar: () => clearInterval(reloj) });
       function sig() {
@@ -178,13 +354,14 @@
         }
         v.vals.p.textContent = `${i + 1}/10`;
         const mob = ronda[i];
-        const ocultos = new Set(barajar([...Array(64).keys()]).slice(0, 54));
+        const celdas = celdasMob(mob), ocultos = new Set(barajar([...Array(celdas).keys()]).slice(0, Math.round(celdas * 0.85)));
+        const porSegundo = Math.max(2, Math.round(celdas / 10));
         const lienzo = el("div", { class: "mob-lienzo" }, caraMob(mob, 200, ocultos));
         const ops = barajar([mob, ...barajar(nombres.filter(n => n !== mob)).slice(0, 3)]);
         let valor = 100;
         const valorEl = el("small", { class: "mob-valor", text: "Vale 100 puntos" });
         const pie = el("button", { class: "btn juego-btn juego-sig", type: "button", hidden: true, text: i === 9 ? "Ver resultado" : "Siguiente", onclick: () => { i++; sig(); } });
-        const q = { tipo: "Adivina el mob", ic: "ojo", titulo: "¿Qué mob es? Se va destapando…", opciones: ops.map(t => ({ texto: t })), correcta: mob, explicar: `Era ${mob === "Araña" ? "una araña" : mob}.` };
+        const q = { tipo: "Adivina el mob", ic: "ojo", titulo: "¿Qué mob es? Se va destapando…", opciones: ops.map(t => ({ texto: t })), correcta: mob, explicar: `Era ${({ "Araña": "una araña", "Bruja": "una bruja", "Oveja": "una oveja", "Gallina": "una gallina", "Vaca": "una vaca" })[mob] || mob}.` };
         const vista = pintarPregunta(q, bien => {
           clearInterval(reloj);
           lienzo.replaceChildren(caraMob(mob, 200));
@@ -195,7 +372,7 @@
         v.zona.replaceChildren(vista);
         reloj = setInterval(() => {
           // Destapa 6 pixeles por segundo; cada vez vale menos
-          const lista = [...ocultos]; barajar(lista).slice(0, 6).forEach(k => ocultos.delete(k));
+          const lista = [...ocultos]; barajar(lista).slice(0, porSegundo).forEach(k => ocultos.delete(k));
           valor = Math.max(10, valor - 10); valorEl.textContent = `Vale ${valor} puntos`;
           lienzo.replaceChildren(caraMob(mob, 200, ocultos));
           if (!ocultos.size) clearInterval(reloj);
@@ -207,35 +384,86 @@
     // =====================================================
     // CRAFTEO: ¿qué sale de esta receta?
     // =====================================================
-    const ING = { T: ["Tablas", "#b8945f"], P: ["Palo", "#8a6a3d"], C: ["Carbón", "#2b2b2b"], R: ["Roca", "#7d7d7d"], H: ["Hierro", "#d8d8d8"], Tr: ["Trigo", "#d9c34a"], L: ["Lana", "#efefef"],
-      Rs: ["Redstone", "#c0241b"], O: ["Oro", "#f2c94c"], Pv: ["Pólvora", "#5b5b5b"], A: ["Arena", "#e0d3a0"], Lb: ["Libro", "#7a4b2a"], D: ["Diamante", "#5fd0e8"], Ob: ["Obsidiana", "#2b1b3d"],
-      BH: ["Bloque de hierro", "#c9c9c9"], Cu: ["Cuerda", "#f4f4f4"], V: ["Vidrio", "#bfe6f2"], En: ["Estrella del Nether", "#fffbe0"] };
+    // [nombre, color de respaldo, textura del juego]
+    const ING = { T: ["Tablas", "#b8945f", "bloque_oak_planks"], P: ["Palo", "#8a6a3d", "item_stick"], C: ["Carbón", "#2b2b2b", "item_coal"], R: ["Roca", "#7d7d7d", "bloque_cobblestone"],
+      H: ["Hierro", "#d8d8d8", "item_iron_ingot"], Tr: ["Trigo", "#d9c34a", "item_wheat"], L: ["Lana", "#efefef", "bloque_white_wool"], Rs: ["Redstone", "#c0241b", "item_redstone"],
+      O: ["Oro", "#f2c94c", "item_gold_ingot"], Pv: ["Pólvora", "#5b5b5b", "item_gunpowder"], A: ["Arena", "#e0d3a0", "bloque_sand"], Lb: ["Libro", "#7a4b2a", "item_book"],
+      D: ["Diamante", "#5fd0e8", "item_diamond"], Ob: ["Obsidiana", "#2b1b3d", "bloque_obsidian"], BH: ["Bloque de hierro", "#c9c9c9", "bloque_iron_block"], Cu: ["Cuerda", "#f4f4f4", "item_string"],
+      V: ["Vidrio", "#bfe6f2", "bloque_glass"], En: ["Estrella del Nether", "#fffbe0", "item_nether_star"], Pa: ["Papel", "#f3f3ea", "item_paper"], Cr: ["Cuero", "#a0613a", "item_leather"],
+      Ca: ["Caña de azúcar", "#8fcf5a", "item_sugar_cane"], Le: ["Cubeta de leche", "#f5f5f5", "item_milk_bucket"], Az: ["Azúcar", "#fafafa", "item_sugar"], Hu: ["Huevo", "#e9d7b0", "item_egg"],
+      Pe: ["Perla de ender", "#1f6f61", "item_ender_pearl"], Bp: ["Polvo de blaze", "#f2a12c", "item_blaze_powder"], Pd: ["Pedernal", "#4a4a4a", "item_flint"], Pl: ["Pluma", "#f0f0f0", "item_feather"],
+      Cb: ["Cobre", "#d9875b", "item_copper_ingot"], Am: ["Fragmento de amatista", "#a77fdc", "item_amethyst_shard"], An: ["Antorcha", "#f2c94c", "bloque_torch"] };
+    // [lo que sale, receta 3x3, textura del resultado]
     const RECETAS = [
-      ["Mesa de crafteo", ["T", "T", "", "T", "T", "", "", "", ""]],
-      ["Antorcha", ["", "C", "", "", "P", "", "", "", ""]],
-      ["Pico de piedra", ["R", "R", "R", "", "P", "", "", "P", ""]],
-      ["Espada de hierro", ["", "H", "", "", "H", "", "", "P", ""]],
-      ["Horno", ["R", "R", "R", "R", "", "R", "R", "R", "R"]],
-      ["Cofre", ["T", "T", "T", "T", "", "T", "T", "T", "T"]],
-      ["Cubeta", ["H", "", "H", "", "H", "", "", "", ""]],
-      ["Pan", ["", "", "", "Tr", "Tr", "Tr", "", "", ""]],
-      ["Cama", ["L", "L", "L", "T", "T", "T", "", "", ""]],
-      ["Escalera de mano", ["P", "", "P", "P", "P", "P", "P", "", "P"]],
-      ["Barco", ["T", "", "T", "T", "T", "T", "", "", ""]],
-      ["Brújula", ["", "H", "", "H", "Rs", "H", "", "H", ""]],
-      ["Reloj", ["", "O", "", "O", "Rs", "O", "", "O", ""]],
-      ["TNT", ["Pv", "A", "Pv", "A", "Pv", "A", "Pv", "A", "Pv"]],
-      ["Mesa de encantamientos", ["", "Lb", "", "D", "Ob", "D", "Ob", "Ob", "Ob"]],
-      ["Yunque", ["BH", "BH", "BH", "", "H", "", "H", "H", "H"]],
-      ["Arco", ["", "P", "Cu", "P", "", "Cu", "", "P", "Cu"]],
-      ["Faro", ["V", "V", "V", "V", "En", "V", "Ob", "Ob", "Ob"]],
-      ["Pistón", ["T", "T", "T", "R", "H", "R", "R", "Rs", "R"]],
-      ["Puerta de madera", ["T", "T", "", "T", "T", "", "T", "T", ""]],
-      ["Escudo", ["T", "H", "T", "T", "T", "T", "", "T", ""]],
-      ["Pico de diamante", ["D", "D", "D", "", "P", "", "", "P", ""]],
+      ["Mesa de crafteo", ["T", "T", "", "T", "T", "", "", "", ""], "bloque_crafting_table_front"],
+      ["Antorcha", ["", "C", "", "", "P", "", "", "", ""], "bloque_torch"],
+      ["Pico de piedra", ["R", "R", "R", "", "P", "", "", "P", ""], "item_stone_pickaxe"],
+      ["Espada de hierro", ["", "H", "", "", "H", "", "", "P", ""], "item_iron_sword"],
+      ["Horno", ["R", "R", "R", "R", "", "R", "R", "R", "R"], "bloque_furnace_front"],
+      ["Cofre", ["T", "T", "T", "T", "", "T", "T", "T", "T"], null],
+      ["Cubeta", ["H", "", "H", "", "H", "", "", "", ""], "item_bucket"],
+      ["Pan", ["", "", "", "Tr", "Tr", "Tr", "", "", ""], "item_bread"],
+      ["Cama", ["L", "L", "L", "T", "T", "T", "", "", ""], null],
+      ["Escalera de mano", ["P", "", "P", "P", "P", "P", "P", "", "P"], "bloque_ladder"],
+      ["Barco", ["T", "", "T", "T", "T", "T", "", "", ""], "item_oak_boat"],
+      ["Brújula", ["", "H", "", "H", "Rs", "H", "", "H", ""], null],
+      ["Reloj", ["", "O", "", "O", "Rs", "O", "", "O", ""], null],
+      ["TNT", ["Pv", "A", "Pv", "A", "Pv", "A", "Pv", "A", "Pv"], "bloque_tnt_side"],
+      ["Mesa de encantamientos", ["", "Lb", "", "D", "Ob", "D", "Ob", "Ob", "Ob"], "bloque_enchanting_table_side"],
+      ["Yunque", ["BH", "BH", "BH", "", "H", "", "H", "H", "H"], null],
+      ["Arco", ["", "P", "Cu", "P", "", "Cu", "", "P", "Cu"], "item_bow"],
+      ["Faro", ["V", "V", "V", "V", "En", "V", "Ob", "Ob", "Ob"], "bloque_beacon"],
+      ["Pistón", ["T", "T", "T", "R", "H", "R", "R", "Rs", "R"], "bloque_piston_side"],
+      ["Puerta de madera", ["T", "T", "", "T", "T", "", "T", "T", ""], "item_oak_door"],
+      ["Escudo", ["T", "H", "T", "T", "T", "T", "", "T", ""], null],
+      ["Pico de diamante", ["D", "D", "D", "", "P", "", "", "P", ""], "item_diamond_pickaxe"],
+      ["Pala de hierro", ["", "H", "", "", "P", "", "", "P", ""], "item_iron_shovel"],
+      ["Hacha de piedra", ["R", "R", "", "R", "P", "", "", "P", ""], "item_stone_axe"],
+      ["Azada de hierro", ["H", "H", "", "", "P", "", "", "P", ""], "item_iron_hoe"],
+      ["Casco de hierro", ["H", "H", "H", "H", "", "H", "", "", ""], "item_iron_helmet"],
+      ["Peto de hierro", ["H", "", "H", "H", "H", "H", "H", "H", "H"], "item_iron_chestplate"],
+      ["Pantalones de hierro", ["H", "H", "H", "H", "", "H", "H", "", "H"], "item_iron_leggings"],
+      ["Botas de hierro", ["", "", "", "H", "", "H", "H", "", "H"], "item_iron_boots"],
+      ["Papel", ["", "", "", "Ca", "Ca", "Ca", "", "", ""], "item_paper"],
+      ["Libro", ["Pa", "Pa", "", "Pa", "Cr", "", "", "", ""], "item_book"],
+      ["Pastel", ["Le", "Le", "Le", "Az", "Hu", "Az", "Tr", "Tr", "Tr"], "item_cake"],
+      ["Antorcha de redstone", ["", "Rs", "", "", "P", "", "", "", ""], "bloque_redstone_torch"],
+      ["Palanca", ["", "P", "", "", "R", "", "", "", ""], "bloque_lever"],
+      ["Caña de pescar", ["", "", "P", "", "P", "Cu", "P", "", "Cu"], "item_fishing_rod"],
+      ["Tijeras", ["", "H", "", "H", "", "", "", "", ""], "item_shears"],
+      ["Vagoneta", ["", "", "", "H", "", "H", "H", "H", "H"], "item_minecart"],
+      ["Rieles", ["H", "", "H", "H", "P", "H", "H", "", "H"], "bloque_rail"],
+      ["Bloque de diamante", ["D", "D", "D", "D", "D", "D", "D", "D", "D"], "bloque_diamond_block"],
+      ["Ojo de ender", ["", "", "", "Pe", "Bp", "", "", "", ""], "item_ender_eye"],
+      ["Bol", ["", "", "", "T", "", "T", "", "T", ""], "item_bowl"],
+      ["Flecha", ["", "Pd", "", "", "P", "", "", "Pl", ""], "item_arrow"],
+      ["Catalejo", ["", "Am", "", "", "Cb", "", "", "Cb", ""], "item_spyglass"],
+      ["Manzana dorada", ["O", "O", "O", "O", "", "O", "O", "O", "O"], null],
+      ["Librero", ["T", "T", "T", "Lb", "Lb", "Lb", "T", "T", "T"], "bloque_bookshelf"],
+      ["Barrotes de hierro", ["", "", "", "H", "H", "H", "H", "H", "H"], "bloque_iron_bars"],
     ];
+    // La manzana dorada lleva una manzana en medio
+    RECETAS.find(r => r[0] === "Manzana dorada")[1][4] = "Mz";
+    RECETAS.find(r => r[0] === "Manzana dorada")[2] = "item_golden_apple";
+    RECETAS.find(r => r[0] === "Brújula")[2] = "item_compass";
+    RECETAS.find(r => r[0] === "Reloj")[2] = "item_clock";
+    ING.Mz = ["Manzana", "#d32f2f", "item_apple"];
+    const iconoTex = (clave, clase) => {
+      const im = clave && TEX[clave];
+      if (!im) return null;
+      // Las texturas animadas (como el fuego) vienen en tira: se toma el primer cuadro
+      const lado = Math.min(im.naturalWidth, im.naturalHeight);
+      const [c, g] = lienzoPixel(lado, lado);
+      g.drawImage(im, 0, 0, lado, lado, 0, 0, lado, lado);
+      c.className = "pixel " + clase;
+      return c;
+    };
     function rejillaReceta(cel) {
-      return el("div", { class: "receta" }, cel.map(k => k ? el("span", { class: "receta-cel", style: `--c:${ING[k][1]}`, title: ING[k][0] }, el("i"), el("small", { text: ING[k][0] })) : el("span", { class: "receta-cel vacia" })));
+      return el("div", { class: "receta" }, cel.map(k => {
+        if (!k) return el("span", { class: "receta-cel vacia" });
+        const tex = iconoTex(ING[k][2], "receta-tex");
+        return el("span", { class: "receta-cel" + (tex ? " con-tex" : ""), style: `--c:${ING[k][1]}`, title: ING[k][0] }, tex || el("i"), el("small", { text: ING[k][0] }));
+      }));
     }
     function crafteo() {
       const ronda = barajar(RECETAS).slice(0, 10);
@@ -247,12 +475,19 @@
           return final(v.zona, { etiqueta: "RESULTADO", numero: `${puntos}/10`, texto: (puntos >= 9 ? "Te sabes las recetas de memoria." : puntos >= 6 ? "Buen crafteador." : "A abrir el libro de recetas.") + (r.nuevo ? " ¡Nuevo récord!" : ""), otra: () => { v.cerrar(); setTimeout(crafteo, 220); }, compartirTxt: `Saqué ${puntos}/10 en Crafteo de la 224.` });
         }
         v.vals.p.textContent = `${i + 1}/10`;
-        const [res, cel] = ronda[i];
+        const [res, cel, texRes] = ronda[i];
         const ops = barajar([res, ...barajar(RECETAS.map(r => r[0]).filter(n => n !== res)).slice(0, 3)]);
         const pie = el("button", { class: "btn juego-btn juego-sig", type: "button", hidden: true, text: i === 9 ? "Ver resultado" : "Siguiente", onclick: () => { i++; sig(); } });
-        const vista = pintarPregunta({ tipo: "Crafteo", ic: "estrella", titulo: "¿Qué sale de esta receta?", opciones: ops.map(t => ({ texto: t })), correcta: res, explicar: `Es ${res === "TNT" ? "la TNT" : "un(a) " + res.toLowerCase()}.` },
-          bien => { if (bien) { puntos++; v.vals.a.textContent = puntos; } pie.hidden = false; pie.focus(); }, { pie });
-        vista.querySelector("h3").after(rejillaReceta(cel));
+        // La casilla del resultado: "?" hasta que contestas
+        const salida = el("span", { class: "receta-salida", "aria-label": "Resultado" }, el("b", { text: "?" }));
+        const vista = pintarPregunta({ tipo: "Crafteo", ic: "estrella", titulo: "¿Qué sale de esta receta?", opciones: ops.map(t => ({ texto: t })), correcta: res, explicar: `Sale: ${res}.` },
+          bien => {
+            if (bien) { puntos++; v.vals.a.textContent = puntos; }
+            salida.replaceChildren(iconoTex(texRes, "receta-tex") || el("small", { text: res }));
+            salida.classList.add("revelada");
+            pie.hidden = false; pie.focus();
+          }, { pie });
+        vista.querySelector("h3").after(el("div", { class: "receta-mesa" }, rejillaReceta(cel), el("span", { class: "receta-flecha", "aria-hidden": "true", text: "➜" }), salida));
         v.zona.replaceChildren(vista);
       }
       sig();
@@ -484,7 +719,11 @@
       function soltar() { while (bajar()) puntos += 1; v.vals.a.textContent = num(puntos); }
       function rotar() { const f = pieza.f[0].map((_, i) => pieza.f.map(r => r[i]).reverse()); for (const k of [0, -1, 1, -2, 2]) if (!choca(f, px + k, py)) { pieza.f = f; px += k; return; } }
       function fin() { vivo = false; const r = record("record-tetris", puntos); v.vals.r.textContent = num(r.mejor); aviso.textContent = `${num(puntos)} puntos y ${lineas} ${lineas === 1 ? "línea" : "líneas"}.${r.nuevo ? " ¡Nuevo récord!" : ""}`; boton.hidden = false; }
+      const TEX_TETRIS = ["bloque_diamond_block", "bloque_gold_block", "bloque_redstone_block", "bloque_emerald_block", "bloque_lapis_block", "bloque_copper_block", "bloque_grass_block_side"];
+      g.imageSmoothingEnabled = false; gp.imageSmoothingEnabled = false;
       function bloque(gg, x, y, t, k) {
+        const im = TEX[TEX_TETRIS[k]];
+        if (im) { gg.drawImage(im, 0, 0, 16, 16, x, y, t, t); gg.fillStyle = "#0000002a"; gg.fillRect(x, y + t - 2, t, 2); gg.fillRect(x + t - 2, y, 2, t); return; }
         const [a, b] = COLORES[k]; gg.fillStyle = b; gg.fillRect(x, y, t, t); gg.fillStyle = a; gg.fillRect(x + 2, y + 2, t - 4, t - 4);
         gg.fillStyle = "#ffffff55"; gg.fillRect(x + 2, y + 2, t - 4, 3); gg.fillStyle = "#00000033"; gg.fillRect(x + t * .5, y + t * .5, t * .2, t * .2); gg.fillRect(x + t * .2, y + t * .3, t * .15, t * .15);
       }
@@ -535,7 +774,7 @@
       const aviso = el("p", { class: "juego-nota", text: "Destapa todo sin tocar un creeper. En compu, clic derecho pone bandera." });
       const otraB = el("button", { class: "btn juego-btn", type: "button", hidden: true, html: icono("actualizar", 16) + "Otra vez", onclick: iniciar });
       v.zona.append(tab, el("div", { class: "juego-acciones" }, modo, otraB), aviso);
-      const creeper = `<svg viewBox="0 0 8 8" width="100%" height="100%" shape-rendering="crispEdges"><rect width="8" height="8" fill="#4caf50"/><path fill="#111" d="M1 2h2v2H1zM5 2h2v2H5zM3 4h2v1H3zM2 5h4v2H2zM2 7h1v1H2zM5 7h1v1H5z"/></svg>`;
+      const creeper = creeperTex() || `<svg viewBox="0 0 8 8" width="100%" height="100%" shape-rendering="crispEdges"><rect width="8" height="8" fill="#4caf50"/><path fill="#111" d="M1 2h2v2H1zM5 2h2v2H5zM3 4h2v1H3zM2 5h4v2H2zM2 7h1v1H2zM5 7h1v1H5z"/></svg>`;
       function iniciar() {
         celdas = Array.from({ length: N * N }, () => ({ mina: false, n: 0, abierta: false, bandera: false }));
         abiertas = 0; primer = true; vivo = true; clearInterval(reloj); v.vals.t.textContent = "0 s"; v.vals.m.textContent = MINAS; otraB.hidden = true;
@@ -600,7 +839,7 @@
       const aviso = el("p", { class: "juego-nota", text: "Sale un creeper. Pícale antes de que explote. Si le das a un hoyo vacío, pierdes una vida." });
       const otraB = el("button", { class: "btn juego-btn", type: "button", html: icono("play", 16) + "Empezar", onclick: iniciar });
       v.zona.append(hoyos, aviso, otraB);
-      const creeper = `<svg viewBox="0 0 8 8" width="100%" height="100%" shape-rendering="crispEdges"><rect width="8" height="8" fill="#4caf50"/><path fill="#2e7d32" d="M0 0h1v1H0zM6 1h1v1H6zM3 6h1v1H3z"/><path fill="#111" d="M1 2h2v2H1zM5 2h2v2H5zM3 4h2v1H3zM2 5h4v2H2zM2 7h1v1H2zM5 7h1v1H5z"/></svg>`;
+      const creeper = creeperTex() || `<svg viewBox="0 0 8 8" width="100%" height="100%" shape-rendering="crispEdges"><rect width="8" height="8" fill="#4caf50"/><path fill="#2e7d32" d="M0 0h1v1H0zM6 1h1v1H6zM3 6h1v1H3z"/><path fill="#111" d="M1 2h2v2H1zM5 2h2v2H5zM3 4h2v1H3zM2 5h4v2H2zM2 7h1v1H2zM5 7h1v1H5z"/></svg>`;
       function iniciar() { puntos = 0; vidas = 3; ventanaMs = 1300; vivo = true; otraB.hidden = true; v.vals.a.textContent = "0"; v.vals.v.textContent = "3"; aviso.className = "juego-nota"; aviso.textContent = "¡Atento!"; setTimeout(sale, 700); }
       function sale() {
         if (!vivo) return;
@@ -640,16 +879,16 @@
     App.juegosExtra = [
       { grupo: "saber", titulo: "Trivia de Minecraft", texto: "10 preguntas del juego: mobs, crafteos, dimensiones.", icono: "pregunta", record: "record-trivia", formato: v => v + "/10", abrir: () => trivia(TRIVIA, "Trivia de Minecraft", "record-trivia", "Trivia", "pregunta") },
       { grupo: "saber", titulo: "Trivia de redstone", texto: "Para los que saben de pistones, repetidores y relojes.", icono: "rayo", record: "record-redstone", formato: v => v + "/10", abrir: () => trivia(REDSTONE, "Trivia de redstone", "record-redstone", "Redstone", "rayo") },
-      { grupo: "saber", titulo: "Adivina el mob", texto: "La cara se va destapando. Mientras antes adivines, más puntos.", icono: "ojo", record: "record-mob", abrir: adivinaMob },
-      { grupo: "saber", titulo: "Crafteo", texto: "Te enseño la receta y tú dices qué sale.", icono: "estrella", record: "record-crafteo", formato: v => v + "/10", abrir: crafteo },
+      { grupo: "saber", titulo: "Adivina el mob", texto: "La cara se va destapando. Mientras antes adivines, más puntos.", icono: "ojo", record: "record-mob", abrir: conTexturas(adivinaMob) },
+      { grupo: "saber", titulo: "Crafteo", texto: "Te enseño la receta y tú dices qué sale.", icono: "estrella", record: "record-crafteo", formato: v => v + "/10", abrir: conTexturas(crafteo) },
       { grupo: "saber", titulo: "Wordle de Minecraft", texto: "Una palabra de 5 letras al día, 6 intentos.", icono: "libro", record: "record-wordle", formato: v => v + " ganados", abrir: () => wordle(false) },
       { grupo: "clasicos", titulo: "Snake del ajolote", texto: "Come y crece sin chocar con las paredes ni contigo.", icono: "pez", record: "record-snake", abrir: snake },
       { grupo: "clasicos", titulo: "Flappy elytra", texto: "Vuela entre los pilares de obsidiana.", icono: "ala", record: "record-flappy", abrir: flappy },
-      { grupo: "clasicos", titulo: "Tetris de bloques", texto: "Con bloques de diamante, oro, redstone y más.", icono: "ladrillo", record: "record-tetris", abrir: tetris },
-      { grupo: "clasicos", titulo: "Buscaminas de creepers", texto: "Destapa todo sin despertar a un creeper.", icono: "calavera", record: "record-buscaminas", formato: v => dec(v) + " s", abrir: buscaminas },
-      { grupo: "clasicos", titulo: "Reflejos contra el creeper", texto: "Pégale antes de que explote. Cada vez más rápido.", icono: "rayo", record: "record-reflejos", abrir: reflejos },
+      { grupo: "clasicos", titulo: "Tetris de bloques", texto: "Con bloques de diamante, oro, redstone y más.", icono: "ladrillo", record: "record-tetris", abrir: conTexturas(tetris) },
+      { grupo: "clasicos", titulo: "Buscaminas de creepers", texto: "Destapa todo sin despertar a un creeper.", icono: "calavera", record: "record-buscaminas", formato: v => dec(v) + " s", abrir: conTexturas(buscaminas) },
+      { grupo: "clasicos", titulo: "Reflejos contra el creeper", texto: "Pégale antes de que explote. Cada vez más rápido.", icono: "rayo", record: "record-reflejos", abrir: conTexturas(reflejos) },
     ];
-    Object.assign(App.juegos || {}, { trivia: () => trivia(TRIVIA, "Trivia de Minecraft", "record-trivia", "Trivia", "pregunta"), adivinaMob, crafteo, wordle, snake, flappy, tetris, buscaminas, reflejos });
+    Object.assign(App.juegos || {}, { trivia: () => trivia(TRIVIA, "Trivia de Minecraft", "record-trivia", "Trivia", "pregunta"), adivinaMob: conTexturas(adivinaMob), crafteo: conTexturas(crafteo), wordle, snake, flappy, tetris: conTexturas(tetris), buscaminas: conTexturas(buscaminas), reflejos: conTexturas(reflejos) });
     if (App.juegos && App.juegos.repintar && !document.querySelector(".juego-ventana")) App.juegos.repintar();
   });
 })();

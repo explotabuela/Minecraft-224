@@ -172,7 +172,10 @@
     const filas = ["..RRRR.W", ".RRRRrRW", "RRRrRRR.", "WWWWWWWW"];
     filas.forEach((f, y) => [...f].forEach((ch, x) => { if (ch === ".") return; g.fillStyle = ch === "R" ? R : ch === "r" ? r : W; g.fillRect(x0 + x * px, y0 + (y - 1) * px, px, px); }));
   }
+  // Skins en 3D (con pelo, gorra y chamarra con volumen); se puede apagar en Ajustes
+  const en3D = () => { try { if (localStorage.getItem("m224-ajuste-skins3d") === "false") return false; } catch {} return !!window.Skin3D; };
   function dibujarCara(im, tam = 128) {
+    if (en3D()) { try { return Skin3D.cabeza(im, tam, gorrito()).toDataURL(); } catch {} }
     const c = document.createElement("canvas"); c.width = c.height = tam;
     const g = c.getContext("2d"); g.imageSmoothingEnabled = false;
     g.drawImage(im, 8, 8, 8, 8, 0, 0, tam, tam);
@@ -181,6 +184,7 @@
     return c.toDataURL();
   }
   function dibujarCuerpo(im, slim, alto = 320) {
+    if (en3D()) { try { return Skin3D.cuerpo(im, slim, alto, gorrito()).toDataURL(); } catch {} }
     const e = Math.max(1, Math.round(alto / 32)), aw = slim ? 3 : 4, nueva = im.naturalHeight === 64;
     const c = document.createElement("canvas"); c.width = 16 * e; c.height = 32 * e;
     const g = c.getContext("2d"); g.imageSmoothingEnabled = false;

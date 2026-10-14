@@ -27,6 +27,7 @@
       letra: () => leer("ajuste-letra", false),
       particulas: () => leer("ajuste-particulas", !reducido),
       temporada: () => leer("ajuste-temporada", true),
+      skins3d: () => leer("ajuste-skins3d", true),
     };
 
     // ---------- Temporada actual ----------
@@ -62,6 +63,7 @@
         fila("contraste", "Alto contraste", "Colores más fuertes para que se lea mejor.", AJ.contraste(), v => { guardar("ajuste-contraste", v); raiz.classList.toggle("alto-contraste", v); }),
         fila("letra", "Letra más grande", "Agranda todo el texto de la página.", AJ.letra(), v => { guardar("ajuste-letra", v); raiz.classList.toggle("letra-grande", v); }),
         fila("particulas", "Bloques flotando", "Los bloquecitos que flotan en el inicio.", AJ.particulas(), v => { guardar("ajuste-particulas", v); v ? particulas() : pararParticulas(); }),
+        fila("skins3d", "Skins en 3D", "Caras y cuerpos con volumen (pelo, gorras, chamarras). Apágalo si tu cel va lento.", AJ.skins3d(), v => { guardar("ajuste-skins3d", v); App.M.avisar("Se aplica al recargar la página"); }),
         fila("temporada", "Adornos de temporada", "Nieve en diciembre, fuegos en año nuevo y aniversarios.", AJ.temporada(), v => { guardar("ajuste-temporada", v); App.M.avisar("Se aplica al recargar la página"); }),
         el("div", { class: "ajustes-acciones" },
           el("button", { class: "btn juego-btn", type: "button", html: icono("actualizar", 16) + "Buscar datos nuevos", onclick: () => recargarDatos(true) }),

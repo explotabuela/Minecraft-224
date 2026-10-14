@@ -841,11 +841,23 @@
 @keyframes tiempo{from{transform:scaleX(1)}to{transform:scaleX(0)}}
 .mob-lienzo{display:grid;place-items:center}
 .mob-cara{width:min(200px,50vw);height:auto;aspect-ratio:1;border-radius:12px;box-shadow:0 10px 24px #0005;image-rendering:pixelated}
+.mob-cara.no-cuadrada{aspect-ratio:auto;max-height:min(220px,55vw);width:auto;max-width:min(240px,60vw)}
 .mob-valor{color:var(--oro);font-weight:700}
 .receta{display:grid;grid-template-columns:repeat(3,minmax(0,78px));gap:4px;padding:8px;border-radius:12px;background:#8b8b8b;box-shadow:inset 0 0 0 3px #c6c6c6,inset 0 0 0 5px #555}
 .receta-cel{aspect-ratio:1;display:grid;place-items:center;align-content:center;gap:2px;background:#8b8b8b;box-shadow:inset 2px 2px 0 #373737,inset -2px -2px 0 #fff;padding:4px;text-align:center}
 .receta-cel i{width:46%;aspect-ratio:1;background:var(--c);box-shadow:inset -3px -3px 0 #0003,inset 3px 3px 0 #fff5}
 .receta-cel small{font-size:.58rem;font-weight:800;color:#1b1b1b;line-height:1.05}
+.receta-tex{width:62%;height:auto;aspect-ratio:1;image-rendering:pixelated;filter:drop-shadow(2px 2px 0 #0004)}
+.receta-cel.con-tex small{font-size:.52rem}
+.receta-mesa{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap}
+.receta-flecha{font-size:1.8rem;color:#c6c6c6;font-weight:900}
+.receta-salida{flex:none;width:clamp(64px,18vw,96px);height:clamp(64px,18vw,96px);display:grid;place-items:center;text-align:center;background:#8b8b8b;border:4px solid;border-color:#373737 #fff #fff #373737;outline:3px solid #c6c6c6;border-radius:4px;padding:6px;box-sizing:border-box}
+.receta-salida b{font-size:1.8rem;color:#373737}
+.receta-salida small{font-size:.58rem;font-weight:800;color:#1b1b1b;line-height:1.1}
+.receta-salida.revelada{animation:salidaPop .35s ease-out}
+.receta-salida .receta-tex{width:70%}
+@keyframes salidaPop{from{transform:scale(.6)}to{transform:scale(1)}}
+@media (max-width:420px){.receta{grid-template-columns:repeat(3,minmax(0,60px))}.receta-mesa{gap:6px}.receta-flecha{font-size:1.3rem}}
 .wordle{display:grid;gap:5px;justify-content:center}
 .wordle-fila{display:grid;grid-template-columns:repeat(5,clamp(40px,12vw,54px));gap:5px}
 .wordle-cel{aspect-ratio:1;display:grid;place-items:center;border:2px solid var(--linea);border-radius:8px;font:800 1.4rem var(--f-display);text-transform:uppercase}
