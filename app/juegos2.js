@@ -601,17 +601,75 @@
       let cuerpo, dir, sigDir, comida, puntos, vel, reloj, vivo;
       const v = ventana("Snake del ajolote", [["a", "Puntos", "0"], ["r", "Récord", num(leer("record-snake", 0))]], { ancho: 460, alCerrar: () => { clearTimeout(reloj); removeEventListener("keydown", teclas); } });
       const COMIDAS = [["#d32f2f", "#7b1f1f"], ["#f2994a", "#b35f1c"], ["#5fd0e8", "#2a8aa0"], ["#f2c94c", "#a8841c"]];
-      function nuevaComida() { do comida = { x: Math.floor(Math.random() * N), y: Math.floor(Math.random() * N), c: COMIDAS[Math.floor(Math.random() * COMIDAS.length)] }; while (cuerpo.some(p => p.x === comida.x && p.y === comida.y)); }
+      function nuevaComida() { do comida = { x: Math.floor(Math.random() * N), y: Math.floor(Math.random() * N), c: COMIDAS[Math.floor(Math.random() * COMIDAS.length)], tex: PECES.length ? PECES[Math.floor(Math.random() * PECES.length)] : null }; while (cuerpo.some(p => p.x === comida.x && p.y === comida.y)); }
       function iniciar() { cuerpo = [{ x: 8, y: 9 }, { x: 7, y: 9 }, { x: 6, y: 9 }]; dir = sigDir = { x: 1, y: 0 }; puntos = 0; vel = 150; vivo = true; v.vals.a.textContent = "0"; nuevaComida(); clearTimeout(reloj); bucle(); }
+      // Fondo de musgo (con la textura del juego si está; si no, pasto dibujado)
+      if (!g.roundRect) g.roundRect = function (x, y, w, h) { this.rect(x, y, w, h); };
+      const fondo = (() => {
+        const [bc, bg] = lienzoPixel(N * T, N * T), musgo = TEX.bloque_moss_block;
+        let semilla = 7; const rnd = () => (semilla = (semilla * 16807) % 2147483647) / 2147483647;
+        for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) {
+          if (musgo) bg.drawImage(musgo, 0, 0, 16, 16, x * T, y * T, T, T);
+          else {
+            bg.fillStyle = (x + y) % 2 ? "#3f7a3a" : "#467f40"; bg.fillRect(x * T, y * T, T, T);
+            for (let k = 0; k < 6; k++) { bg.fillStyle = rnd() < .5 ? "#356a31" : "#5a9450"; bg.fillRect(x * T + (rnd() * 5 | 0) * 4, y * T + (rnd() * 5 | 0) * 4, 4, 4); }
+          }
+          if ((x + y) % 2) { bg.fillStyle = "#00000014"; bg.fillRect(x * T, y * T, T, T); }
+        }
+        // Orillas más oscuras
+        const vi = bg.createRadialGradient(N * T / 2, N * T / 2, N * T * .3, N * T / 2, N * T / 2, N * T * .75);
+        vi.addColorStop(0, "#0000"); vi.addColorStop(1, "#0006"); bg.fillStyle = vi; bg.fillRect(0, 0, N * T, N * T);
+        return bc;
+      })();
+      const PECES = ["item_tropical_fish", "item_salmon", "item_cod"].filter(k => TEX[k]);
+      let pops = [];
+      function pez(x, y) {
+        const cx = x * T + T / 2, cy = y * T + T / 2;
+        g.fillStyle = "#0004"; g.beginPath(); g.ellipse(cx, cy + 7, 7, 2.5, 0, 0, 7); g.fill();
+        if (comida.tex) { g.drawImage(TEX[comida.tex], 0, 0, 16, 16, x * T - 2, y * T - 3, T + 4, T + 4); return; }
+        g.fillStyle = comida.c[0]; g.beginPath(); g.ellipse(cx - 1, cy, 7, 4.5, 0, 0, 7); g.fill();
+        g.beginPath(); g.moveTo(cx + 5, cy); g.lineTo(cx + 10, cy - 5); g.lineTo(cx + 10, cy + 5); g.closePath(); g.fill();
+        g.fillStyle = comida.c[1]; g.fillRect(cx - 2, cy - 4, 2, 8); g.fillStyle = "#111"; g.fillRect(cx - 6, cy - 2, 2, 2);
+      }
       function dibujar() {
-        for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) { g.fillStyle = (x + y) % 2 ? "#3f7a3a" : "#467f40"; g.fillRect(x * T, y * T, T, T); }
-        g.fillStyle = comida.c[0]; g.fillRect(comida.x * T + 3, comida.y * T + 3, T - 6, T - 6); g.fillStyle = comida.c[1]; g.fillRect(comida.x * T + T / 2, comida.y * T + 3, T / 2 - 3, T / 2 - 3);
-        cuerpo.forEach((p, i) => {
-          g.fillStyle = i === 0 ? "#f7a8c4" : i % 2 ? "#ee8fb3" : "#f29cbc"; g.fillRect(p.x * T + 1, p.y * T + 1, T - 2, T - 2);
-          if (i === 0) { g.fillStyle = "#3a1d2a"; const ex = dir.x === 0 ? [5, 13] : dir.x > 0 ? [13, 13] : [5, 5], ey = dir.y === 0 ? [5, 13] : dir.y > 0 ? [13, 13] : [5, 5];
-            g.fillRect(p.x * T + ex[0] - 1, p.y * T + ey[0] - 1, 3, 3); g.fillRect(p.x * T + ex[1] - 1, p.y * T + ey[1] - 1, 3, 3);
-            g.fillStyle = "#e05a8a"; g.fillRect(p.x * T - 2, p.y * T + 2, 3, 4); g.fillRect(p.x * T + T - 1, p.y * T + 2, 3, 4); }
-        });
+        g.drawImage(fondo, 0, 0);
+        pez(comida.x, comida.y);
+        const centro = p => [p.x * T + T / 2, p.y * T + T / 2];
+        const n = cuerpo.length, radio = i => (T / 2 - 1) * (i === 0 ? 1.05 : 1 - Math.max(0, i - n + 4) * .14);
+        // Cuerpo: de la cola a la cabeza, bien unido
+        for (let i = n - 1; i > 0; i--) {
+          const [x1, y1] = centro(cuerpo[i]), [x2, y2] = centro(cuerpo[i - 1]), r = radio(i);
+          g.strokeStyle = "#d9799f"; g.lineWidth = r * 2 + 2; g.lineCap = "round"; g.beginPath(); g.moveTo(x1, y1); g.lineTo(x2, y2); g.stroke();
+          g.strokeStyle = "#f4a3c3"; g.lineWidth = r * 2 - 1; g.beginPath(); g.moveTo(x1, y1); g.lineTo(x2, y2); g.stroke();
+          g.strokeStyle = "#fbc6da"; g.lineWidth = r * .7; g.beginPath(); g.moveTo(x1, y1 - r * .35); g.lineTo(x2, y2 - r * .35); g.stroke();
+          if (i % 3 === 1) { g.fillStyle = "#e486ab"; g.fillRect(x1 - 2, y1 + 1, 3, 3); g.fillRect(x1 + 3, y1 - 3, 2, 2); }
+        }
+        // Aleta de la cola
+        if (n > 1) {
+          const [tx, ty] = centro(cuerpo[n - 1]), [px, py] = centro(cuerpo[n - 2]), a = Math.atan2(ty - py, tx - px);
+          g.save(); g.translate(tx, ty); g.rotate(a); g.fillStyle = "#e58bb0";
+          g.beginPath(); g.moveTo(0, -5); g.quadraticCurveTo(14, 0, 0, 5); g.closePath(); g.fill(); g.restore();
+        }
+        // Cabeza con branquias
+        const [hx, hy] = centro(cuerpo[0]), ang = Math.atan2(dir.y, dir.x);
+        g.save(); g.translate(hx, hy); g.rotate(ang);
+        const ond = Math.sin(Date.now() / 140) * 1.2;
+        g.fillStyle = "#c93f74";
+        for (const lado of [-1, 1]) for (let k = 0; k < 3; k++) {
+          g.save(); g.translate(-4 + k * 3, lado * 8); g.rotate(lado * (0.7 + k * 0.35) + lado * ond * .05);
+          g.fillRect(-1.5, 0, 3, 7 + (k === 1 ? 2 : 0)); g.restore();
+        }
+        g.fillStyle = "#d9799f"; g.beginPath(); g.roundRect(-10, -10, 21, 20, 7); g.fill();
+        g.fillStyle = "#f7b3cd"; g.beginPath(); g.roundRect(-9, -9, 19, 18, 6); g.fill();
+        g.fillStyle = "#fbd0e0"; g.fillRect(-6, -7, 10, 4);
+        // Ojos y boquita
+        g.fillStyle = "#1d0f16"; g.fillRect(4, -7, 4, 4); g.fillRect(4, 3, 4, 4);
+        g.fillStyle = "#fff"; g.fillRect(6, -7, 1.5, 1.5); g.fillRect(6, 3, 1.5, 1.5);
+        g.fillStyle = "#b8507a"; g.fillRect(9, -2, 1.5, 4);
+        g.restore();
+        // "+1" al comer
+        pops = pops.filter(p => p.t-- > 0);
+        pops.forEach(p => { g.globalAlpha = p.t / 6; g.fillStyle = "#fff"; g.font = "bold 14px sans-serif"; g.textAlign = "center"; g.fillText("+1", p.x, p.y - (6 - p.t) * 3); g.globalAlpha = 1; });
         if (!vivo) { g.fillStyle = "#000a"; g.fillRect(0, 0, c.width, c.height); g.fillStyle = "#fff"; g.font = "bold 22px sans-serif"; g.textAlign = "center"; g.fillText("Fin del juego", c.width / 2, c.height / 2); }
       }
       function bucle() {
@@ -619,7 +677,7 @@
         const cab = { x: cuerpo[0].x + dir.x, y: cuerpo[0].y + dir.y };
         if (cab.x < 0 || cab.y < 0 || cab.x >= N || cab.y >= N || cuerpo.some(p => p.x === cab.x && p.y === cab.y)) return morir();
         cuerpo.unshift(cab);
-        if (cab.x === comida.x && cab.y === comida.y) { puntos++; v.vals.a.textContent = puntos; vel = Math.max(70, vel - 4); nuevaComida(); } else cuerpo.pop();
+        if (cab.x === comida.x && cab.y === comida.y) { pops.push({ x: cab.x * T + T / 2, y: cab.y * T, t: 6 }); puntos++; v.vals.a.textContent = puntos; vel = Math.max(70, vel - 4); nuevaComida(); } else cuerpo.pop();
         dibujar(); reloj = setTimeout(bucle, vel);
       }
       function morir() {
@@ -645,8 +703,11 @@
       let y, vy, tubos, puntos, vivo, empezado, raf, t0;
       const v = ventana("Flappy elytra", [["a", "Puntos", "0"], ["r", "Récord", num(leer("record-flappy", 0))]], { ancho: 440, alCerrar: () => { cancelAnimationFrame(raf); removeEventListener("keydown", teclas); } });
       const HUECO = 150;
-      function iniciar() { y = H_ / 2; vy = 0; tubos = []; puntos = 0; vivo = true; empezado = false; v.vals.a.textContent = "0"; t0 = 0; cancelAnimationFrame(raf); raf = requestAnimationFrame(bucle); }
-      function aletear() { if (!vivo) return; empezado = true; vy = -6.4; }
+      function iniciar() { y = H_ / 2; vy = 0; tubos = []; puntos = 0; vivo = true; empezado = false; avance = 0; chispas = []; v.vals.a.textContent = "0"; t0 = 0; cancelAnimationFrame(raf); raf = requestAnimationFrame(bucle); }
+      function aletear() {
+        if (!vivo) return; empezado = true; vy = -6.4;
+        for (let k = 0; k < 8; k++) chispas.push({ x: 64, y: y + 6, vy: (Math.random() - .5) * 2, v: 14 + Math.random() * 10, c: ["#ffd54a", "#ff8a3d", "#fff"][k % 3] });
+      }
       function bucle(t) {
         const dt = t0 ? Math.min(2, (t - t0) / 16.7) : 1; t0 = t;
         if (empezado && vivo) {
@@ -661,23 +722,72 @@
         dibujar(t);
         raf = requestAnimationFrame(bucle);
       }
-      function dibujar(t) {
-        const cielo = g.createLinearGradient(0, 0, 0, H_); cielo.addColorStop(0, "#1b0f2e"); cielo.addColorStop(1, "#3b2a5a");
-        g.fillStyle = cielo; g.fillRect(0, 0, W_, H_);
-        g.fillStyle = "#ffffff55"; for (let k = 0; k < 30; k++) g.fillRect((k * 97 + (t / 30 | 0)) % W_, (k * 61) % (H_ - 60), 2, 2);
-        g.fillStyle = "#e9e4b0"; g.fillRect(0, H_ - 40, W_, 40); g.fillStyle = "#d4cf98"; for (let x = 0; x < W_; x += 20) g.fillRect(x, H_ - 40, 10, 6);
-        tubos.forEach(p => {
-          [[p.x, 0, 56, p.h], [p.x, p.h + HUECO, 56, H_ - 40 - p.h - HUECO]].forEach(([x, yy, w, h]) => {
-            g.fillStyle = "#1c1030"; g.fillRect(x, yy, w, h); g.fillStyle = "#3a2363";
-            for (let k = 0; k < h; k += 14) g.fillRect(x + ((k / 14) % 2) * 14 + 4, yy + k + 3, 10, 4);
-            g.fillStyle = "#4b2e80"; g.fillRect(x - 3, yy === 0 ? h - 12 : yy, w + 6, 12);
-          });
-        });
-        // El jugador con elytra
-        g.save(); g.translate(80, y); g.rotate(Math.max(-.5, Math.min(.9, vy / 10)));
-        g.fillStyle = "#8a8a8a"; g.beginPath(); g.moveTo(-6, -2); g.lineTo(-30, -14 + Math.sin(t / 90) * 4); g.lineTo(-24, 6); g.closePath(); g.fill();
-        g.fillStyle = "#2b6ca3"; g.fillRect(-8, -6, 18, 12); g.fillStyle = "#c69c6d"; g.fillRect(8, -8, 10, 10); g.fillStyle = "#5a3b22"; g.fillRect(8, -8, 10, 3);
+      // ---- Dibujo: cielo del End, islas lejanas, pilares de obsidiana y la élitra ----
+      g.imageSmoothingEnabled = false;
+      const OBS = TEX.bloque_obsidian, LLORONA = TEX.bloque_crying_obsidian, PIEDRA_END = TEX.bloque_end_stone, ELITRA = TEX.item_elytra;
+      const ESTRELLAS = Array.from({ length: 70 }, (_, k) => ({ x: (k * 137) % W_, y: (k * 89) % (H_ - 80), z: k % 3 }));
+      const ISLAS = Array.from({ length: 5 }, (_, k) => ({ x: k * 110 + 30, y: 120 + (k * 53) % 220, w: 50 + (k * 37) % 50 }));
+      let avance = 0, chispas = [];
+      // Bloques con textura (o color si no hay)
+      function bloques(x, yy, w, h, tex, color, tam = 28) {
+        g.save(); g.beginPath(); g.rect(x, yy, w, h); g.clip();
+        if (tex) { for (let by = yy - ((yy % tam) + tam) % tam; by < yy + h; by += tam) for (let bx = x; bx < x + w; bx += tam) g.drawImage(tex, 0, 0, 16, 16, bx, by, tam, tam); }
+        else { g.fillStyle = color; g.fillRect(x, yy, w, h); g.fillStyle = "#3a2363"; for (let k = 0; k < h; k += 14) g.fillRect(x + ((k / 14) % 2) * 14 + 4, yy + k + 3, 10, 4); }
         g.restore();
+      }
+      function dibujar(t) {
+        if (empezado && vivo) avance += 2.6;
+        const cielo = g.createLinearGradient(0, 0, 0, H_); cielo.addColorStop(0, "#0d0718"); cielo.addColorStop(.6, "#25153f"); cielo.addColorStop(1, "#3b2a5a");
+        g.fillStyle = cielo; g.fillRect(0, 0, W_, H_);
+        // Estrellas en 3 capas (las cercanas se mueven más)
+        ESTRELLAS.forEach(e => { const vx = ((e.x - avance * (0.05 + e.z * 0.08)) % W_ + W_) % W_; g.fillStyle = ["#ffffff44", "#ffffff88", "#ffffffcc"][e.z]; g.fillRect(vx, e.y, e.z + 1, e.z + 1); });
+        // Islas flotando a lo lejos
+        ISLAS.forEach(i => {
+          const ix = ((i.x - avance * .25) % (W_ + 120) + W_ + 120) % (W_ + 120) - 60;
+          g.globalAlpha = .45;
+          if (PIEDRA_END) bloques(ix, i.y, i.w, 12, PIEDRA_END, "#cfc78f", 12);
+          else { g.fillStyle = "#cfc78f"; g.fillRect(ix, i.y, i.w, 12); }
+          g.fillStyle = "#1a1030"; g.fillRect(ix + 6, i.y + 12, i.w - 12, 8); g.fillRect(ix + 14, i.y + 20, i.w - 28, 8);
+          g.globalAlpha = 1;
+        });
+        // Piso de piedra del End
+        const piso = H_ - 40;
+        if (PIEDRA_END) { g.save(); g.translate(-(avance % 20), 0); bloques(0, piso, W_ + 20, 40, PIEDRA_END, "#e9e4b0", 20); g.restore(); }
+        else { g.fillStyle = "#e9e4b0"; g.fillRect(0, piso, W_, 40); g.fillStyle = "#d4cf98"; for (let x = -(avance % 20); x < W_; x += 20) g.fillRect(x, piso, 10, 6); }
+        g.fillStyle = "#0003"; g.fillRect(0, piso, W_, 4);
+        // Pilares de obsidiana con la punta de obsidiana llorona
+        tubos.forEach(p => {
+          const arriba = [p.x, 0, 56, p.h], abajo = [p.x, p.h + HUECO, 56, piso - p.h - HUECO];
+          for (const [x, yy, w, h] of [arriba, abajo]) {
+            bloques(x, yy, w, h, OBS, "#1c1030");
+            g.fillStyle = "#0005"; g.fillRect(x + w - 8, yy, 8, h);
+          }
+          const capY = [p.h - 14, p.h + HUECO];
+          for (const cy of capY) {
+            if (LLORONA) bloques(p.x - 4, cy, 64, 14, LLORONA, "#4b2e80", 14);
+            else { g.fillStyle = "#4b2e80"; g.fillRect(p.x - 4, cy, 64, 14); }
+            g.fillStyle = `rgba(170,90,255,${0.25 + 0.15 * Math.sin(t / 300 + p.x)})`; g.fillRect(p.x - 4, cy, 64, 14);
+          }
+        });
+        // Chispas de cohete detrás
+        chispas = chispas.filter(k => (k.v -= 1) > 0);
+        chispas.forEach(k => { k.x -= 2.2; k.y += k.vy; g.globalAlpha = k.v / 24; g.fillStyle = k.c; g.fillRect(k.x, k.y, 3, 3); }); g.globalAlpha = 1;
+        // La élitra
+        g.save(); g.translate(80, y); g.rotate(Math.max(-.5, Math.min(.9, vy / 10)));
+        if (ELITRA) {
+          const aleteo = 1 + Math.sin(t / 70) * (empezado ? .08 : .04);
+          g.scale(1, aleteo); g.drawImage(ELITRA, 0, 0, 16, 16, -20, -20, 40, 40);
+        } else {
+          const ab = Math.sin(t / 90) * 5;
+          g.fillStyle = "#6f6f7a"; g.beginPath(); g.moveTo(-4, -3); g.lineTo(-30, -16 + ab); g.lineTo(-26, 2); g.lineTo(-6, 4); g.closePath(); g.fill();
+          g.fillStyle = "#9a9aa8"; g.beginPath(); g.moveTo(-4, -3); g.lineTo(-24, -12 + ab); g.lineTo(-20, 0); g.closePath(); g.fill();
+          g.fillStyle = "#2b6ca3"; g.fillRect(-8, -6, 18, 12); g.fillStyle = "#1f4f7a"; g.fillRect(-8, 3, 18, 3);
+          g.fillStyle = "#c69c6d"; g.fillRect(8, -9, 11, 11); g.fillStyle = "#5a3b22"; g.fillRect(8, -9, 11, 3);
+          g.fillStyle = "#222"; g.fillRect(15, -5, 2, 2);
+        }
+        g.restore();
+        // Puntos grandes arriba
+        if (empezado) { g.font = "bold 40px sans-serif"; g.textAlign = "center"; g.fillStyle = "#0008"; g.fillText(puntos, W_ / 2 + 2, 62); g.fillStyle = "#fff"; g.fillText(puntos, W_ / 2, 60); }
         if (!empezado && vivo) { g.fillStyle = "#fff"; g.font = "bold 20px sans-serif"; g.textAlign = "center"; g.fillText("Toca o presiona espacio", W_ / 2, H_ / 2 - 60); }
         if (!vivo) { g.fillStyle = "#0008"; g.fillRect(0, 0, W_, H_); g.fillStyle = "#fff"; g.font = "bold 24px sans-serif"; g.textAlign = "center"; g.fillText("¡Chocaste!", W_ / 2, H_ / 2); }
       }
@@ -882,13 +992,13 @@
       { grupo: "saber", titulo: "Adivina el mob", texto: "La cara se va destapando. Mientras antes adivines, más puntos.", icono: "ojo", record: "record-mob", abrir: conTexturas(adivinaMob) },
       { grupo: "saber", titulo: "Crafteo", texto: "Te enseño la receta y tú dices qué sale.", icono: "estrella", record: "record-crafteo", formato: v => v + "/10", abrir: conTexturas(crafteo) },
       { grupo: "saber", titulo: "Wordle de Minecraft", texto: "Una palabra de 5 letras al día, 6 intentos.", icono: "libro", record: "record-wordle", formato: v => v + " ganados", abrir: () => wordle(false) },
-      { grupo: "clasicos", titulo: "Snake del ajolote", texto: "Come y crece sin chocar con las paredes ni contigo.", icono: "pez", record: "record-snake", abrir: snake },
-      { grupo: "clasicos", titulo: "Flappy elytra", texto: "Vuela entre los pilares de obsidiana.", icono: "ala", record: "record-flappy", abrir: flappy },
+      { grupo: "clasicos", titulo: "Snake del ajolote", texto: "Come y crece sin chocar con las paredes ni contigo.", icono: "pez", record: "record-snake", abrir: conTexturas(snake) },
+      { grupo: "clasicos", titulo: "Flappy elytra", texto: "Vuela entre los pilares de obsidiana.", icono: "ala", record: "record-flappy", abrir: conTexturas(flappy) },
       { grupo: "clasicos", titulo: "Tetris de bloques", texto: "Con bloques de diamante, oro, redstone y más.", icono: "ladrillo", record: "record-tetris", abrir: conTexturas(tetris) },
       { grupo: "clasicos", titulo: "Buscaminas de creepers", texto: "Destapa todo sin despertar a un creeper.", icono: "calavera", record: "record-buscaminas", formato: v => dec(v) + " s", abrir: conTexturas(buscaminas) },
       { grupo: "clasicos", titulo: "Reflejos contra el creeper", texto: "Pégale antes de que explote. Cada vez más rápido.", icono: "rayo", record: "record-reflejos", abrir: conTexturas(reflejos) },
     ];
-    Object.assign(App.juegos || {}, { trivia: () => trivia(TRIVIA, "Trivia de Minecraft", "record-trivia", "Trivia", "pregunta"), adivinaMob: conTexturas(adivinaMob), crafteo: conTexturas(crafteo), wordle, snake, flappy, tetris: conTexturas(tetris), buscaminas: conTexturas(buscaminas), reflejos: conTexturas(reflejos) });
+    Object.assign(App.juegos || {}, { trivia: () => trivia(TRIVIA, "Trivia de Minecraft", "record-trivia", "Trivia", "pregunta"), adivinaMob: conTexturas(adivinaMob), crafteo: conTexturas(crafteo), wordle, snake: conTexturas(snake), flappy: conTexturas(flappy), tetris: conTexturas(tetris), buscaminas: conTexturas(buscaminas), reflejos: conTexturas(reflejos) });
     if (App.juegos && App.juegos.repintar && !document.querySelector(".juego-ventana")) App.juegos.repintar();
   });
 })();
