@@ -507,7 +507,7 @@
       const seccion = (t, lista) => lista.length ? [el("h3", { class: "sub-titulo juego-grupo", text: t }), el("div", { class: "juego-arcades" }, lista)] : [];
       caja.replaceChildren(
         hayBanda ? tarjetaDia() : el("p", { class: "vacio", text: "El juego del día y los juegos de la banda salen cuando haya al menos 3 jugadores en la 224. Mientras, juega los de abajo." }),
-        ...seccion("De la banda", grupos.banda), ...seccion("Qué tanto sabes de Minecraft", grupos.saber), ...seccion("Clásicos con estilo Minecraft", grupos.clasicos));
+        ...seccion("De la banda", grupos.banda), ...seccion("¿Qué tanto sabes de Minecraft?", grupos.saber), ...seccion("Clásicos con estilo Minecraft", grupos.clasicos));
     }
     pintar();
     // Si cambia el día con la página abierta, se actualiza solo

@@ -14,6 +14,7 @@
     const CATS = [
       { id: "horas", nombre: "Horas", icono: "reloj", fmt: v => dec(v) + " h", unidad: "horas jugadas" },
       { id: "diamantes", nombre: "Diamantes", icono: "gema", fmt: num, unidad: "diamantes" },
+      { id: "netherita", nombre: "Netherita", icono: "lingote", fmt: num, unidad: "ancient debris" },
       { id: "minado", nombre: "Minado", icono: "pico", fmt: num, unidad: "bloques minados" },
       { id: "mobs", nombre: "Mobs", icono: "espada", fmt: num, unidad: "mobs matados" },
       { id: "metros", nombre: "Caminado", icono: "brujula", fmt: v => dec(v / 1000) + " km", unidad: "km caminados" },
@@ -79,7 +80,7 @@
 
       // La tabla
       const ol = el("ol", { class: "liga-tabla" });
-      const etiquetas = { horas: "Horas", minado: "Bloques", diamantes: "Diamantes", mobs: "Mobs", metros: "Caminar", dias: "Días que entró", muertes: "Muertes" };
+      const etiquetas = { horas: "Horas", minado: "Bloques", diamantes: "Diamantes", netherita: "Netherita", mobs: "Mobs", metros: "Caminar", dias: "Días que entró", muertes: "Muertes" };
       tabla.forEach((f, i) => {
         const detalle = el("div", { class: "liga-desglose", hidden: true },
           Object.entries(f.desglose || {}).filter(([, v]) => v).map(([k, v]) => el("span", { class: "pts " + (v < 0 ? "menos" : ""), html: `${esc(etiquetas[k] || k)} <b>${v > 0 ? "+" : ""}${num(v)}</b>` })),
@@ -105,11 +106,11 @@
       const P = LIGA.puntos || {};
       caja.append(el("details", { class: "liga-reglas" }, el("summary", { text: "¿Cómo se ganan puntos?" }),
         el("ul", { html: [
-          `<li><b>+${P.porHora || 10}</b> por cada hora jugada</li>`, `<li><b>+1</b> por cada ${P.bloquesPorPunto || 25} bloques minados</li>`,
-          `<li><b>+${P.porDiamante || 5}</b> por cada diamante</li>`, `<li><b>+1</b> por cada ${P.mobsPorPunto || 2} mobs</li>`,
-          `<li><b>+1</b> por cada ${P.metrosPorPunto || 250} metros caminados</li>`, `<li><b>+${P.porDia || 5}</b> por cada día que entras</li>`,
+          `<li><b>+${P.porHora || 6}</b> por cada hora jugada</li>`, `<li><b>+1</b> por cada ${P.bloquesPorPunto || 100} bloques minados (el netherrack no cuenta)</li>`,
+          `<li><b>+${P.porDiamante || 5}</b> por cada diamante</li>`, `<li><b>+${P.porNetherita || 25}</b> por cada ancient debris (netherita)</li>`, `<li><b>+1</b> por cada ${P.mobsPorPunto || 5} mobs</li>`,
+          `<li><b>+1</b> por cada ${P.metrosPorPunto || 500} metros caminados</li>`, `<li><b>+${P.porDia || 5}</b> por cada día que entras</li>`,
           `<li><b>Extras:</b> primer diamante, llegar al Nether o al End, ser el primero del server, matar al dragón y ganar medallas</li>`,
-          `<li class="menos"><b>−${P.porMuerte || 3}</b> por cada muerte. Por tonto.</li>`].join("") })));
+          `<li class="menos"><b>−${P.porMuerte || 20}</b> por cada muerte. Por tonto.</li>`].join("") })));
 
       // Salón de campeones
       const camp = Object.entries(LIGA.campeones || {}).sort((x, y) => y[0].localeCompare(x[0]));

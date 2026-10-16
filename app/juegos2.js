@@ -598,11 +598,11 @@
     // =====================================================
     function snake() {
       const N = 18, T = 20, c = lienzoJuego(N * T, N * T), g = c.getContext("2d");
-      let cuerpo, dir, sigDir, comida, puntos, vel, reloj, vivo;
+      let cuerpo, dir, sigDir, comida, puntos, vel, reloj, vivo, esperando;
       const v = ventana("Snake del ajolote", [["a", "Puntos", "0"], ["r", "Récord", num(leer("record-snake", 0))]], { ancho: 460, alCerrar: () => { clearTimeout(reloj); removeEventListener("keydown", teclas); } });
       const COMIDAS = [["#d32f2f", "#7b1f1f"], ["#f2994a", "#b35f1c"], ["#5fd0e8", "#2a8aa0"], ["#f2c94c", "#a8841c"]];
       function nuevaComida() { do comida = { x: Math.floor(Math.random() * N), y: Math.floor(Math.random() * N), c: COMIDAS[Math.floor(Math.random() * COMIDAS.length)], tex: PECES.length ? PECES[Math.floor(Math.random() * PECES.length)] : null }; while (cuerpo.some(p => p.x === comida.x && p.y === comida.y)); }
-      function iniciar() { cuerpo = [{ x: 8, y: 9 }, { x: 7, y: 9 }, { x: 6, y: 9 }]; dir = sigDir = { x: 1, y: 0 }; puntos = 0; vel = 150; vivo = true; v.vals.a.textContent = "0"; nuevaComida(); clearTimeout(reloj); bucle(); }
+      function iniciar() { cuerpo = [{ x: 8, y: 9 }, { x: 7, y: 9 }, { x: 6, y: 9 }]; dir = sigDir = { x: 1, y: 0 }; puntos = 0; vel = 150; vivo = true; esperando = true; v.vals.a.textContent = "0"; nuevaComida(); clearTimeout(reloj); dibujar(); }
       // Fondo de musgo (con la textura del juego si está; si no, pasto dibujado)
       if (!g.roundRect) g.roundRect = function (x, y, w, h) { this.rect(x, y, w, h); };
       const fondo = (() => {
@@ -614,11 +614,11 @@
             bg.fillStyle = (x + y) % 2 ? "#3f7a3a" : "#467f40"; bg.fillRect(x * T, y * T, T, T);
             for (let k = 0; k < 6; k++) { bg.fillStyle = rnd() < .5 ? "#356a31" : "#5a9450"; bg.fillRect(x * T + (rnd() * 5 | 0) * 4, y * T + (rnd() * 5 | 0) * 4, 4, 4); }
           }
-          if ((x + y) % 2) { bg.fillStyle = "#00000014"; bg.fillRect(x * T, y * T, T, T); }
+          bg.fillStyle = (x + y) % 2 ? "#ffffff10" : "#00000010"; bg.fillRect(x * T, y * T, T, T);
         }
         // Orillas más oscuras
         const vi = bg.createRadialGradient(N * T / 2, N * T / 2, N * T * .3, N * T / 2, N * T / 2, N * T * .75);
-        vi.addColorStop(0, "#0000"); vi.addColorStop(1, "#0006"); bg.fillStyle = vi; bg.fillRect(0, 0, N * T, N * T);
+        vi.addColorStop(0, "#0000"); vi.addColorStop(1, "#0004"); bg.fillStyle = vi; bg.fillRect(0, 0, N * T, N * T);
         return bc;
       })();
       const PECES = ["item_tropical_fish", "item_salmon", "item_cod"].filter(k => TEX[k]);
@@ -670,6 +670,7 @@
         // "+1" al comer
         pops = pops.filter(p => p.t-- > 0);
         pops.forEach(p => { g.globalAlpha = p.t / 6; g.fillStyle = "#fff"; g.font = "bold 14px sans-serif"; g.textAlign = "center"; g.fillText("+1", p.x, p.y - (6 - p.t) * 3); g.globalAlpha = 1; });
+        if (esperando && vivo) { g.fillStyle = "#0007"; g.fillRect(0, c.height / 2 - 26, c.width, 44); g.fillStyle = "#fff"; g.font = "bold 18px sans-serif"; g.textAlign = "center"; g.fillText("Presiona una flecha para empezar", c.width / 2, c.height / 2); }
         if (!vivo) { g.fillStyle = "#000a"; g.fillRect(0, 0, c.width, c.height); g.fillStyle = "#fff"; g.font = "bold 22px sans-serif"; g.textAlign = "center"; g.fillText("Fin del juego", c.width / 2, c.height / 2); }
       }
       function bucle() {
@@ -685,7 +686,12 @@
         const r = record("record-snake", puntos); v.vals.r.textContent = num(r.mejor);
         aviso.textContent = `Comiste ${puntos}.${r.nuevo ? " ¡Nuevo récord!" : ""}`; boton.hidden = false;
       }
-      const girar = k => { const d = { arriba: { x: 0, y: -1 }, abajo: { x: 0, y: 1 }, izq: { x: -1, y: 0 }, der: { x: 1, y: 0 } }[k]; if (d && (d.x !== -dir.x || d.y !== -dir.y)) sigDir = d; };
+      const girar = k => {
+        const d = { arriba: { x: 0, y: -1 }, abajo: { x: 0, y: 1 }, izq: { x: -1, y: 0 }, der: { x: 1, y: 0 } }[k];
+        if (d && (d.x !== -dir.x || d.y !== -dir.y)) sigDir = d;
+        // Arranca con la primera flecha
+        if (esperando && vivo && d) { esperando = false; bucle(); }
+      };
       const teclas = e => { const k = { ArrowUp: "arriba", ArrowDown: "abajo", ArrowLeft: "izq", ArrowRight: "der", w: "arriba", s: "abajo", a: "izq", d: "der" }[e.key]; if (k) { e.preventDefault(); girar(k); } };
       addEventListener("keydown", teclas);
       alDeslizar(c, girar);

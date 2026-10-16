@@ -27,6 +27,7 @@
 <meta property="og:image" content="https://explotabuela.github.io/Minecraft-224/iconos/icono-512.png">
 <meta property="og:type" content="website">
 <link rel="stylesheet" href="app/app.css">
+<script src="app/idioma.js"></script>
 <script src="app/skin3d.js" defer></script>
 <script src="app/base.js" defer></script>
 <script src="app/compartir.js" defer></script>
@@ -498,7 +499,7 @@ footer{border-top:1px solid var(--linea);padding-block:28px 96px;color:var(--ten
     <div class="cabeza">
       <span class="eyebrow">LIGA DEL MES</span>
       <h2 id="liga-titulo">La liga de la 224</h2>
-      <p>Todo lo que haces da puntos: horas, bloques, diamantes, mobs, caminar y entrar seguido. Morirte quita puntos. El que gane el mes se lleva el rol de campeón.</p>
+      <p>Todo lo que haces da puntos: horas, bloques, diamantes, netherita, mobs, caminar y entrar seguido. Morirte quita muchos puntos. El que gane el mes se lleva el rol de campeón.</p>
     </div>
     <div id="liga-caja"></div>
   </section>
@@ -647,7 +648,7 @@ footer{border-top:1px solid var(--linea);padding-block:28px 96px;color:var(--ten
       </details>
       <details>
         <summary>¿Cómo funciona la liga del mes?</summary>
-        <p>Cada cosa que haces da puntos: horas jugadas, bloques minados, diamantes, mobs, lo que caminas y los días que entras. Morir quita 3 puntos. Ser el primero del server en algo (diamante, Nether, End, Dragón) da puntos extra, igual que ganar medallas. El que tenga más puntos al final del mes es el campeón y le toca el rol en Discord. En el apartado <a href="#liga">Liga</a> viene todo el detalle.</p>
+        <p>Cada cosa que haces da puntos: horas jugadas, bloques minados (el netherrack no cuenta), diamantes, netherita, mobs, lo que caminas y los días que entras. Morir quita 20 puntos, así que cuídate. Ser el primero del server en algo (diamante, Nether, End, Dragón) da puntos extra, igual que ganar medallas. El que tenga más puntos al final del mes es el campeón y le toca el rol en Discord. En el apartado <a href="#liga">Liga</a> viene todo el detalle.</p>
       </details>
       <details>
         <summary>¿Cómo gano medallas?</summary>
@@ -1018,7 +1019,11 @@ pintarReloj(); setInterval(pintarReloj, 1000);
        ${!j.diamantes && !w.Diamante ? `<p class="anim">${tx("Y ni un diamante en todo el mes.", "And not a single diamond all month.")}</p>` : ""}`));
 
     const decoMuerte = skin(j.nombre, j.muertes ? POSES[3] : "cheering");
-    if (!j.muertes) {
+    if (!j.muertes && (j.horas || 0) < 3) {
+      // Sin morir pero casi sin jugar: no cuenta como hazaña
+      L.push(lam(decoMuerte, `<span class="ojo anim">${tx("Muertes", "Deaths")}</span><h3 class="anim">${tx("Este mes te moriste", "This month you died")}</h3>
+        <div class="grande anim">0 <span class="unidad">${tx("veces", "times")}</span></div><p class="anim">${tx("Pero casi ni jugaste, así que no cuenta.", "But you barely played, so it doesn't count.")}</p>`));
+    } else if (!j.muertes) {
       L.push(lam(decoMuerte, `<span class="ojo anim">${tx("Muertes", "Deaths")}</span><h3 class="anim">${tx("Este mes te moriste", "This month you died")}</h3>
         <div class="grande anim">0 <span class="unidad">${tx("veces", "times")}</span></div><p class="anim">${tx("¿Eres real? ¿Juegas con hacks?", "Are you even real? Hacks?")}</p>`));
     } else {

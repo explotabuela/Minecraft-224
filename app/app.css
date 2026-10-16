@@ -950,3 +950,12 @@ main section.llegando,#inicio.llegando{animation:llegar .8s ease}
 .visor.apaisado.pie-visible .visor-pie{opacity:1;pointer-events:auto}
 .visor.apaisado+.capa-x,.visor.apaisado~.capa-x{opacity:.6}
 .visor:fullscreen{background:#000}
+/* Skins: que no se pinten de azul al picarles muchas veces */
+.skin3d,.pres-skin,.pres-skin *,.perfil-skin,.perfil-skin *,img.pixel,canvas.pixel,.carta img,.carta canvas{-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent;-webkit-user-drag:none}
+canvas.skin3d{touch-action:pan-y}
+/* Medallas únicas */
+.unicas{margin:14px 0 6px}
+.medalla.unica{position:relative;opacity:.75;cursor:default;background:linear-gradient(160deg,var(--capa-2),var(--capa))}
+.medalla.unica.suya{opacity:1;border-color:#b98cff;box-shadow:0 0 0 2px #b98cff55,0 6px 18px #7a3cff33}
+.medalla.unica .medalla-ico{color:#b98cff}
+.unica-que{display:block;font-style:normal;font-size:.68rem;color:var(--tenue);line-height:1.2;margin-top:2px}

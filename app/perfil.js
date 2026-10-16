@@ -18,10 +18,13 @@
     const promedio = k => js.reduce((s, j) => s + (Number(j[k]) || 0), 0) / Math.max(1, js.length);
     const lugarEn = (n, k, menos = false) => 1 + js.filter(j => menos ? (j[k] || 0) < (App.jugador(n)[k] || 0) : (j[k] || 0) > (App.jugador(n)[k] || 0)).length;
     const COLOR_RANGO = { Leyenda: "#f5c451", Veterano: "#c9d1d9", Aventurero: "#5fd068", Novato: "#8a8f98" };
-    const medallasDe = j => (j.medallas || []).reduce((s, m) => s + (m.nivel || 0), 0);
+    const medallasDe = j => (j.medallas || []).filter(m => !m.unica).reduce((s, m) => s + (m.nivel || 0), 0);
 
+    // Metas "de veterano": las barras se llenan contra esto (o contra el mejor, si alguien ya lo pasó).
+    // Así nadie sale al 100% nomás por ser el único que juega.
+    const METAS = { horas: 300, diamantes: 400, netherita: 64, minado: 150000, mobs: 5000, metros: 1000000, muertes: 100, record: 3000, mejorRacha: 30, mensajes: 3000, dias: 90 };
     const STATS = [
-      ["horas", "Horas jugadas", "reloj", v => dec(v) + " h"], ["diamantes", "Diamantes", "gema", num], ["minado", "Bloques minados", "pico", num],
+      ["horas", "Horas jugadas", "reloj", v => dec(v) + " h"], ["diamantes", "Diamantes", "gema", num], ["netherita", "Netherita", "lingote", num], ["minado", "Bloques minados", "pico", num],
       ["mobs", "Mobs matados", "espada", num], ["metros", "Caminado", "brujula", v => dec(v / 1000) + " km"], ["muertes", "Muertes", "calavera", num, true],
       ["record", "Récord sin morir", "escudo", App.tiempo], ["mejorRacha", "Mejor racha", "llama", v => num(v) + " días"],
       ["mensajes", "Mensajes", "chat", num], ["dias", "Días jugados", "calendario", num],
@@ -112,6 +115,10 @@
         v.autoRotateSpeed = .6;
         v.zoom = zoom;
         v.controls.enableZoom = false;
+        // Que se pueda subir y bajar la ventana aunque el dedo esté sobre la skin
+        v.controls.enablePan = false;
+        canvas.style.touchAction = "pan-y";
+        canvas.addEventListener("dblclick", e => e.preventDefault());
         v.animation = animacion === "caminar" ? new sv.WalkingAnimation() : animacion === "saludar" ? new sv.WaveAnimation() : new sv.IdleAnimation();
         caja.innerHTML = ""; caja.append(canvas);
         return v;
@@ -195,14 +202,15 @@
           el("b", { text: f(v) }),
           n > 1 ? el("span", { class: "pstat-comp " + (comp === "Como el promedio" ? "neutro" : bueno ? "sube" : "baja"), text: comp }) : null,
           n > 1 ? el("span", { class: "pstat-lugar", text: `#${lugarEn(j.nombre, k, menos)} de ${n}` }) : null,
-          n > 1 && prom > 0 ? el("span", { class: "pstat-barra" }, el("i", { style: `--p:${Math.min(100, v / Math.max(v, prom * 2) * 100).toFixed(1)}%` }), el("em", { style: `left:${Math.min(100, prom / Math.max(v, prom * 2) * 100).toFixed(1)}%`, title: "Promedio" })) : null);
+          (() => { const tope = Math.max(v, prom * 2, METAS[k] || 0, 1); return el("span", { class: "pstat-barra", title: `Meta: ${f(METAS[k] || tope)}` }, el("i", { style: `--p:${Math.min(100, v / tope * 100).toFixed(1)}%` }), n > 1 && prom > 0 ? el("em", { style: `left:${Math.min(100, prom / tope * 100).toFixed(1)}%`, title: "Promedio" }) : null); })());
       }), j.primerDia ? el("p", { class: "perfil-primer", text: `En la 224 desde el ${fecha(j.primerDia)}${j.racha ? ` · racha actual: ${j.racha} ${j.racha === 1 ? "día" : "días"}` : ""}` }) : null);
     }
 
     // ---------- Pestaña: Medallas ----------
     const NIV = ["Sin ganar", "Bronce", "Plata", "Oro", "Diamante"];
     function medallas(j) {
-      const lista = j.medallas || [];
+      const todas = j.medallas || [];
+      const lista = todas.filter(m => !m.unica), unicas = todas.filter(m => m.unica);
       if (!lista.length) return el("p", { class: "vacio", text: "Las medallas salen cuando el bot junte datos." });
       const cuantos = id => js.filter(x => (x.medallas || []).some(m => m.id === id && m.nivel > 0)).length;
       const detalle = el("div", { class: "medalla-detalle", hidden: true });
@@ -230,18 +238,27 @@
         return b;
       }));
       const total = medallasDe(j);
-      // Porcentaje: cada categoría vale 4 niveles y cada especial 1
+      // Porcentaje: cada categoría vale 4 niveles y cada especial 1 (las únicas van aparte, son extra)
       const posibles = lista.reduce((t, m) => t + (m.especial ? 1 : 4), 0);
+      const suyasUnicas = unicas.filter(m => m.nivel);
       const pct = Math.round(total / Math.max(1, posibles) * 100);
       const ganadas = lista.filter(m => m.nivel > 0);
       const rara = ganadas.map(m => ({ m, n: cuantos(m.id) })).sort((a, b) => a.n - b.n || (b.m.nivel - a.m.nivel))[0];
       const resumenMed = el("div", { class: "med-resumen" },
-        el("div", { class: "med-pct" }, el("b", { text: pct + "%" }), el("small", { text: `completado · ${total} de ${posibles} niveles` }),
+        el("div", { class: "med-pct" }, el("b", { text: pct + "%" }), el("small", { text: `completado · ${total} de ${posibles} niveles` + (suyasUnicas.length ? ` · +${suyasUnicas.length} única${suyasUnicas.length === 1 ? "" : "s"}` : "") }),
           el("span", { class: "med-barra" }, el("i", { style: `width:${pct}%` }))),
         rara ? el("div", { class: "med-rara" }, el("span", { class: "medalla-ico mini", html: icono(rara.m.icono, 18) }),
           el("span", {}, el("small", { text: "Su medalla más rara" }), el("b", { text: rara.m.nombre }), el("em", { text: rara.n <= 1 ? "Nadie más la tiene" : `Solo la tienen ${rara.n} de ${js.length}` }))) : null);
       const tontos = (j.masTonto || []).length ? el("div", { class: "trofeos" }, j.masTonto.map(m => el("span", { class: "trofeo tonto", html: icono("calavera", 18) + "El más tonto de " + nombreMes(m) }))) : null;
-      return el("div", {}, resumenMed, tontos, el("p", { class: "perfil-nota", text: `Pícale a una medalla para ver cómo se gana.` }), rej, detalle);
+      // Medallas únicas: solo una persona la tiene; si alguien la supera, se la quita
+      const zonaUnicas = unicas.length ? el("div", { class: "unicas" },
+        el("h3", { class: "sub-titulo", text: "Medallas únicas" }),
+        el("p", { class: "perfil-nota", text: "Solo una persona en toda la 224 puede tenerlas. Si alguien te supera, te la quita." }),
+        el("div", { class: "medallas" }, unicas.map(m => el("div", { class: "medalla unica" + (m.nivel ? " suya" : "") },
+          el("span", { class: "medalla-ico", html: icono(m.icono, 26) }), el("b", { text: m.nombre }),
+          el("small", { text: m.nivel ? "¡Es suya!" : m.duena ? "La tiene " + m.duena : "Nadie todavía" }),
+          el("em", { class: "unica-que", text: m.que }))))) : null;
+      return el("div", {}, resumenMed, tontos, zonaUnicas, el("p", { class: "perfil-nota", text: `Pícale a una medalla para ver cómo se gana.` }), rej, detalle);
     }
 
     // ---------- Pestaña: Liga (historial y comparar meses) ----------
@@ -271,7 +288,7 @@
         const sb = el("select", { "aria-label": "Mes B" }, meses.map(m => el("option", { value: m, text: nombreMes(m) })));
         sa.value = meses[meses.length - 2]; sb.value = meses[meses.length - 1];
         const zona = el("div", { class: "comparar-meses" });
-        const CAMPOS = [["minutos", "Horas", v => dec(v / 60) + " h"], ["diamantes", "Diamantes", num], ["minado", "Bloques", num], ["mobs", "Mobs", num], ["metros", "Km", v => dec(v / 1000)], ["muertes", "Muertes", num, true]];
+        const CAMPOS = [["minutos", "Horas", v => dec(v / 60) + " h"], ["diamantes", "Diamantes", num], ["netherita", "Netherita", num], ["minado", "Bloques", num], ["mobs", "Mobs", num], ["metros", "Km", v => dec(v / 1000)], ["muertes", "Muertes", num, true]];
         function pintar() {
           const A = W.Meses[sa.value].Stats[j.nombre] || {}, B = W.Meses[sb.value].Stats[j.nombre] || {};
           zona.innerHTML = "";
@@ -294,7 +311,7 @@
     function graficas(j) {
       const HIST = App.M.historial || {}, dias = Object.keys(HIST).sort().filter(d => HIST[d][j.nombre]);
       if (dias.length < 2) return el("p", { class: "vacio", text: "La gráfica sale cuando el bot tenga unos días de datos." });
-      const OPC = [["minutos", "Horas", v => dec(v / 60) + " h"], ["diamantes", "Diamantes", num], ["minado", "Bloques", num], ["mobs", "Mobs", num], ["muertes", "Muertes", num], ["metros", "Km", v => dec(v / 1000) + " km"]];
+      const OPC = [["minutos", "Horas", v => dec(v / 60) + " h"], ["diamantes", "Diamantes", num], ["netherita", "Netherita", num], ["minado", "Bloques", num], ["mobs", "Mobs", num], ["muertes", "Muertes", num], ["metros", "Km", v => dec(v / 1000) + " km"]];
       let k = "minutos";
       const chips = el("div", { class: "chips" }, OPC.map(([id, t]) => el("button", { class: "chip-btn", type: "button", "data-k": id, text: t })));
       const zona = el("div", { class: "caja-grafica" });
@@ -362,6 +379,30 @@
       });
       Object.entries(LIGA.campeones || {}).forEach(([m, n]) => { if (n === j.nombre) add(m + "-28", "corona", "Campeón de " + nombreMes(m), "Ganó la liga del mes."); });
       (j.masTonto || []).forEach(m => add(m + "-28", "calavera", "El más tonto de " + nombreMes(m), "Nadie se murió más que él ese mes."));
+      // Logros sacados de su historial día por día
+      const HIST = (App.M && App.M.historial) || {}, dias = Object.keys(HIST).sort().filter(d => HIST[d][j.nombre]);
+      const HITOS = [
+        ["minutos", [60, 600, 3000, 6000, 15000], v => `${num(v / 60)} ${v === 60 ? "hora jugada" : "horas jugadas"}`, "reloj", "Llegó a"],
+        ["minado", [1000, 10000, 50000, 100000], v => `${num(v)} bloques minados`, "pico", "Llegó a"],
+        ["mobs", [100, 1000, 5000], v => `${num(v)} mobs matados`, "espada", "Llegó a"],
+        ["diamantes", [64, 200, 500], v => `${num(v)} diamantes`, "gema", "Juntó"],
+        ["netherita", [1, 4, 16], v => v === 1 ? "su primer ancient debris" : v === 4 ? "su primer lingote de netherita (4 debris)" : `${num(v)} ancient debris`, "lingote", "Sacó"],
+        ["metros", [10000, 100000, 500000], v => `${num(v / 1000)} km caminados`, "brujula", "Llegó a"],
+        ["muertes", [1, 25, 100], v => v === 1 ? "su primera muerte" : `${num(v)} muertes`, "calavera", "Tuvo"],
+      ];
+      HITOS.forEach(([k, metas, txt, ic, verbo]) => metas.forEach(meta => {
+        const d = dias.find(x => (HIST[x][j.nombre][k] || 0) >= meta);
+        if (d && d !== dias[0]) add(d, ic, `${verbo} ${txt(meta)}`, "");
+      }));
+      // Su mejor día (más horas)
+      let mejor = null;
+      dias.forEach((d, i) => { if (!i) return; const h = (HIST[d][j.nombre].minutos || 0) - (HIST[dias[i - 1]][j.nombre].minutos || 0); if (h >= 120 && (!mejor || h > mejor.h)) mejor = { d, h }; });
+      if (mejor) add(mejor.d, "estrella", "Su día más viciado", `Jugó ${dec(mejor.h / 60)} horas en un solo día.`);
+      if ((j.mejorRacha || 0) >= 7) add(dias[dias.length - 1], "llama", `Racha de ${j.mejorRacha} días`, "Su mejor racha entrando seguido.");
+      // Medallas únicas que tiene ahorita
+      (j.medallas || []).filter(m => m.unica && m.nivel).forEach(m => add(m.fecha || dias[dias.length - 1], m.icono, `Medalla única: ${m.nombre}`, "Nadie más en la 224 la tiene."));
+      // Sus Wrapped
+      Object.keys(W.Meses || {}).filter(m => m < App.mesActual && ((W.Meses[m].Stats || {})[j.nombre])).forEach(m => add(m + "-28", "regalo", "Su Wrapped de " + nombreMes(m), "Ya se puede ver en la pestaña Wrapped."));
       if (!ev.length) return el("p", { class: "vacio", text: "Su historia se va llenando conforme juega." });
       ev.sort((a, b) => a.f.localeCompare(b.f));
       return el("ol", { class: "linea-personal" }, ev.map(e => el("li", {},
@@ -373,8 +414,12 @@
     function presentacion(nombre) {
       let actual = App.jugador(nombre) || js[0];
       if (!actual) return;
-      const BARRAS = [["horas", "Aguante", "reloj"], ["minado", "Minería", "pico"], ["mobs", "Combate", "espada"], ["metros", "Exploración", "brujula"], ["diamantes", "Riqueza", "gema"], ["record", "Supervivencia", "escudo"]];
-      const max = k => Math.max(1, ...js.map(x => Number(x[k] || 0)));
+      const BARRAS = [["horas", "Aguante", "reloj"], ["minado", "Minería", "pico"], ["mobs", "Combate", "espada"], ["metros", "Exploración", "brujula"], ["riqueza", "Riqueza", "gema"], ["record", "Supervivencia", "escudo"]];
+      // Riqueza: diamantes + netherita (cada debris vale como 6 diamantes)
+      const valor = (x, k) => k === "riqueza" ? Number(x.diamantes || 0) + Number(x.netherita || 0) * 6 : Number(x[k] || 0);
+      const META_PRES = { horas: 300, minado: 150000, mobs: 5000, metros: 1000000, riqueza: 800, record: 3000 };
+      // Para llenar la barra hay que llegar a la meta (o ser el mejor si alguien ya la pasó)
+      const max = k => Math.max(META_PRES[k] || 1, ...js.map(x => valor(x, k)));
       const escena = el("div", { class: "pres-skin" });
       const info = el("div", { class: "pres-info" });
       const rejilla = el("div", { class: "pres-rejilla", role: "listbox", "aria-label": "Jugadores" });
@@ -391,7 +436,7 @@
           el("h2", { class: "pres-nombre", text: j.nombre }),
           el("p", { class: "pres-sub", text: `${(j.clase || "Novato").toUpperCase()} · NIVEL ${num(j.nivel || 1)} · ${(j.rango || "Novato").toUpperCase()}` }),
           el("div", { class: "pres-barras" }, BARRAS.map(([k, t, ic], i) => {
-            const pct = Math.round(Number(j[k] || 0) / max(k) * 100);
+            const pct = Math.round(valor(j, k) / max(k) * 100);
             return el("div", { class: "pres-barra", style: `--i:${i}` }, el("span", { html: icono(ic, 16) + t }),
               el("span", { class: "pres-pista" }, Array.from({ length: 10 }, (_, n) => el("i", { class: n < Math.ceil(pct / 10) ? "on" : "" }))));
           })),

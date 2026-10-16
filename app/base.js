@@ -5,6 +5,12 @@
    ========================================================= */
 (function () {
   "use strict";
+  // Nunca escribir "null" en la página: append/prepend/etc. ignoran null, undefined y false
+  (function () {
+    const limpiar = fn => function (...a) { return fn.apply(this, a.filter(x => x !== null && x !== undefined && x !== false)); };
+    for (const P of [Element.prototype, DocumentFragment.prototype])
+      for (const m of ["append", "prepend", "replaceChildren", "after", "before"]) if (P[m]) P[m] = limpiar(P[m]);
+  })();
 
   const listo = new Promise(r => {
     if (window.M224) r(window.M224);
@@ -292,15 +298,22 @@
     caja.append(x, contenido);
     const fondo = el("div", { class: "capa" }, caja);
     const previo = document.activeElement;
+    let cerrada = false;
     function cerrar() {
+      if (cerrada) return; cerrada = true;
       fondo.classList.remove("abierta");
+      fondo.classList.add("cerrando");
       removeEventListener("keydown", tecla);
       setTimeout(() => fondo.remove(), 200);
-      document.body.style.overflow = "";
+      // Solo se libera la página si ya no queda ninguna ventana abierta
+      if (!document.querySelector(".capa:not(.cerrando), .cine")) document.body.style.overflow = "";
       alCerrar && alCerrar();
       previo && previo.focus && previo.focus();
     }
-    function tecla(e) { if (e.key === "Escape") cerrar(); }
+    // Escape cierra solo la ventana de hasta arriba
+    function tecla(e) { if (e.key === "Escape" && [...document.querySelectorAll(".capa:not(.cerrando)")].pop() === fondo && !document.querySelector(".cine")) { e.stopImmediatePropagation(); cerrar(); } }
+    // La rueda del mouse sobre lo oscuro también mueve la ventana
+    fondo.addEventListener("wheel", e => { if (e.target === fondo) caja.scrollBy({ top: e.deltaY, behavior: "auto" }); }, { passive: true });
     x.addEventListener("click", cerrar);
     fondo.addEventListener("click", e => { if (e.target === fondo) cerrar(); });
     addEventListener("keydown", tecla);
@@ -318,7 +331,7 @@
     function cerrar() {
       removeEventListener("keydown", tecla);
       if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
-      c.remove(); document.body.style.overflow = "";
+      c.remove(); if (!document.querySelector(".capa:not(.cerrando), .cine")) document.body.style.overflow = "";
       alCerrar && alCerrar();
     }
     function tecla(e) { if (e.key === "Escape") cerrar(); }
@@ -616,7 +629,7 @@
     ["VS", "#comparador", "rayo"], ["Mini juegos", "#juegos", "mando"], ["Estadísticas", "#estadisticas", "grafica"], ["Meses", "#meses", "calendario"],
     ["Historia", "#historia", "libro"], ["Capturas", "#capturas", "foto"], ["Mapa", "#mapa", "mapa"], ["Wrapped", "#wrapped", "regalo"],
     ["Cómo entrar", "#entrar", "entrar"], ["Reglas", "#reglas", "reglas"], ["Preguntas", "#preguntas", "pregunta"]];
-  const CATEGORIAS = [["Horas", "horas"], ["Diamantes", "diamantes"], ["Bloques minados", "minado"], ["Mobs", "mobs"], ["Metros", "metros"], ["Muertes", "muertes"], ["Racha", "racha"], ["Nivel", "nivel"], ["Récord sin morir", "record"]];
+  const CATEGORIAS = [["Horas", "horas"], ["Diamantes", "diamantes"], ["Netherita", "netherita"], ["Bloques minados", "minado"], ["Mobs", "mobs"], ["Metros", "metros"], ["Muertes", "muertes"], ["Racha", "racha"], ["Nivel", "nivel"], ["Récord sin morir", "record"]];
   function abrirBuscador() {
     const input = el("input", { type: "search", placeholder: "Busca un jugador, un apartado, un mes…", autocomplete: "off", "aria-label": "Buscar" });
     const ul = el("ul", { role: "listbox" });
