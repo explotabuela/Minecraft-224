@@ -351,8 +351,9 @@
     // ---------- Cuentas de Java y Bedrock unidas ----------
     function cuentasDe(j) {
       const c = j.cuentas && j.cuentas.length ? j.cuentas : [{ nombre: j.nombre, plataforma: j.nombre.startsWith(".") ? "bedrock" : "java" }, ...(j.otrosNombres || []).map(n => ({ nombre: n, plataforma: n.startsWith(".") ? "bedrock" : "java" }))];
-      if (c.length < 2 && c[0].plataforma === "java") return null;
-      return el("div", { class: "perfil-cuentas" }, c.map(x => el("span", { class: "cuenta-chip " + x.plataforma, title: x.plataforma === "java" ? "Minecraft Java (compu)" : "Minecraft Bedrock (cel, consola o Windows)" },
+      // Siempre dice dónde juega: solo Java, solo Bedrock o los dos (con sus nombres)
+      const donde = c.some(x => x.plataforma === "java") && c.some(x => x.plataforma === "bedrock") ? "Juega en Java y Bedrock" : c[0].plataforma === "bedrock" ? "Juega en Bedrock" : "Juega en Java";
+      return el("div", { class: "perfil-cuentas" }, el("small", { class: "cuentas-donde", text: donde }), ...c.map(x => el("span", { class: "cuenta-chip " + x.plataforma, title: x.plataforma === "java" ? "Minecraft Java (compu)" : "Minecraft Bedrock (cel, consola o Windows)" },
         el("span", { html: icono(x.plataforma, 14) }), el("b", { text: x.nombre }), el("small", { text: x.plataforma === "java" ? "Java" : "Bedrock" }))));
     }
 

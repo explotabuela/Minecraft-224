@@ -959,3 +959,4 @@ canvas.skin3d{touch-action:pan-y}
 .medalla.unica.suya{opacity:1;border-color:#b98cff;box-shadow:0 0 0 2px #b98cff55,0 6px 18px #7a3cff33}
 .medalla.unica .medalla-ico{color:#b98cff}
 .unica-que{display:block;font-style:normal;font-size:.68rem;color:var(--tenue);line-height:1.2;margin-top:2px}
+.cuentas-donde{flex-basis:100%;font-weight:700;color:var(--tenue);font-size:.75rem;letter-spacing:.02em}
