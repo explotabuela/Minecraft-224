@@ -95,12 +95,12 @@
       if (cuerpo) { g.imageSmoothingEnabled = false; const ch = 720, cw = ch * cuerpo.width / cuerpo.height; g.drawImage(cuerpo, (w - cw) / 2, 200, cw, ch); }
       g.textAlign = "center";
       g.fillStyle = "#fff"; g.font = '800 92px "Unbounded", sans-serif'; texto(g, j.nombre, w / 2, 1030, w - 120);
-      g.fillStyle = ORO; g.font = '700 44px "Figtree", sans-serif'; g.fillText(`Nivel ${j.nivel || 1} · ${j.rango || "Novato"} · ${j.clase || ""}`, w / 2, 1100);
+      g.fillStyle = ORO; g.font = '700 44px "Figtree", sans-serif'; g.fillText([`Nivel ${j.nivel || 1}`, j.rango || "Novato", j.clase].filter(Boolean).join(" · "), w / 2, 1100);
       barraXp(g, j, 160, 1140, w - 320);
       g.textAlign = "left";
       rejilla(g, statsDe(j), 60, 1240, w - 120, 3, 170);
       g.fillStyle = "#ffffffcc"; g.font = '600 38px "Figtree", sans-serif'; g.textAlign = "center";
-      g.fillText(extraDe(j), w / 2, 1640);
+      g.fillText(extraDe(j), w / 2, 1710);
       g.textAlign = "left";
     } else {
       if (cuerpo) { g.imageSmoothingEnabled = false; const ch = 640, cw = ch * cuerpo.width / cuerpo.height; g.drawImage(cuerpo, w - cw - 70, 200, cw, ch); }
@@ -108,8 +108,8 @@
       g.fillStyle = ORO; g.font = '700 38px "Figtree", sans-serif'; g.fillText(`Nivel ${j.nivel || 1} · ${j.rango || "Novato"}`, 60, 310);
       g.fillStyle = "#ffffffaa"; g.font = '600 32px "Figtree", sans-serif'; g.fillText(`Clase: ${j.clase || "—"}`, 60, 360);
       barraXp(g, j, 60, 390, 560);
-      rejilla(g, statsDe(j), 60, 470, 600, 2, 150);
-      g.fillStyle = "#ffffffcc"; g.font = '600 32px "Figtree", sans-serif'; texto(g, extraDe(j), 60, 960, w - 120);
+      rejilla(g, statsDe(j), 60, 450, 600, 2, 132);
+      g.fillStyle = "#ffffffcc"; g.font = '600 32px "Figtree", sans-serif'; texto(g, extraDe(j), 60, 950, w - 120);
     }
     return blob(c, () => perfil(j, formato, false), conImagenes);
   }
