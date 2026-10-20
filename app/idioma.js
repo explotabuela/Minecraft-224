@@ -26,7 +26,7 @@
     "Multijugador → Agregar servidor → pega la IP": "Multiplayer → Add server → paste the IP", "Multijugador → Agregar servidor → pega la IP.": "Multiplayer → Add server → paste the IP.",
     "(cel, consola, Windows): misma IP, puerto": "(phone, console, Windows): same IP, port", "Unirme al Discord": "Join the Discord", "INAUGURACIÓN EN": "OPENING IN",
     "LA 224 LLEVA": "THE 224 HAS BEEN ON FOR", "DÍAS": "DAYS", "HORAS": "HOURS", "MIN": "MIN", "SEG": "SEC", "Fecha por anunciar": "Date to be announced",
-    "Sábado 14 de noviembre, 4:00 pm": "Saturday, November 14, 4:00 pm", "Desde el 14 de noviembre": "Since November 14",
+    "Martes 15 de diciembre, 4:00 pm": "Tuesday, December 15, 4:00 pm", "Desde el 15 de diciembre": "Since December 15",
     "Revisando server…": "Checking server…", "Server apagado": "Server offline", "Nadie jugando ahorita.": "Nobody playing right now.", "Nadie conectado ahorita": "Nobody online right now",
     "La 224 en números": "The 224 in numbers", "Buscando diamantes…": "Looking for diamonds…", "Contando las muertes por tonto…": "Counting the silly deaths…",
     "Despertando a los creepers…": "Waking up the creepers…", "Revisando quién va primero en la liga…": "Checking who leads the league…", "Acomodando los bloques…": "Placing the blocks…",
@@ -116,7 +116,7 @@
     // Preguntas
     "PREGUNTAS": "FAQ", "Preguntas frecuentes": "Frequently asked questions", "Lo que todos preguntan. Si no está aquí, pregunta en el Discord.": "What everyone asks. If it's not here, ask in the Discord.",
     "¿Cuánto cuesta y a quién le pago?": "How much is it and who do I pay?", "Son": "It's", "pesos": "pesos", "por dos meses": "for two months", ". Se le pagan a": ". You pay",
-    "en la escuela, a más tardar la primera o segunda semana de noviembre. Con eso se paga el server para que esté prendido 24/7. Si quieren seguir después, se puede pagar desde antes o al regresar de vacaciones.": "at school, by the first or second week of November at the latest. That pays for the server to be online 24/7. If you want to keep playing after that, you can pay early or after the holidays.",
+    "en la escuela, antes de que empiecen las vacaciones. Con eso se paga el server para que esté prendido 24/7 los dos meses.": "at school, before the holidays start. That pays for the server to be online 24/7 for the two months.",
     "¿Puedo entrar con Minecraft pirata?": "Can I join with a pirated Minecraft?", "No. Solo cuentas originales: Minecraft Java comprado": "No. Only legit accounts: a bought Minecraft Java",
     ", o Minecraft Bedrock con tu cuenta de Xbox": ", or Minecraft Bedrock with your Xbox account", "¿Puedo jugar en el celular?": "Can I play on my phone?",
     "Sí, con Minecraft Bedrock (celular, consola o Windows). Usa la misma IP y en puerto pon": "Yes, with Minecraft Bedrock (phone, console or Windows). Use the same IP and set the port to",
