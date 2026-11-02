@@ -336,7 +336,7 @@ async Task RondaAsync(string comando)
                 presencia.Murio(principal, "murió");
                 wrapped.Muerte(principal, $"{nombre} died", reales, nombre);
             }
-            try { await webhook.EnviarAsync(nuevas == 1 ? $"💀 **{principal}** se murió" : $"💀 **{principal}** se murió {nuevas} veces", principal, Webhook.Cara(principal)); } catch { }
+            if (config.MuertesEnDiscord) try { await webhook.EnviarAsync(nuevas == 1 ? $"💀 **{principal}** se murió" : $"💀 **{principal}** se murió {nuevas} veces", principal, Webhook.Cara(principal)); } catch { }
         }
     }
 
@@ -344,6 +344,8 @@ async Task RondaAsync(string comando)
     {
         try { await f(); } catch (Exception ex) { Console.WriteLine($"[{nombre}] {ex.Message}"); }
     }
+    if (!string.IsNullOrWhiteSpace(config.DiscordToken) && !string.IsNullOrWhiteSpace(config.CanalCapturasId))
+        await Paso("Capturas", () => new Capturas(config, new Discord(config), github, vinculos).RevisarCanalAsync());
     await Paso("Ranking", ranking.PasoAsync);
     await Paso("Resumen", resumen.PasoAsync);
     await Paso("Desaparecidos", desaparecidos.RevisarAsync);

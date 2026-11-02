@@ -22,6 +22,8 @@ public class Config
     [JsonPropertyName("minutos_pagina")] public int MinutosPagina { get; set; } = 10;
 
     // Bot de Discord de verdad: comandos, chat de dos sentidos y whitelist (opcional)
+    // Si un mod del server ya manda las muertes a Discord, pon esto en false para que no salgan dobles
+    [JsonPropertyName("muertes_en_discord")] public bool MuertesEnDiscord { get; set; } = true;
     [JsonPropertyName("discord_token")] public string DiscordToken { get; set; } = "";
     [JsonPropertyName("canal_chat_id")] public string CanalChatId { get; set; } = "";
     [JsonPropertyName("canal_capturas_id")] public string CanalCapturasId { get; set; } = "";

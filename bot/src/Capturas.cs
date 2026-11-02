@@ -101,6 +101,27 @@ public class Capturas
         await _discord.ReaccionarAsync(_config.CanalCapturasId, idMensaje, "✅");
     }
 
+    // Modo GitHub: no hay conexión en vivo con Discord, así que se revisan los mensajes nuevos del canal en cada ronda
+    public async Task RevisarCanalAsync()
+    {
+        if (string.IsNullOrEmpty(_config.CanalCapturasId)) return;
+        const string RutaUltimo = "capturas_ultimo.txt";
+        var ultimo = File.Exists(RutaUltimo) ? File.ReadAllText(RutaUltimo).Trim() : "";
+        var ruta = $"/channels/{_config.CanalCapturasId}/messages?limit=50" + (ultimo != "" ? $"&after={ultimo}" : "");
+        if (await _discord.ApiAsync(HttpMethod.Get, ruta) is not { ValueKind: JsonValueKind.Array } mensajes) return;
+        var lista = mensajes.EnumerateArray().OrderBy(m => ulong.Parse(m.GetProperty("id").GetString() ?? "0")).ToList();
+        if (lista.Count == 0) return;
+        // La primera vez solo se marca dónde vamos (para no subir capturas viejas)
+        if (ultimo != "")
+            foreach (var m in lista)
+            {
+                var copia = JsonDocument.Parse(m.GetRawText().TrimEnd('}') + $",\"channel_id\":\"{_config.CanalCapturasId}\"}}").RootElement;
+                try { await MensajeAsync(m.TryGetProperty("channel_id", out _) ? m : copia); }
+                catch (Exception ex) { Console.WriteLine($"[Capturas] {ex.Message}"); }
+            }
+        File.WriteAllText(RutaUltimo, lista[^1].GetProperty("id").GetString());
+    }
+
     // Dylan le pone ❌ a un mensaje del canal de capturas -> se quita de la página
     public async Task ReaccionAsync(JsonElement r)
     {
