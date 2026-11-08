@@ -35,14 +35,14 @@ public class Jefes
 
     private static readonly string[][] Misiones =
     {
-        new[] { "Mina 128 bloques de piedra", "Tala 32 troncos de roble", "Mata 20 zombis", "Duerme en una cama 3 veces" },
-        new[] { "Junta 24 de hierro crudo", "Mata 15 esqueletos", "Pesca 10 peces", "Cosecha 64 de trigo" },
-        new[] { "Mata 15 creepers", "Consigue 5 diamantes", "Cría 15 animales", "Comercia 10 veces con aldeanos" },
-        new[] { "Mata 10 endermans", "Camina 5 kilómetros", "Mata 20 arañas", "Consigue 32 de oro" },
-        new[] { "Mata 10 blazes", "Consigue 64 de cuarzo", "Mata 3 wither skeletons", "Mata 2 ghasts" },
-        new[] { "Consigue 2 escombros ancestrales", "Encanta 5 objetos", "Mata 5 brujas", "Mata 10 saqueadores" },
-        new[] { "Mata 10 wither skeletons", "Pesca 30 veces", "Mata 5 guardianes", "Consigue 32 esmeraldas" },
+        new[] { "Mata 30 zombis", "Junta 32 de hierro crudo", "Consigue 5 diamantes", "Comercia 10 veces con aldeanos" },
+        new[] { "Mata 10 blazes", "Consigue 64 de cuarzo", "Mata 15 creepers", "Pesca 15 veces" },
+        new[] { "Mata 3 esqueletos wither", "Consigue 2 escombros ancestrales", "Cría 20 animales", "Encanta 5 objetos" },
+        new[] { "Mata 15 endermans", "Camina 10 km", "Mata 5 brujas", "Mata 5 piglins brutos" },
+        new[] { "Mata 10 esqueletos wither", "Mata 3 ghasts", "Mata 30 arañas", "Consigue 64 lingotes de oro" },
+        new[] { "Consigue 4 escombros ancestrales", "Mata 5 ahogados", "Mata 100 mobs", "Mata 10 saqueadores" },
         new[] { "Mata al Wither", "Consigue 20 diamantes", "Mata 40 creepers", "Gana una invasión de aldea" },
+        new[] { "Mata 200 mobs", "Mata 20 blazes", "Comercia 30 veces", "Cómete 2 pasteles (14 rebanadas)" }
     };
 
     public Jefes(Config config, Rcon rcon, Anunciador avisos)
