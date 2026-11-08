@@ -538,14 +538,14 @@
 
   // ---------- Barra de abajo en el cel ----------
   function barraAbajo() {
-    const items = [["#inicio", "casa", "Inicio"], ["#liga", "trofeo", "Liga"], ["#ranking", "podio", "Ranking"], ["#jugadores", "gente", "Jugadores"]];
+    const items = [["#inicio", "casa", "Inicio"], ["#jefes", "espada", "Jefes"], ["#liga", "trofeo", "Liga"], ["#jugadores", "gente", "Jugadores"]];
     const nav = el("nav", { class: "abajo", "aria-label": "Menú rápido" },
       items.map(([h, i, t]) => el("a", { href: h, html: icono(i, 22) + `<span>${t}</span>` })),
       el("button", { type: "button", html: icono("mas", 22) + "<span>Más</span>", onclick: hojaMas }));
     document.body.append(nav);
   }
   function hojaMas() {
-    const items = [["#jefes", "espada", "Jefes"], ["#misiones", "reglas", "Misiones"], ["#juegos", "mando", "Juegos"], ["#capturas", "foto", "Capturas"], ["#wrapped", "regalo", "Wrapped"], ["#estadisticas", "grafica", "Estadísticas"],
+    const items = [["#ranking", "podio", "Ranking"], ["#misiones", "reglas", "Misiones"], ["#juegos", "mando", "Juegos"], ["#capturas", "foto", "Capturas"], ["#wrapped", "regalo", "Wrapped"], ["#estadisticas", "grafica", "Estadísticas"],
       ["#meses", "calendario", "Meses"], ["#historia", "libro", "Historia"], ["#mapa", "mapa", "Mapa"], ["#entrar", "entrar", "Cómo entrar"], ["#reglas", "reglas", "Reglas"],
       ["#preguntas", "pregunta", "Preguntas"]];
     const rej = el("div", { class: "hoja-rejilla" },

@@ -1,28 +1,28 @@
 /* Jefes y misiones de la Temporada 1 */
 (function () {
   const JEFES = [
-    { id: "bruja", n: "La Bruja del Pantano", f: "2026-12-19T17:10:00-07:00", vida: 400, donde: "En un pantano",
+    { id: "bruja", lema: "Sus pociones no fallan.", c1: "#3d7a3a", c2: "#0e2412", n: "La Bruja del Pantano", f: "2026-12-19T17:10:00-07:00", vida: 400, donde: "En un pantano",
       d: "Avienta pociones, se vuelve invisible y suelta murciélagos. La cuidan sus aprendices.",
       todos: "4 pociones, libro de Reparación y XP", top: "Tótem y Escoba de la Bruja (Empuje II)" },
-    { id: "muneco", n: "El Muñeco de Nieve Maldito", f: "2026-12-26T17:10:00-07:00", vida: 470, donde: "En la nieve",
+    { id: "muneco", lema: "Esta Navidad nadie se salva del frío.", c1: "#5d9bcc", c2: "#0f2440", n: "El Muñeco de Nieve Maldito", f: "2026-12-26T17:10:00-07:00", vida: 470, donde: "En la nieve",
       d: "Ventisca, bolas de nieve y esqueletos de hielo. El jefe de Navidad.",
       todos: "Caja de regalo (shulker) con comida, XP y manzana dorada", top: "Tótem y Botas de Hielo" },
-    { id: "viejo", n: "El Año Viejo", f: "2027-01-02T17:10:00-07:00", vida: 580, donde: "En una planicie",
+    { id: "viejo", lema: "Se va con todo, y con cohetes.", c1: "#d9922f", c2: "#3f1a07", n: "El Año Viejo", f: "2027-01-02T17:10:00-07:00", vida: 580, donde: "En una planicie",
       d: "Cohetes que explotan por todos lados. Al final se quema.",
       todos: "64 cohetes y manzana dorada encantada", top: "Tótem y Ballesta de Año Nuevo" },
-    { id: "reina", n: "La Reina Araña", f: "2027-01-09T17:10:00-07:00", vida: 700, donde: "Bajo tierra, en una cueva frondosa",
+    { id: "reina", lema: "Bajo tierra, nadie te oye gritar.", c1: "#7d2b3c", c2: "#160a10", n: "La Reina Araña", f: "2027-01-09T17:10:00-07:00", vida: 700, donde: "Bajo tierra, en una cueva frondosa",
       d: "Veneno, saltos y telarañas. Sus crías le hacen escudo.",
       todos: "Plantilla de netherita, 8 diamantes y XP", top: "Tótem y Colmillo de la Reina" },
-    { id: "rey", n: "El Rey Esqueleto", f: "2027-01-16T17:10:00-07:00", vida: 800, donde: "En el desierto",
+    { id: "rey", lema: "El desierto tiene dueño.", c1: "#c9ad5e", c2: "#3a2a0c", n: "El Rey Esqueleto", f: "2027-01-16T17:10:00-07:00", vida: 800, donde: "En el desierto",
       d: "Lluvia de flechas, rayos y la Guardia Real.",
       todos: "Lingote de netherita, 4 bloques de oro y XP", top: "Arco del Rey y Corona del Rey" },
-    { id: "guardian", n: "El Guardián del Nether", f: "2027-01-23T17:10:00-07:00", vida: 900, donde: "En el Nether, en un bosque carmesí",
+    { id: "guardian", lema: "Bienvenidos al fuego.", c1: "#d4542b", c2: "#2e0b06", n: "El Guardián del Nether", f: "2027-01-23T17:10:00-07:00", vida: 900, donde: "En el Nether, en un bosque carmesí",
       d: "Lluvia de fuego y centinelas. Se pelea en el Nether.",
       todos: "Lingote de netherita, plantilla y pociones de resistencia al fuego", top: "Tótem y Peto del Guardián" },
-    { id: "ultimo", n: "El Último", f: "2027-01-30T17:10:00-07:00", vida: 1000, donde: "Sobre la oscuridad profunda",
+    { id: "ultimo", lema: "Si te escucha, ya valiste.", c1: "#1f5560", c2: "#030d10", n: "El Último", f: "2027-01-30T17:10:00-07:00", vida: 1000, donde: "Sobre la oscuridad profunda",
       d: "Un Warden gigante. Si te escucha, corre.",
       todos: "Lingote de netherita, tótem, brújula de recuperación y Sigilo veloz III", top: "Botas de El Último" },
-    { id: "profe", n: "La Profe Cristina", f: "2027-02-06T17:10:00-07:00", vida: 1000, donde: "En una pradera", final: true,
+    { id: "profe", lema: "El examen final.", c1: "#6b45c4", c2: "#160c30", n: "La Profe Cristina", f: "2027-02-06T17:10:00-07:00", vida: 1000, donde: "En una pradera", final: true,
       d: "La jefa final. Monitores, exámenes sorpresa y errores de compilación.",
       todos: "Élitros, 64 cohetes y Diploma de la 224", top: "Regla de la Profe (maza) y Diploma con 10" },
   ];
@@ -43,34 +43,60 @@
   const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
   const DUR = 25 * 60 * 1000; // ventana en la que el jefe "está despierto"
 
+  function arte(j, tam) {
+    const caja = document.createElement("div");
+    caja.className = "j-arte";
+    caja.style.setProperty("--tam", tam + "px");
+    const cuerpo = document.createElement("canvas"), brillo = document.createElement("canvas");
+    cuerpo.width = cuerpo.height = brillo.width = brillo.height = 32;
+    brillo.className = "j-brillo";
+    caja.append(cuerpo, brillo);
+    if (window.dibujarJefe) window.dibujarJefe(j.id, cuerpo, brillo);
+    return caja;
+  }
+  const fondo = j => `radial-gradient(circle at 50% 34%, ${j.c1}, ${j.c2} 72%)`;
+
   function pintarJefes() {
-    const caja = document.getElementById("jefes-caja");
-    if (!caja) return;
+    const caja = document.getElementById("jefes-caja"), dest = document.getElementById("jefe-destacado");
+    if (!caja) return -1;
     const ahora = Date.now();
     const idx = JEFES.findIndex(j => new Date(j.f).getTime() + DUR > ahora);
-    caja.innerHTML = JEFES.map((j, i) => {
-      const t = new Date(j.f);
-      const paso = i < idx || idx === -1;
-      const prox = i === idx;
-      const estado = paso ? `<span class="j-estado paso">Ya pasó · revancha disponible</span>`
-        : prox ? `<span class="j-estado prox">Próximo</span>` : `<span class="j-estado">Pronto</span>`;
-      return `<article class="jefe${prox ? " proximo" : ""}${paso ? " pasado" : ""}${j.final ? " final" : ""}">
-        <div class="j-top"><span class="j-n">${i + 1}</span><div><span class="j-fecha">${fecha(t)} · 5:10 pm</span>${estado}</div></div>
-        <h3>${esc(j.n)}</h3>
-        <p class="j-desc">${esc(j.d)}</p>
-        <div class="j-datos"><span><b>${j.vida}</b> de vida</span><span>${esc(j.donde)}</span></div>
-        <dl class="j-premio"><dt>Todos</dt><dd>${esc(j.todos)}</dd><dt>#1 en daño</dt><dd>${esc(j.top)}</dd></dl>
-      </article>`;
-    }).join("");
-    const nom = document.getElementById("jefe-prox-nombre");
-    if (nom) nom.textContent = idx === -1 ? "La temporada terminó. Gracias por jugar." : JEFES[idx].n;
+    caja.innerHTML = "";
+    JEFES.forEach((j, i) => {
+      const t = new Date(j.f), paso = idx === -1 || i < idx, prox = i === idx;
+      const a = document.createElement("article");
+      a.className = "poster" + (prox ? " proximo" : "") + (paso ? " pasado" : "") + (j.final ? " final" : "");
+      a.style.background = fondo(j);
+      a.innerHTML = `<span class="p-num">${String(i + 1).padStart(2, "0")}/08</span>
+        ${prox ? '<span class="sello">PRÓXIMO</span>' : paso ? '<span class="sello gris">YA PASÓ</span>' : j.final ? '<span class="sello oro">FINAL</span>' : ""}
+        <div class="p-txt"><p class="lema">${esc(j.lema)}</p><h3>${esc(j.n)}</h3>
+        <div class="p-pie"><span>${fecha(t).toUpperCase()}</span><span>${j.vida} DE VIDA</span></div>
+        <dl class="p-premio"><dt>Todos</dt><dd>${esc(j.todos)}</dd><dt>#1</dt><dd>${esc(j.top)}</dd></dl></div>`;
+      a.prepend(arte(j, 132));
+      caja.append(a);
+    });
+    if (dest) {
+      dest.innerHTML = "";
+      if (idx === -1) { dest.innerHTML = `<div class="d-fin"><h3>Fin de temporada</h3><p>Gracias por jugar la 224.</p></div>`; return idx; }
+      const j = JEFES[idx], t = new Date(j.f);
+      const cartel = document.createElement("div");
+      cartel.className = "d-cartel"; cartel.style.background = fondo(j);
+      cartel.append(arte(j, 260));
+      const info = document.createElement("div");
+      info.className = "d-info";
+      info.innerHTML = `<span class="d-etq">PRÓXIMO ESTRENO</span><h3>${esc(j.n)}</h3><p class="d-lema">${esc(j.lema)}</p>
+        <p class="d-desc">${esc(j.d)} ${esc(j.donde)}.</p>
+        <div class="reloj d-reloj" id="jefe-reloj"></div>
+        <p class="d-cuando">${fecha(t)} a las 5:10 pm, ${j.vida} de vida</p>
+        <dl class="p-premio grande"><dt>Para todos</dt><dd>${esc(j.todos)}</dd><dt>Para el #1</dt><dd>${esc(j.top)}</dd></dl>`;
+      dest.append(cartel, info);
+    }
     return idx;
   }
 
   function reloj(idx) {
     const r = document.getElementById("jefe-reloj");
-    if (!r) return;
-    if (idx === -1) { r.innerHTML = ""; return; }
+    if (!r || idx === -1) return;
     const meta = new Date(JEFES[idx].f).getTime();
     const tick = () => {
       let s = Math.floor((meta - Date.now()) / 1000);
