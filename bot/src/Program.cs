@@ -266,6 +266,7 @@ async Task RondaAsync(string comando)
 {
     var inauguracion = new Inauguracion(config, avisos);
     var nether = new AperturaNether(config, rcon, avisos);
+    var jefes = new Jefes(config, rcon, avisos);
 
     if (comando != "")
     {
@@ -283,6 +284,7 @@ async Task RondaAsync(string comando)
                 Console.WriteLine($"Listo ✔ Respaldo en {Temporada.Reiniciar(DateTime.Now)}");
                 return;
             case "pagina": break;
+            case "jefe" when partes.Length == 2: await rcon.ComandoAsync($"execute in minecraft:overworld positioned 0 100 0 rotated 0 0 run function jefes224:{partes[1]}/invocar"); break;
             default: Console.WriteLine("No conozco ese comando"); break;
         }
         } catch (Exception ex) { Console.WriteLine($"[Comando] Error: {ex.Message}"); }
@@ -351,6 +353,7 @@ async Task RondaAsync(string comando)
     await Paso("Desaparecidos", desaparecidos.RevisarAsync);
     await Paso("Inauguración", inauguracion.PasoAsync);
     if (vivo) await Paso("Nether", nether.PasoAsync);
+    if (vivo) await Paso("Jefes", jefes.PasoAsync);
     if (pagina.TareaSkins != null) await Paso("Skins", () => pagina.TareaSkins);
     Console.WriteLine("[Ronda] Lista ✔");
 }

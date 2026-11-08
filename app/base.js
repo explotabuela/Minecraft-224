@@ -545,7 +545,7 @@
     document.body.append(nav);
   }
   function hojaMas() {
-    const items = [["#juegos", "mando", "Juegos"], ["#capturas", "foto", "Capturas"], ["#wrapped", "regalo", "Wrapped"], ["#estadisticas", "grafica", "Estadísticas"],
+    const items = [["#jefes", "espada", "Jefes"], ["#misiones", "reglas", "Misiones"], ["#juegos", "mando", "Juegos"], ["#capturas", "foto", "Capturas"], ["#wrapped", "regalo", "Wrapped"], ["#estadisticas", "grafica", "Estadísticas"],
       ["#meses", "calendario", "Meses"], ["#historia", "libro", "Historia"], ["#mapa", "mapa", "Mapa"], ["#entrar", "entrar", "Cómo entrar"], ["#reglas", "reglas", "Reglas"],
       ["#preguntas", "pregunta", "Preguntas"]];
     const rej = el("div", { class: "hoja-rejilla" },
@@ -625,7 +625,7 @@
   }
 
   // ---------- Buscador universal ----------
-  const APARTADOS = [["Inicio", "#inicio", "casa"], ["Liga del mes", "#liga", "trofeo"], ["Ranking", "#ranking", "podio"], ["Jugadores", "#jugadores", "gente"],
+  const APARTADOS = [["Inicio", "#inicio", "casa"], ["Liga del mes", "#liga", "trofeo"], ["Ranking", "#ranking", "podio"], ["Jugadores", "#jugadores", "gente"], ["Jefes", "#jefes", "espada"], ["Misiones", "#misiones", "reglas"],
     ["VS", "#comparador", "rayo"], ["Mini juegos", "#juegos", "mando"], ["Estadísticas", "#estadisticas", "grafica"], ["Meses", "#meses", "calendario"],
     ["Historia", "#historia", "libro"], ["Capturas", "#capturas", "foto"], ["Mapa", "#mapa", "mapa"], ["Wrapped", "#wrapped", "regalo"],
     ["Cómo entrar", "#entrar", "entrar"], ["Reglas", "#reglas", "reglas"], ["Preguntas", "#preguntas", "pregunta"]];
