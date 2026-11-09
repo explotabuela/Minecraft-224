@@ -16,8 +16,8 @@
     { id: "rey", lema: "El desierto tiene dueño.", c1: "#c9ad5e", c2: "#3a2a0c", n: "El Rey Esqueleto", f: "2027-01-16T17:10:00-07:00", vida: 800, donde: "En el desierto",
       d: "Lluvia de flechas, rayos y la Guardia Real.",
       todos: "Lingote de netherita, 4 bloques de oro y XP", top: "Arco del Rey y Corona del Rey" },
-    { id: "guardian", lema: "Bienvenidos al fuego.", c1: "#d4542b", c2: "#2e0b06", n: "El Guardián del Nether", f: "2027-01-23T17:10:00-07:00", vida: 900, donde: "En el Nether, en un bosque carmesí",
-      d: "Lluvia de fuego y centinelas. Se pelea en el Nether.",
+    { id: "guardian", lema: "Bienvenidos al fuego.", c1: "#d4542b", c2: "#2e0b06", n: "El Guardián del Nether", f: "2027-01-23T17:10:00-07:00", vida: 1500, donde: "En el Nether, en un bosque carmesí",
+      d: "Un bruto acorazado con un hacha enorme. Lluvia de fuego, centinelas y 1500 de vida.",
       todos: "Lingote de netherita, plantilla y pociones de resistencia al fuego", top: "Tótem y Peto del Guardián" },
     { id: "ultimo", lema: "Si te escucha, ya valiste.", c1: "#1f5560", c2: "#030d10", n: "El Último", f: "2027-01-30T17:10:00-07:00", vida: 1000, donde: "Sobre la oscuridad profunda",
       d: "Un Warden gigante. Si te escucha, corre.",
@@ -55,6 +55,16 @@
     return caja;
   }
   const fondo = j => `radial-gradient(circle at 50% 34%, ${j.c1}, ${j.c2} 72%)`;
+  function escena(j, tam) {
+    const e = document.createElement("div");
+    e.className = "j-escena";
+    const f = document.createElement("canvas");
+    f.width = 48; f.height = 72; f.className = "j-fondo";
+    e.append(f);
+    if (window.dibujarFondo) window.dibujarFondo(j.id, f);
+    e.append(arte(j, tam));
+    return e;
+  }
 
   function pintarJefes() {
     const caja = document.getElementById("jefes-caja"), dest = document.getElementById("jefe-destacado");
@@ -72,7 +82,7 @@
         <div class="p-txt"><p class="lema">${esc(j.lema)}</p><h3>${esc(j.n)}</h3>
         <div class="p-pie"><span>${fecha(t).toUpperCase()}</span><span>${j.vida} DE VIDA</span></div>
         <dl class="p-premio"><dt>Todos</dt><dd>${esc(j.todos)}</dd><dt>#1</dt><dd>${esc(j.top)}</dd></dl></div>`;
-      a.prepend(arte(j, 132));
+      a.prepend(escena(j, 150));
       caja.append(a);
     });
     if (dest) {
@@ -81,7 +91,7 @@
       const j = JEFES[idx], t = new Date(j.f);
       const cartel = document.createElement("div");
       cartel.className = "d-cartel"; cartel.style.background = fondo(j);
-      cartel.append(arte(j, 260));
+      cartel.append(escena(j, 250));
       const info = document.createElement("div");
       info.className = "d-info";
       info.innerHTML = `<span class="d-etq">PRÓXIMO ESTRENO</span><h3>${esc(j.n)}</h3><p class="d-lema">${esc(j.lema)}</p>

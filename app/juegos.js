@@ -488,9 +488,21 @@
     // =====================================================
     // PINTAR EL APARTADO
     // =====================================================
+    const PORTADAS = [
+      [/speedrun/i, "item_clock", "bloque_redstone_block"], [/trivia de minecraft/i, "item_book", "bloque_bookshelf"],
+      [/redstone/i, "item_redstone", "bloque_piston_side"], [/adivina el mob/i, "item_ender_eye", "bloque_moss_block"],
+      [/crafteo/i, "bloque_crafting_table_front", "bloque_oak_planks"], [/wordle/i, "item_paper", "bloque_white_wool"],
+      [/quién tiene/i, "item_gold_ingot", "bloque_gold_block"], [/skin/i, "item_spyglass", "bloque_glass"],
+      [/memorama/i, "item_diamond", "bloque_diamond_block"], [/snake|ajolote/i, "item_tropical_fish", "bloque_lapis_block"],
+      [/flappy|elytra/i, "item_elytra", "bloque_obsidian"], [/tetris/i, "bloque_tnt_side", "bloque_emerald_block"],
+      [/buscaminas|creeper/i, "item_gunpowder", "bloque_sand"]];
+    function portada(titulo) {
+      const [, item, fondo] = PORTADAS.find(([re]) => re.test(titulo)) || [0, "item_diamond_pickaxe", "bloque_cobblestone"];
+      return el("span", { class: "ja-portada", style: `--tex:url(texturas/${fondo}.png)`, html: `<img src="texturas/${item}.png" alt="" loading="lazy">` });
+    }
     function arcade(titulo, texto, ic, record, fn) {
       return el("button", { class: "juego-arcade", type: "button", onclick: fn },
-        el("span", { class: "juego-arcade-ico", html: icono(ic, 26) }),
+        portada(titulo),
         el("b", { text: titulo }), el("small", { text: texto }),
         el("span", { class: "juego-arcade-record", text: record }));
     }

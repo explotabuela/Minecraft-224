@@ -8,10 +8,10 @@
   const A = () => window.App;
 
   const TAM = { cuadrado: [1080, 1080], historia: [1080, 1920], ancho: [1600, 900] };
-  const ORO = "#f5c451", PLATA = "#c9d1d9", BRONCE = "#d08a4e", VERDE = "#5fd068";
+  const ORO = "#f5c451", PLATA = "#c9d1d9", BRONCE = "#d08a4e", VERDE = "#ffc94d";
 
   async function fuentes() {
-    try { await Promise.all(['800 60px "Unbounded"', '600 40px "Figtree"', '700 40px "Figtree"', '30px "Silkscreen"'].map(f => document.fonts.load(f))); } catch {}
+    try { await Promise.all(['400 60px "Anton"', '600 40px "Archivo"', '700 40px "Archivo"', '30px "Silkscreen"'].map(f => document.fonts.load(f))); } catch {}
   }
 
   // Imágenes de otras páginas (caras). Si no dejan dibujarlas, se hace sin ellas.
@@ -39,12 +39,12 @@
     return [c, c.getContext("2d"), w, h];
   }
 
-  function fondo(g, w, h, colores = ["#0e1c14", "#14301f", "#0b1310"]) {
+  function fondo(g, w, h, colores = ["#3b1f5e", "#7d2d6c", "#160d2a"]) {
     const d = g.createLinearGradient(0, 0, w, h);
     d.addColorStop(0, colores[0]); d.addColorStop(.55, colores[1]); d.addColorStop(1, colores[2]);
     g.fillStyle = d; g.fillRect(0, 0, w, h);
     const brillo = g.createRadialGradient(w * .8, h * .15, 0, w * .8, h * .15, w * .7);
-    brillo.addColorStop(0, "#5fd06833"); brillo.addColorStop(1, "#5fd06800");
+    brillo.addColorStop(0, "#ffc94d33"); brillo.addColorStop(1, "#ffc94d00");
     g.fillStyle = brillo; g.fillRect(0, 0, w, h);
     g.fillStyle = "#ffffff08";
     for (let x = 0; x < w; x += 40) g.fillRect(x, 0, 2, h);
@@ -54,7 +54,7 @@
   async function marca(g, w, h, conImagenes) {
     const lg = conImagenes ? await logo() : null;
     if (lg) { g.save(); redondo(g, 60, 54, 72, 72, 16); g.clip(); g.drawImage(lg, 60, 54, 72, 72); g.restore(); }
-    g.fillStyle = "#fff"; g.font = '800 34px "Unbounded", sans-serif'; g.textBaseline = "middle";
+    g.fillStyle = "#fff"; g.font = '400 34px "Anton", sans-serif'; g.textBaseline = "middle";
     g.fillText("MINECRAFT 224", lg ? 150 : 60, 91);
     g.textBaseline = "alphabetic";
     g.fillStyle = "#ffffff99"; g.font = '26px "Silkscreen", monospace';
@@ -80,7 +80,7 @@
     const im = conImagenes ? await cargar(A().urlsCara(nombre, 256)) : null;
     g.save(); redondo(g, x, y, t, t, t * .16); g.clip();
     if (im) { g.imageSmoothingEnabled = false; g.drawImage(im, x, y, t, t); }
-    else { g.fillStyle = "#26322e"; g.fillRect(x, y, t, t); g.fillStyle = VERDE; g.font = `800 ${t * .45}px "Unbounded", sans-serif`; g.textAlign = "center"; g.textBaseline = "middle"; g.fillText((nombre.replace(/^\./, "")[0] || "?").toUpperCase(), x + t / 2, y + t / 2); g.textAlign = "left"; g.textBaseline = "alphabetic"; }
+    else { g.fillStyle = "#2b1a4c"; g.fillRect(x, y, t, t); g.fillStyle = VERDE; g.font = `400 ${t * .45}px "Anton", sans-serif`; g.textAlign = "center"; g.textBaseline = "middle"; g.fillText((nombre.replace(/^\./, "")[0] || "?").toUpperCase(), x + t / 2, y + t / 2); g.textAlign = "left"; g.textBaseline = "alphabetic"; }
     g.restore();
   }
 
@@ -94,22 +94,22 @@
     if (alto) {
       if (cuerpo) { g.imageSmoothingEnabled = false; const ch = 720, cw = ch * cuerpo.width / cuerpo.height; g.drawImage(cuerpo, (w - cw) / 2, 200, cw, ch); }
       g.textAlign = "center";
-      g.fillStyle = "#fff"; g.font = '800 92px "Unbounded", sans-serif'; texto(g, j.nombre, w / 2, 1030, w - 120);
-      g.fillStyle = ORO; g.font = '700 44px "Figtree", sans-serif'; g.fillText([`Nivel ${j.nivel || 1}`, j.rango || "Novato", j.clase].filter(Boolean).join(" · "), w / 2, 1100);
+      g.fillStyle = "#fff"; g.font = '400 92px "Anton", sans-serif'; texto(g, j.nombre, w / 2, 1030, w - 120);
+      g.fillStyle = ORO; g.font = '700 44px "Archivo", sans-serif'; g.fillText([`Nivel ${j.nivel || 1}`, j.rango || "Novato", j.clase].filter(Boolean).join(" · "), w / 2, 1100);
       barraXp(g, j, 160, 1140, w - 320);
       g.textAlign = "left";
       rejilla(g, statsDe(j), 60, 1240, w - 120, 3, 170);
-      g.fillStyle = "#ffffffcc"; g.font = '600 38px "Figtree", sans-serif'; g.textAlign = "center";
+      g.fillStyle = "#ffffffcc"; g.font = '600 38px "Archivo", sans-serif'; g.textAlign = "center";
       g.fillText(extraDe(j), w / 2, 1710);
       g.textAlign = "left";
     } else {
       if (cuerpo) { g.imageSmoothingEnabled = false; const ch = 640, cw = ch * cuerpo.width / cuerpo.height; g.drawImage(cuerpo, w - cw - 70, 200, cw, ch); }
-      g.fillStyle = "#fff"; g.font = '800 76px "Unbounded", sans-serif'; texto(g, j.nombre, 60, 250, 620);
-      g.fillStyle = ORO; g.font = '700 38px "Figtree", sans-serif'; g.fillText(`Nivel ${j.nivel || 1} · ${j.rango || "Novato"}`, 60, 310);
-      g.fillStyle = "#ffffffaa"; g.font = '600 32px "Figtree", sans-serif'; g.fillText(`Clase: ${j.clase || "—"}`, 60, 360);
+      g.fillStyle = "#fff"; g.font = '400 76px "Anton", sans-serif'; texto(g, j.nombre, 60, 250, 620);
+      g.fillStyle = ORO; g.font = '700 38px "Archivo", sans-serif'; g.fillText(`Nivel ${j.nivel || 1} · ${j.rango || "Novato"}`, 60, 310);
+      g.fillStyle = "#ffffffaa"; g.font = '600 32px "Archivo", sans-serif'; g.fillText(`Clase: ${j.clase || "—"}`, 60, 360);
       barraXp(g, j, 60, 390, 560);
       rejilla(g, statsDe(j), 60, 450, 600, 2, 132);
-      g.fillStyle = "#ffffffcc"; g.font = '600 32px "Figtree", sans-serif'; texto(g, extraDe(j), 60, 950, w - 120);
+      g.fillStyle = "#ffffffcc"; g.font = '600 32px "Archivo", sans-serif'; texto(g, extraDe(j), 60, 950, w - 120);
     }
     return blob(c, () => perfil(j, formato, false), conImagenes);
   }
@@ -133,19 +133,19 @@
       const cx = x + (k % cols) * (cw + gap), cy = y + Math.floor(k / cols) * (alto + gap);
       g.fillStyle = "#00000040"; redondo(g, cx, cy, cw, alto, 24); g.fill();
       g.strokeStyle = "#ffffff1a"; g.lineWidth = 2; g.stroke();
-      g.fillStyle = "#fff"; g.font = '800 54px "Unbounded", sans-serif'; texto(g, val, cx + 28, cy + alto * .52, cw - 50);
-      g.fillStyle = "#ffffffaa"; g.font = '600 28px "Figtree", sans-serif'; g.fillText(etq, cx + 28, cy + alto * .52 + 46);
+      g.fillStyle = "#fff"; g.font = '400 54px "Anton", sans-serif'; texto(g, val, cx + 28, cy + alto * .52, cw - 50);
+      g.fillStyle = "#ffffffaa"; g.font = '600 28px "Archivo", sans-serif'; g.fillText(etq, cx + 28, cy + alto * .52 + 46);
     });
   }
 
   // ---------- Podio ----------
   async function podio({ titulo, sub = "", filas, formato = "cuadrado" }, conImagenes = true) {
     const [c, g, w, h] = lienzo(formato);
-    fondo(g, w, h, ["#1b1406", "#2b2210", "#0b0f0c"]);
+    fondo(g, w, h, ["#1b1406", "#2b2210", "#160d2a"]);
     await marca(g, w, h, conImagenes);
     g.textAlign = "center";
-    g.fillStyle = "#fff"; g.font = '800 64px "Unbounded", sans-serif'; texto(g, titulo, w / 2, 230, w - 120);
-    g.fillStyle = "#ffffffaa"; g.font = '600 34px "Figtree", sans-serif'; g.fillText(sub, w / 2, 285);
+    g.fillStyle = "#fff"; g.font = '400 64px "Anton", sans-serif'; texto(g, titulo, w / 2, 230, w - 120);
+    g.fillStyle = "#ffffffaa"; g.font = '600 34px "Archivo", sans-serif'; g.fillText(sub, w / 2, 285);
     const base = formato === "historia" ? 1500 : h - 150;
     const anchoE = 280, orden = [1, 0, 2], altos = [380, 290, 220], colores = [ORO, PLATA, BRONCE];
     const xs = [w / 2 - anchoE * 1.5 - 20, w / 2 - anchoE / 2, w / 2 + anchoE / 2 + 20];
@@ -154,11 +154,11 @@
       const x = xs[k], alto = altos[i], y = base - alto;
       const grad = g.createLinearGradient(0, y, 0, base); grad.addColorStop(0, colores[i]); grad.addColorStop(1, colores[i] + "55");
       g.fillStyle = grad; redondo(g, x, y, anchoE, alto + 40, 22); g.fill();
-      g.fillStyle = "#0b0f0c"; g.font = '800 110px "Unbounded", sans-serif'; g.fillText(String(i + 1), x + anchoE / 2, y + 140);
+      g.fillStyle = "#160d2a"; g.font = '400 110px "Anton", sans-serif'; g.fillText(String(i + 1), x + anchoE / 2, y + 140);
       const tc = i === 0 ? 200 : 170;
       await cara(g, f.nombre, x + (anchoE - tc) / 2, y - tc - 90, tc, conImagenes);
-      g.fillStyle = "#fff"; g.font = '800 40px "Unbounded", sans-serif'; texto(g, f.nombre, x + anchoE / 2, y - 50, anchoE + 20);
-      g.fillStyle = colores[i]; g.font = '700 34px "Figtree", sans-serif'; g.fillText(f.valor, x + anchoE / 2, y - 12);
+      g.fillStyle = "#fff"; g.font = '400 40px "Anton", sans-serif'; texto(g, f.nombre, x + anchoE / 2, y - 50, anchoE + 20);
+      g.fillStyle = colores[i]; g.font = '700 34px "Archivo", sans-serif'; g.fillText(f.valor, x + anchoE / 2, y - 12);
     }
     g.textAlign = "left";
     return blob(c, () => podio({ titulo, sub, filas, formato }, false), conImagenes);
@@ -169,19 +169,19 @@
     const [c, g, w, h] = lienzo(formato);
     fondo(g, w, h);
     await marca(g, w, h, conImagenes);
-    g.fillStyle = "#fff"; g.font = '800 64px "Unbounded", sans-serif'; texto(g, titulo, 60, 240, w - 120);
-    g.fillStyle = "#ffffffaa"; g.font = '600 34px "Figtree", sans-serif'; g.fillText(sub, 60, 295);
+    g.fillStyle = "#fff"; g.font = '400 64px "Anton", sans-serif'; texto(g, titulo, 60, 240, w - 120);
+    g.fillStyle = "#ffffffaa"; g.font = '600 34px "Archivo", sans-serif'; g.fillText(sub, 60, 295);
     const max = Math.max(1, ...filas.map(f => f.n || 0));
     const top = 350, altoF = Math.min(140, (h - top - 140) / Math.max(1, Math.min(10, filas.length)));
     for (let i = 0; i < Math.min(10, filas.length); i++) {
       const f = filas[i], y = top + i * altoF;
-      g.fillStyle = i < 3 ? [ORO, PLATA, BRONCE][i] : "#ffffff66"; g.font = '800 44px "Unbounded", sans-serif'; g.fillText(String(i + 1), 60, y + altoF * .62);
+      g.fillStyle = i < 3 ? [ORO, PLATA, BRONCE][i] : "#ffffff66"; g.font = '400 44px "Anton", sans-serif'; g.fillText(String(i + 1), 60, y + altoF * .62);
       const t = altoF * .66;
       await cara(g, f.nombre, 140, y + (altoF - t) / 2, t, conImagenes);
-      g.fillStyle = "#fff"; g.font = '700 40px "Figtree", sans-serif'; texto(g, f.nombre, 160 + t, y + altoF * .45, 480);
+      g.fillStyle = "#fff"; g.font = '700 40px "Archivo", sans-serif'; texto(g, f.nombre, 160 + t, y + altoF * .45, 480);
       g.fillStyle = "#ffffff1f"; redondo(g, 160 + t, y + altoF * .58, w - 260 - t - 220, 14, 7); g.fill();
       g.fillStyle = i === 0 ? ORO : VERDE; redondo(g, 160 + t, y + altoF * .58, Math.max(14, (w - 260 - t - 220) * (f.n || 0) / max), 14, 7); g.fill();
-      g.textAlign = "right"; g.fillStyle = "#fff"; g.font = '800 40px "Unbounded", sans-serif'; g.fillText(f.valor, w - 60, y + altoF * .62); g.textAlign = "left";
+      g.textAlign = "right"; g.fillStyle = "#fff"; g.font = '400 40px "Anton", sans-serif'; g.fillText(f.valor, w - 60, y + altoF * .62); g.textAlign = "left";
     }
     return blob(c, () => tabla({ titulo, sub, filas, formato }, false), conImagenes);
   }

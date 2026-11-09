@@ -114,20 +114,28 @@
     },
     guardian(d, g) {
       const { R, P, L } = d;
-      // fuego de hombros
-      for (let a = 2; a < 30; a += 3) { const h = 4 + ((a * 7) % 5); R(a, 32 - h, 3, h, a % 2 ? "#d93a1a" : "#ff7a1a"); R(a + 1, 32 - h + 2, 1, h - 2, "#ffd166"); }
-      // cuernos
-      L(9, 9, 4, 5, "#d9c9a8"); L(4, 5, 3, 1, "#d9c9a8"); L(8, 10, 4, 6, "#bfae8c");
-      L(22, 9, 27, 5, "#d9c9a8"); L(27, 5, 28, 1, "#d9c9a8"); L(23, 10, 27, 6, "#bfae8c");
-      // yelmo
-      R(8, 6, 16, 19, "#2b2b30"); R(9, 5, 14, 1, "#3a3a42"); R(8, 6, 1, 19, "#3a3a42"); R(23, 6, 1, 19, "#1d1d22");
-      // grietas de lava
-      L(11, 7, 13, 11, "#ff6a00"); L(20, 8, 18, 12, "#ff6a00"); L(10, 20, 12, 23, "#d93a1a");
-      // visera
-      R(10, 13, 12, 3, "#0a0a0c"); g.R(11, 14, 3, 1, "#ff8a00"); g.R(18, 14, 3, 1, "#ff8a00");
-      // rejilla
-      for (let a = 11; a <= 20; a += 3) R(a, 18, 1, 5, "#0a0a0c");
-      R(10, 25, 12, 2, "#1d1d22");
+      // hacha gigante
+      L(28, 31, 28, 6, "#5a3a1a"); L(29, 31, 29, 6, "#3a2410");
+      R(24, 4, 4, 9, "#9aa3ad"); R(23, 6, 1, 5, "#c9d1d9"); R(30, 5, 2, 7, "#9aa3ad"); P(27, 3, "#9aa3ad"); P(27, 13, "#9aa3ad");
+      // hombreras con picos
+      R(2, 21, 9, 6, "#3a3a44"); R(21, 21, 9, 6, "#3a3a44"); R(2, 21, 9, 1, "#5a5a68"); R(21, 21, 9, 1, "#5a5a68");
+      [[3, 19], [6, 18], [9, 19], [22, 19], [25, 18], [28, 19]].forEach(([a, b]) => { R(a, b, 1, 2, "#c9b48a"); });
+      // pecho con cinturón
+      R(8, 24, 16, 8, "#2a2a32"); R(8, 28, 16, 2, "#5a2a14"); R(14, 28, 4, 2, "#d9a520");
+      // cabeza de bruto (piel rojiza)
+      R(9, 10, 14, 13, "#8a3a2a"); R(22, 10, 1, 13, "#6a2a1e"); R(9, 22, 14, 1, "#6a2a1e");
+      // yelmo con cuernos
+      R(8, 5, 16, 6, "#2b2b30"); R(9, 4, 14, 1, "#3a3a42"); R(8, 10, 16, 1, "#1d1d22");
+      L(8, 7, 4, 4, "#d9c9a8"); L(4, 4, 3, 0, "#d9c9a8"); L(8, 8, 5, 5, "#bfae8c");
+      L(23, 7, 27, 4, "#d9c9a8"); L(27, 4, 28, 0, "#d9c9a8"); L(23, 8, 26, 5, "#bfae8c");
+      L(11, 6, 13, 9, "#ff6a00");
+      // ceño y ojos de lava
+      R(10, 12, 12, 2, "#4a1a12"); R(11, 14, 4, 2, "#140806"); R(17, 14, 4, 2, "#140806");
+      // quijada con colmillos
+      R(11, 18, 10, 4, "#6a2a1e"); R(12, 19, 8, 2, "#140806"); R(12, 17, 1, 3, "#efe6cf"); R(19, 17, 1, 3, "#efe6cf"); P(12, 16, "#efe6cf"); P(19, 16, "#efe6cf");
+      // cicatriz
+      L(18, 11, 20, 17, "#c45a3a");
+      g.R(12, 14, 2, 1, "#ff8a00"); g.R(18, 14, 2, 1, "#ff8a00"); g.L(11, 6, 13, 9, "#ff6a00");
     },
     ultimo(d, g) {
       const { R, P, L, C } = d;
@@ -168,6 +176,98 @@
       // aretes de perla
       P(9, 19, "#f4ecdf"); P(22, 19, "#f4ecdf"); P(9, 20, "#d8d0c0"); P(22, 20, "#d8d0c0");
     },
+  };
+
+
+  // ===== Escenarios de fondo (48x72) para cada póster =====
+  const FONDOS = {
+    bruja(d) {
+      const { R, P, L, C, x } = d;
+      degradado(x, ["#07150b", "#0d2414", "#14341c", "#1c4426"]);
+      C(34, 14, 7, "#d9e8c4"); C(36, 12, 6, "#c4d8ac"); C(32, 13, 2, "#b8cca0");
+      estrellas(d, 30, 34, "#cfe8c0");
+      // árboles secos
+      [[4, 36], [42, 40]].forEach(([a, b]) => { R(a, b, 3, 36, "#050c07"); L(a, b + 6, a - 4, b - 2, "#050c07"); L(a + 2, b + 10, a + 7, b + 2, "#050c07"); L(a - 4, b - 2, a - 6, b - 5, "#050c07"); });
+      // pantano
+      R(0, 60, 48, 12, "#0a1f12"); for (let i = 0; i < 48; i += 3) P(i, 61 + (i % 2), "#2a5a34");
+      [[10, 58], [30, 56], [40, 59], [20, 54], [6, 50]].forEach(([a, b]) => P(a, b, "#d8ff6a"));
+    },
+    muneco(d) {
+      const { R, P, x } = d;
+      degradado(x, ["#0a1a33", "#123056", "#1d4a7a", "#2a6098"]);
+      { let r = 5; const rnd = () => (r = (r * 9301 + 49297) % 233280) / 233280; for (let i = 0; i < 70; i++) P(Math.floor(rnd() * 48), Math.floor(rnd() * 70), i % 3 ? "#ffffffaa" : "#ffffff"); }
+      // pinos nevados
+      [[3, 40, 9], [40, 36, 11], [12, 48, 7], [33, 50, 7]].forEach(([a, b, h]) => { for (let k = 0; k < h; k++) { R(a + 4 - Math.floor(k / 1.5), b + k * 2, 1 + Math.floor(k / 1.5) * 2, 2, "#0b2238"); P(a + 4 - Math.floor(k / 1.5), b + k * 2, "#e8f0f7"); } });
+      R(0, 62, 48, 10, "#dfe9f2"); R(0, 62, 48, 1, "#ffffff");
+    },
+    viejo(d) {
+      const { R, P, x } = d;
+      degradado(x, ["#0a0a24", "#1a1440", "#3a1f4a", "#6a2a3a"]);
+      [[10, 12, "#ff5a5a"], [37, 9, "#ffd166"], [24, 22, "#6af0ff"], [41, 30, "#b56aff"], [6, 30, "#7aff8a"]].forEach(([cx, cy, c]) => {
+        for (let t = 0; t < 12; t++) { const a = t * Math.PI / 6; for (let r = 2; r < 6; r++) P(Math.round(cx + Math.cos(a) * r), Math.round(cy + Math.sin(a) * r), r > 4 ? c + "88" : c); } P(cx, cy, "#fff"); });
+      // techos de pueblo
+      [[0, 58, 10], [9, 54, 8], [16, 60, 9], [25, 55, 10], [35, 57, 13]].forEach(([a, b, w]) => { R(a, b, w, 72 - b, "#120a1a"); P(a + 2, b + 4, "#ffcf6a"); P(a + w - 3, b + 6, "#ffcf6a"); });
+    },
+    reina(d) {
+      const { R, P, L, x } = d;
+      degradado(x, ["#0d0508", "#1a0a10", "#2a0e18", "#160609"]);
+      // estalactitas y estalagmitas
+      for (let a = 0; a < 48; a += 4) { const h = 4 + (a * 7) % 9; for (let k = 0; k < h; k++) R(a + Math.floor(k / 3), k, 4 - Math.floor(k / 1.6) > 0 ? 4 - Math.floor(k / 1.6) : 1, 1, "#2e1418"); }
+      for (let a = 2; a < 48; a += 5) { const h = 3 + (a * 5) % 8; for (let k = 0; k < h; k++) R(a + Math.floor(k / 3), 71 - k, Math.max(1, 4 - Math.floor(k / 1.6)), 1, "#2e1418"); }
+      // telarañas en esquinas
+      [[0, 0, 1], [47, 0, -1]].forEach(([a, b, s]) => { for (let k = 0; k < 4; k++) L(a, b + k * 4, a + s * (14 - k * 3), b, "#ffffff22"); L(a, b, a + s * 12, b + 12, "#ffffff22"); });
+      [[6, 40], [40, 46], [10, 56], [36, 30]].forEach(([a, b]) => { P(a, b, "#ff2a3a"); P(a + 2, b, "#ff2a3a"); });
+    },
+    rey(d) {
+      const { R, P, C, x } = d;
+      degradado(x, ["#120d24", "#2a1f3a", "#6a4a3a", "#b88a4a"]);
+      C(11, 16, 6, "#f4e6c0"); estrellas(d, 25, 24, "#fff3d0");
+      // pirámide
+      for (let k = 0; k < 18; k++) R(30 - k, 40 + k, 2 + k * 2, 1, k % 3 ? "#5a3e1a" : "#4a3212");
+      // dunas
+      for (let i = 0; i < 48; i++) { const h = 58 + Math.round(Math.sin(i / 6) * 3); R(i, h, 1, 72 - h, "#c8964a"); P(i, h, "#e0b468"); }
+    },
+    guardian(d) {
+      const { R, P, x } = d;
+      degradado(x, ["#1a0402", "#3a0a04", "#6a1406", "#a02a0a"]);
+      // cascadas de lava
+      [[6, 4], [38, 6], [22, 2]].forEach(([a, w]) => { R(a, 0, w, 72, "#ff6a0055"); R(a + 1, 0, Math.max(1, w - 2), 72, "#ff8a1a66"); });
+      // acantilados de piedra infernal
+      for (let i = 0; i < 48; i++) { const h = 54 + Math.round(Math.sin(i / 4) * 3 + Math.cos(i / 7) * 2); R(i, h, 1, 72 - h, "#3a0c0c"); P(i, h, "#5a1a14"); }
+      { let r = 7; const rnd = () => (r = (r * 9301 + 49297) % 233280) / 233280; for (let i = 0; i < 40; i++) P(Math.floor(rnd() * 48), Math.floor(rnd() * 60), i % 2 ? "#ffb04a" : "#ff6a00aa"); }
+    },
+    ultimo(d) {
+      const { R, P, x } = d;
+      degradado(x, ["#000203", "#02090c", "#041318", "#020a0d"]);
+      // agujas oscuras
+      [[3, 20], [10, 34], [36, 26], [43, 14], [26, 44]].forEach(([a, b]) => { for (let k = 0; k < 72 - b; k++) R(a + Math.floor(Math.sin(k / 6)), b + k, 2 + Math.floor(k / 16), 1, "#06161b"); });
+      // venas que brillan
+      for (let i = 0; i < 48; i++) if (i % 5 < 3) P(i, 66 + Math.round(Math.sin(i / 3) * 2), "#0f4a50");
+      { let r = 9; const rnd = () => (r = (r * 9301 + 49297) % 233280) / 233280; for (let i = 0; i < 26; i++) P(Math.floor(rnd() * 48), Math.floor(rnd() * 70), "#4ff0e055"); }
+    },
+    profe(d) {
+      const { R, P, L, x } = d;
+      degradado(x, ["#120a24", "#1c1036", "#24144a", "#170c30"]);
+      // pizarrón
+      R(3, 8, 42, 30, "#4a3018"); R(5, 10, 38, 26, "#1f3a2a");
+      // garabatos de gis
+      const gis = "#e8efe2bb";
+      [[8, 14, 16, 14], [8, 17, 13, 17], [26, 13, 36, 13], [26, 16, 33, 16], [26, 19, 38, 19], [8, 26, 14, 30], [14, 26, 8, 30]].forEach(([a, b, c, e]) => L(a, b, c, e, gis));
+      // "10" en rojo
+      R(30, 25, 1, 7, "#ff5a5a"); R(33, 25, 4, 1, "#ff5a5a"); R(33, 31, 4, 1, "#ff5a5a"); R(33, 25, 1, 7, "#ff5a5a"); R(36, 25, 1, 7, "#ff5a5a");
+      // reloj
+      for (let t = 0; t < 360; t += 30) { const a = t * Math.PI / 180; P(Math.round(41 + Math.cos(a) * 3), Math.round(44 + Math.sin(a) * 3), "#d8d0c0"); } L(41, 44, 41, 42, "#d8d0c0"); L(41, 44, 43, 44, "#d8d0c0");
+      // pupitres
+      R(0, 62, 48, 10, "#2a1a10"); R(0, 62, 48, 1, "#4a3018");
+    },
+  };
+  function degradado(x, cols) { for (let y = 0; y < 72; y++) { x.fillStyle = cols[Math.min(cols.length - 1, Math.floor(y / 72 * cols.length))]; x.fillRect(0, y, 48, 1); } }
+  function estrellas(d, n, alto, c) { let r = 11; const rnd = () => (r = (r * 9301 + 49297) % 233280) / 233280; for (let i = 0; i < n; i++) d.P(Math.floor(rnd() * 48), Math.floor(rnd() * alto), c); }
+
+  window.dibujarFondo = function (id, cv) {
+    const d = lienzo(cv);
+    d.x.clearRect(0, 0, 48, 72);
+    (FONDOS[id] || FONDOS.bruja)(d);
   };
 
   // Dibuja el jefe en dos lienzos: el cuerpo y el brillo (ojos que brillan)

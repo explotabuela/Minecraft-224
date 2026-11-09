@@ -391,7 +391,7 @@
     return el("div", { html: `<svg class="grafica" viewBox="0 0 ${W} ${H}" role="img"><line class="eje" x1="${m.l}" x2="${W - m.r}" y1="${H - m.b}" y2="${H - m.b}"/>${marcas}${barras}</svg>` });
   }
 
-  const COLORES = ["#5fd068", "#f5c451", "#5fd0e8", "#ff6b57", "#b57bff", "#ff9a3c", "#7dd3a8", "#e879f9"];
+  const COLORES = ["#ffc94d", "#f5c451", "#5fd0e8", "#ff6b57", "#b57bff", "#ff9a3c", "#7dd3a8", "#e879f9"];
   function graficaDona(partes, { tam = 180, centro = "", sub = "" } = {}) {
     const total = partes.reduce((s, p) => s + p.valor, 0) || 1, r = 70, c = 2 * Math.PI * r;
     let acum = 0;

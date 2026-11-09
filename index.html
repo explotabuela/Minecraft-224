@@ -39,6 +39,7 @@
 <script src="app/extras.js" defer></script>
 <script src="app/jefes-arte.js" defer></script>
 <script src="app/jefes.js" defer></script>
+<script src="app/musica.js" defer></script>
 <style>
 /* Layout: página moderna por apartados con menú fijo arriba; cada apartado con su encabezado.
    Oscuro con brillo verde suave; lo "Minecraft" queda solo en detalles pixelados chiquitos. */
@@ -440,7 +441,7 @@ h2{font-family:var(--f-display);font-weight:400;text-transform:uppercase;font-si
 .cabeza p{font-size:1.02rem}
 .eyebrow{font-family:var(--f-body);font-weight:700;font-size:.74rem!important;letter-spacing:.24em;color:var(--verde)}
 .eyebrow::before{display:none}
-section{padding-block:96px;border-top:0;position:relative}
+section{padding-block:60px;border-top:0;position:relative}
 main section+section::before{content:"";position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--linea) 20%,var(--linea) 80%,transparent)}
 .btn{border-radius:4px}
 .marca{font-family:var(--f-display);font-weight:400;font-size:1.25rem;letter-spacing:.02em;text-transform:uppercase}
@@ -448,32 +449,39 @@ main section+section::before{content:"";position:absolute;top:0;left:0;right:0;h
 .menu nav a.activo{background:transparent;box-shadow:inset 0 -2px var(--verde);border-radius:0}
 
 /* ---------- Portada ---------- */
-.hero.cine{position:relative;overflow:hidden;min-height:min(100svh,880px);padding:0;display:grid;grid-template-rows:1fr auto auto auto;justify-items:center;text-align:center;isolation:isolate;color:#f7efe3}
-.hero.cine::before{display:none}
+.hero.estreno{position:relative;overflow:hidden;min-height:min(100svh,900px);padding:0;display:grid;grid-template-rows:1fr auto auto auto;justify-items:center;text-align:center;isolation:isolate;color:#f7efe3}
+.hero.estreno::before{display:none}
 .hero-cielo{position:absolute;inset:0;width:100%;height:100%;z-index:-2;image-rendering:pixelated;background:#2c1850}
-.hero.cine::after{content:"";position:absolute;inset:auto 0 0;height:45%;z-index:-1;background:linear-gradient(transparent,#160d2a 92%)}
-.hero-creditos{align-self:start;padding:9vh 20px 0}
-.presenta{margin:0;font:700 .82rem var(--f-body);letter-spacing:.32em;text-transform:uppercase;color:#ffd166}
-.hero.cine h1{margin:10px 0 0;font:400 clamp(7rem,21vw,19rem)/.8 var(--f-display);text-transform:uppercase;letter-spacing:-.005em;color:#f7efe3;text-shadow:0 .06em 0 #170e2c66}
-.temporada{display:inline-block;margin:22px 0 0;font:700 .86rem var(--f-body);letter-spacing:.22em;text-transform:uppercase;border-block:1.5px solid #f7efe388;padding:9px 6px}
-.billing{margin:0 0 26px;padding:0 20px;font:400 1.02rem/1.3 var(--f-display);letter-spacing:.06em;text-transform:uppercase;color:#f7efe3cc;transform:scaleY(1.3);max-width:780px}
-.billing b{font-weight:400;color:#fff;font-size:1.22em}
-.hero-acciones{display:flex;flex-wrap:wrap;justify-content:center;align-items:stretch;gap:12px;padding:0 20px}
-.hero.cine .ip{background:#160d2ad9;border:1.5px solid #f7efe355;border-radius:4px;display:flex;align-items:center;gap:14px;padding:10px 10px 10px 20px;max-width:100%}
-.hero.cine .ip .datos{text-align:left}
-.hero.cine .ip small{color:#b9aad3;letter-spacing:.2em;font-weight:700;font-size:.68rem}
-.hero.cine .ip code{font:700 1.1rem var(--f-body);color:#ffd166}
-.hero.cine .ip .btn{height:46px;background:#f7efe3;color:#170e2c}
-.hero.cine .cuenta{max-width:none;width:auto;background:#ff7a3d;border:0;border-radius:4px;color:#170e2c;padding:10px 22px;display:grid;grid-template-columns:auto auto;align-items:center;gap:4px 20px}
-.hero.cine .cuenta .etiqueta{color:#170e2c;font:800 .8rem var(--f-body);letter-spacing:.2em;grid-row:span 2}
-.hero.cine .reloj{gap:14px}
-.hero.cine .reloj b{font:400 2.6rem/1 var(--f-display);color:#170e2c}
-.hero.cine .reloj small{color:#170e2cb3;font-weight:800;letter-spacing:.14em;font-size:.62rem}
-.hero.cine .cuenta-fecha{grid-column:2;margin:0;color:#170e2cb3;font-weight:700;text-align:left}
-.hero-ayuda{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:8px 22px;padding:22px 20px 56px;color:#b9aad3}
+.hero.estreno::after{content:"";position:absolute;inset:auto 0 0;height:48%;z-index:-1;background:linear-gradient(transparent,#160d2a 92%)}
+.hero-creditos{align-self:start;padding:10vh 20px 0}
+.presenta{margin:0 0 26px;font:700 .8rem var(--f-body);letter-spacing:.34em;text-transform:uppercase;color:#ffd166}
+.hero.estreno h1{margin:0;font:400 clamp(7rem,20vw,18rem)/.82 var(--f-display);text-transform:uppercase;color:#f7efe3;text-shadow:0 .05em 0 #170e2c55;padding-top:.04em}
+.temporada{display:inline-block;margin:34px 0 0;font:700 .82rem var(--f-body);letter-spacing:.24em;text-transform:uppercase;border-block:1.5px solid #f7efe377;padding:10px 8px}
+.billing{display:grid;gap:8px;margin:0 0 30px;padding:0 20px;max-width:680px;color:#f7efe3d9}
+.billing b{font:400 clamp(1.7rem,3.4vw,2.4rem)/1 var(--f-display);text-transform:uppercase;letter-spacing:.02em;color:#fff}
+.billing span{font-size:1rem;line-height:1.5}
+.hero-acciones{display:flex;flex-wrap:wrap;justify-content:center;align-items:stretch;gap:14px;padding:0 20px}
+.hero.estreno .ip{background:#160d2ad9;border:1.5px solid #f7efe355;border-radius:6px;display:flex;align-items:center;gap:16px;padding:10px 10px 10px 22px;max-width:100%;backdrop-filter:blur(6px)}
+.hero.estreno .ip .datos{text-align:left}
+.hero.estreno .ip small{color:#b9aad3;letter-spacing:.2em;font-weight:700;font-size:.66rem}
+.hero.estreno .ip code{font:700 1.1rem var(--f-body);color:#ffd166}
+.hero.estreno .ip .btn{height:46px;background:#f7efe3;color:#170e2c}
+/* contador como boleto de cine */
+.boleto{--muesca:#2a1440;max-width:none;width:auto;display:grid;grid-template-columns:auto auto;align-items:stretch;padding:0;border:0;border-radius:6px;background:#f7efe3;color:#170e2c;position:relative;
+  -webkit-mask:radial-gradient(circle 9px at 0 50%,#0000 98%,#000) left/51% 100% no-repeat,radial-gradient(circle 9px at 100% 50%,#0000 98%,#000) right/51% 100% no-repeat;
+          mask:radial-gradient(circle 9px at 0 50%,#0000 98%,#000) left/51% 100% no-repeat,radial-gradient(circle 9px at 100% 50%,#0000 98%,#000) right/51% 100% no-repeat}
+.boleto .talon{display:grid;align-content:center;gap:4px;padding:12px 22px 12px 26px;border-right:2px dashed #170e2c40;text-align:left;background:linear-gradient(135deg,#ffd166,#ff9a48)}
+.boleto .etiqueta{font:800 .74rem var(--f-body)!important;letter-spacing:.22em;color:#170e2c}
+.boleto .cuenta-fecha{margin:0;font-weight:700;font-size:.8rem;color:#170e2cb3;text-align:left}
+.boleto .reloj{display:flex;gap:6px;align-items:center;padding:10px 24px 10px 18px}
+.boleto .reloj div{display:grid;justify-items:center;min-width:54px}
+.boleto .reloj b{font:400 2.5rem/1 var(--f-display);color:#170e2c}
+.boleto .reloj small{font:800 .58rem var(--f-body);letter-spacing:.16em;color:#170e2c99;margin-top:2px}
+.boleto .reloj div+div{border-left:1.5px solid #170e2c1f}
+.hero-ayuda{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:8px 22px;padding:24px 20px 60px;color:#b9aad3}
 .hero-ayuda .ip-ayuda{margin:0;font-size:.9rem;color:#b9aad3}
 .hero-ayuda .ip-ayuda b{color:#f7efe3}
-.hero-ayuda .btn-discord{margin:0;border-radius:4px;padding:10px 18px}
+.hero-ayuda .btn-discord{margin:0;border-radius:6px;padding:10px 18px}
 
 /* ---------- Jefes ---------- */
 #jefes{overflow:hidden}
@@ -518,19 +526,40 @@ main section+section::before{content:"";position:absolute;top:0;left:0;right:0;h
 .mandamiento .n,.pasos li::before,.m-lista li::before{font-family:var(--f-display);font-weight:400;color:var(--verde)}
 .mandamiento .n{font-size:3rem}
 
+
+/* escenas de los pósters */
+.j-escena{position:absolute;inset:0;display:grid;place-items:start center;overflow:hidden}
+.j-escena .j-fondo{position:absolute;inset:0;width:100%;height:100%;image-rendering:pixelated;opacity:.95}
+.poster .j-escena .j-arte{margin-top:54px}
+.d-cartel .j-escena{place-items:center}
+.d-cartel .j-escena .j-arte{margin-top:-30px}
+.poster{min-height:500px;justify-content:flex-end}
+.poster .p-txt{background:linear-gradient(transparent,#0a0512e6 38%);margin:0 -20px -20px;padding:60px 20px 20px;width:calc(100% + 40px)}
+.poster::before{content:"";position:absolute;inset:8px;border:1px solid #ffffff2e;z-index:3;pointer-events:none}
+
+/* botón de música */
+.musica-btn{position:relative}
+.musica-btn .ondas{position:absolute;right:5px;bottom:6px;display:none;gap:1.5px;align-items:end;height:8px}
+.musica-btn.sonando{color:var(--verde)}
+.musica-btn.sonando .ondas{display:flex}
+.musica-btn .ondas i{width:2px;background:currentColor;animation:onda .9s ease-in-out infinite}
+.musica-btn .ondas i:nth-child(2){animation-delay:.2s}.musica-btn .ondas i:nth-child(3){animation-delay:.4s}
+@keyframes onda{0%,100%{height:2px}50%{height:8px}}
 @media (max-width:820px){
   .hero-creditos{padding-top:12vh}
-  .billing{font-size:.86rem;transform:none;line-height:1.5}
-  .hero.cine .cuenta{grid-template-columns:1fr;justify-items:center;text-align:center;width:100%}
-  .hero.cine .cuenta .etiqueta{grid-row:auto}.hero.cine .cuenta-fecha{grid-column:auto;text-align:center}
-  .hero.cine .ip{width:100%;justify-content:space-between;padding-left:14px}
-  .hero.cine .ip code{font-size:.98rem;white-space:nowrap}
-  .hero.cine h1{font-size:30vw}
+  .billing span{font-size:.92rem}
+  .hero-creditos{padding-bottom:30px}.temporada{margin-top:24px;letter-spacing:.16em;font-size:.74rem}.presenta{margin-bottom:16px;letter-spacing:.24em}
+  .boleto{grid-template-columns:1fr;width:100%;-webkit-mask:none;mask:none}
+  .boleto .talon{border-right:0;border-bottom:2px dashed #170e2c40;text-align:center;padding:10px}
+  .boleto .cuenta-fecha{text-align:center}.boleto .reloj{justify-content:center;padding:10px 6px}.boleto .reloj div{min-width:0;flex:1}
+  .hero.estreno .ip{width:100%;justify-content:space-between;padding-left:14px}
+  .hero.estreno .ip code{font-size:.98rem;white-space:nowrap}
+  .hero.estreno h1{font-size:30vw}
   .destacado{grid-template-columns:1fr;gap:26px}
   .d-cartel{max-width:360px;width:100%;margin:0 auto}
   .d-reloj{grid-template-columns:repeat(4,1fr)}
   .carril{grid-auto-columns:80%}
-  section{padding-block:72px}
+  section{padding-block:44px}
 }
 @media (prefers-reduced-motion:reduce){.d-cartel .j-brillo{animation:none}}
 </style>
@@ -574,23 +603,22 @@ main section+section::before{content:"";position:absolute;top:0;left:0;right:0;h
   </div>
 </header>
 
-<div class="hero cine" id="inicio">
+<div class="hero estreno" id="inicio">
   <canvas class="hero-cielo" id="hero-cielo" aria-hidden="true"></canvas>
   <div class="hero-creditos">
     <p class="presenta">El salón 5 del CBTIS 224 presenta</p>
     <h1>La 224</h1>
-    <p class="temporada">Temporada 1 &nbsp;/&nbsp; del 15 de diciembre al 6 de febrero</p>
+    <p class="temporada">Temporada 1 &nbsp;/&nbsp; del 15 de dic al 6 de feb</p>
   </div>
-  <p class="billing">Survival vanilla en <b>difícil</b>, Java <span id="version">26.3</span> y Bedrock<br>con <b>8 jefes</b>, <b>misiones semanales</b> y <b>el Gulag</b></p>
+  <p class="billing"><b>El server vanilla del salón</b><span>Survival en difícil, Java <span id="version">26.3</span> y Bedrock, con 8 jefes, misiones cada semana y el Gulag</span></p>
   <div class="hero-acciones">
     <div class="ip" role="group" aria-label="IP del server">
       <div class="datos"><small>IP DEL SERVER</small><code id="ip-texto">play.minecraft224.net</code></div>
       <button class="btn" id="copiar" type="button">Copiar</button>
     </div>
-    <div class="cuenta" id="cuenta">
-      <span class="etiqueta" id="cuenta-etiqueta">ESTRENO EN</span>
+    <div class="cuenta boleto" id="cuenta">
+      <div class="talon"><span class="etiqueta" id="cuenta-etiqueta">ESTRENO EN</span><small class="cuenta-fecha" id="cuenta-fecha"></small></div>
       <div class="reloj" id="reloj"></div>
-      <small class="cuenta-fecha" id="cuenta-fecha"></small>
     </div>
   </div>
   <div class="hero-ayuda">
@@ -1052,7 +1080,7 @@ pintarReloj(); setInterval(pintarReloj, 1000);
   const GRADS = [
     "linear-gradient(160deg,#1f7a35,#2b5fd9 60%,#a33ed6)", "linear-gradient(160deg,#0f3d2e,#1f7a35 50%,#c9e265)",
     "linear-gradient(160deg,#2b1a6b,#5b2bd9 50%,#ff6bb5)", "linear-gradient(160deg,#1b1206,#6b4a12 45%,#3fc6d8)",
-    "linear-gradient(160deg,#2a0606,#b3261e 55%,#ff9a3c)", "linear-gradient(160deg,#04223a,#0f6e8c 50%,#5fd068)",
+    "linear-gradient(160deg,#2a0606,#b3261e 55%,#ff9a3c)", "linear-gradient(160deg,#04223a,#0f6e8c 50%,#ffc94d)",
     "linear-gradient(160deg,#3d0a3a,#c2185b 50%,#ffb74d)", "linear-gradient(160deg,#111,#3a3a3a 50%,#f5c451)",
     "linear-gradient(160deg,#1f7a35,#2b5fd9 60%,#a33ed6)",
   ];
@@ -1077,7 +1105,7 @@ pintarReloj(); setInterval(pintarReloj, 1000);
   };
   const flotan = lista => lista.map(([e, x, y, t, d, r]) => `<span class="flota" style="--x:${x}%;--y:${y}%;--t:${t}rem;--d:${d}s;--r:${r}deg">${e}</span>`).join("");
   const confeti = () => `<div class="confeti">${Array.from({ length: 28 }, (_, k) =>
-    `<i style="--x:${Math.random() * 100}%;--c:${["#f5c451", "#5fd068", "#ff6bb5", "#5fd0e8", "#fff"][k % 5]};--v:${2.5 + Math.random() * 2}s;--d:${Math.random() * 3}s"></i>`).join("")}</div>`;
+    `<i style="--x:${Math.random() * 100}%;--c:${["#f5c451", "#ffc94d", "#ff6bb5", "#5fd0e8", "#fff"][k % 5]};--v:${2.5 + Math.random() * 2}s;--d:${Math.random() * 3}s"></i>`).join("")}</div>`;
 
   // Mejor racha de días seguidos dentro del mes
   const rachaMes = dias => { const s = [...new Set(dias || [])].sort((a, b) => a - b); let mejor = 0, act = 0, prev = -9; for (const d of s) { act = d === prev + 1 ? act + 1 : 1; mejor = Math.max(mejor, act); prev = d; } return mejor; };
@@ -1470,6 +1498,7 @@ pintarReloj(); setInterval(pintarReloj, 1000);
   const paginaBase = () => ((typeof DATOS !== "undefined" && DATOS && DATOS.pagina) || location.href).replace(/#.*$/, "");
 
   function historia({ L, inicio = 0, etiqueta, mes, quien, tarjeta: hacerTarjeta, archivo: nombreArchivo, titulo: tituloCompartir, whatsapp, video, reabrir }) {
+    if (window.MusicaFondo && MusicaFondo.sonando()) MusicaFondo.apagar();
     Musica.iniciar();
     const h = document.createElement("div");
     h.className = "hist" + (esNavidad(mes) ? " navidad" : "");
@@ -1593,7 +1622,7 @@ pintarReloj(); setInterval(pintarReloj, 1000);
       { grad: ["#0f3d2e", "#1f7a35", "#c9e265"], ojo: tx("TU TIEMPO", "YOUR TIME"), titulo: tx("Le metiste", "You played"), num: j.horas, dec: 1, unidad: tx("horas", "hours"), musica: "tiempo" },
       { grad: ["#1b1206", "#6b4a12", "#3fc6d8"], ojo: tx("BAJO TIERRA", "UNDERGROUND"), titulo: tx("Minaste", "You mined"), num: j.minado, unidad: tx("bloques", "blocks"), sub: `${numTx(j.diamantes)} ${tx("diamantes", "diamonds")}`, musica: "mina" },
       { grad: ["#2a0606", "#b3261e", "#ff9a3c"], ojo: tx("MUERTES", "DEATHS"), titulo: tx("Te moriste", "You died"), num: j.muertes, unidad: tx("veces", "times"), sub: d.causas[0] ? tx(`Lo que más te mató: ${limpia(d.causas[0][0])}`, `Top killer: ${limpia(d.causas[0][0])}`) : "", musica: "muerte" },
-      { grad: ["#04223a", "#0f6e8c", "#5fd068"], ojo: tx("AVENTURA", "ADVENTURE"), titulo: tx("Caminaste", "You walked"), num: j.metros / 1000, dec: 1, unidad: "km", sub: `${numTx(j.mobs)} ${tx("mobs matados", "mobs killed")}`, musica: "aventura" },
+      { grad: ["#04223a", "#0f6e8c", "#ffc94d"], ojo: tx("AVENTURA", "ADVENTURE"), titulo: tx("Caminaste", "You walked"), num: j.metros / 1000, dec: 1, unidad: "km", sub: `${numTx(j.mobs)} ${tx("mobs matados", "mobs killed")}`, musica: "aventura" },
       { grad: ["#111111", "#3a3a3a", "#f5c451"], ojo: tx("TU TÍTULO", "YOUR TITLE"), titulo: t.t, sub: t.x, musica: esNavidad(d.mes) ? "navidad2" : "titulo", grande: true },
     ];
     return s;
@@ -1612,7 +1641,7 @@ pintarReloj(); setInterval(pintarReloj, 1000);
     if (!window.MediaRecorder || !HTMLCanvasElement.prototype.captureStream) throw new Error("sin grabadora");
     const W_ = 720, H_ = 1280, c = document.createElement("canvas"); c.width = W_; c.height = H_;
     const g = c.getContext("2d");
-    try { await Promise.all([document.fonts.load('800 80px "Unbounded"'), document.fonts.load('600 40px "Figtree"'), document.fonts.load('40px "Silkscreen"')]); } catch {}
+    try { await Promise.all([document.fonts.load('400 80px "Anton"'), document.fonts.load('600 40px "Archivo"'), document.fonts.load('40px "Silkscreen"')]); } catch {}
     const POR = 2600, total = diapos.length * POR;
     const lienzo = c.captureStream(30);
     const audio = Musica.grabar();
@@ -1634,15 +1663,15 @@ pintarReloj(); setInterval(pintarReloj, 1000);
       const entra = Math.min(1, p * 4), sube = (1 - entra) * 40;
       g.globalAlpha = entra; g.textAlign = "left";
       g.fillStyle = "#ffffffcc"; g.font = '26px "Silkscreen", monospace'; g.fillText(s.ojo, 56, 470 + sube);
-      g.fillStyle = "#fff"; g.font = `800 ${s.grande ? 76 : 58}px "Unbounded", sans-serif`;
+      g.fillStyle = "#fff"; g.font = `400 ${s.grande ? 76 : 58}px "Anton", sans-serif`;
       const lineas = envolver(s.titulo, W_ - 112); lineas.slice(0, 3).forEach((l, n) => g.fillText(l, 56, 560 + sube + n * (s.grande ? 86 : 68)));
       let y = 560 + lineas.slice(0, 3).length * (s.grande ? 86 : 68) + 40;
       if (s.num != null) {
         const v = s.num * (1 - Math.pow(1 - Math.min(1, p * 1.6), 3));
-        g.font = '800 140px "Unbounded", sans-serif'; g.fillText(s.dec ? decTx(v, s.dec) : numTx(Math.round(v)), 56, y + 110);
-        g.font = '600 40px "Figtree", sans-serif'; g.fillText(s.unidad || "", 60, y + 170); y += 210;
+        g.font = '400 140px "Anton", sans-serif'; g.fillText(s.dec ? decTx(v, s.dec) : numTx(Math.round(v)), 56, y + 110);
+        g.font = '600 40px "Archivo", sans-serif'; g.fillText(s.unidad || "", 60, y + 170); y += 210;
       }
-      if (s.sub) { g.fillStyle = "#ffffffe6"; g.font = '600 38px "Figtree", sans-serif'; envolver(s.sub, W_ - 112).slice(0, 4).forEach((l, n) => g.fillText(l, 56, y + 30 + n * 50)); }
+      if (s.sub) { g.fillStyle = "#ffffffe6"; g.font = '600 38px "Archivo", sans-serif'; envolver(s.sub, W_ - 112).slice(0, 4).forEach((l, n) => g.fillText(l, 56, y + 30 + n * 50)); }
       g.globalAlpha = 1;
       g.fillStyle = "#ffffffaa"; g.font = '22px "Silkscreen", monospace'; g.textAlign = "center"; g.fillText(paginaBase().replace(/^https?:\/\//, "").replace(/\/$/, ""), W_ / 2, H_ - 60);
     }
@@ -1868,7 +1897,7 @@ pintarReloj(); setInterval(pintarReloj, 1000);
     const W_ = 1080, H = alto ? 1920 : 1350, c = document.createElement("canvas");
     c.width = W_; c.height = H;
     const g = c.getContext("2d");
-    try { await Promise.all([document.fonts.load('800 80px "Unbounded"'), document.fonts.load('600 40px "Figtree"'), document.fonts.load('40px "Silkscreen"')]); } catch {}
+    try { await Promise.all([document.fonts.load('400 80px "Anton"'), document.fonts.load('600 40px "Archivo"'), document.fonts.load('40px "Silkscreen"')]); } catch {}
     const fondo = g.createLinearGradient(0, 0, W_, H);
     if (esNavidad(d.mes)) { fondo.addColorStop(0, "#5a0b12"); fondo.addColorStop(.5, "#b3261e"); fondo.addColorStop(1, "#1f7a35"); }
     else { fondo.addColorStop(0, "#0f3d2e"); fondo.addColorStop(.5, "#1f7a35"); fondo.addColorStop(1, "#2b5fd9"); }
@@ -1876,12 +1905,12 @@ pintarReloj(); setInterval(pintarReloj, 1000);
     g.fillStyle = "#ffffff12";
     for (let x = 0; x < W_; x += 40) g.fillRect(x, 0, 2, H);
     for (let y = 0; y < H; y += 40) g.fillRect(0, y, W_, 2);
-    g.fillStyle = "#ffffff1c"; g.font = '800 420px "Unbounded", sans-serif'; g.textAlign = "right"; g.fillText("224", W_ + 30, H - 20);
+    g.fillStyle = "#ffffff1c"; g.font = '400 420px "Anton", sans-serif'; g.textAlign = "right"; g.fillText("224", W_ + 30, H - 20);
     g.textAlign = "left";
     const y0 = alto ? 260 : 120;
     g.fillStyle = "#ffffffcc"; g.font = '34px "Silkscreen", monospace'; g.fillText(`WRAPPED 224 · ${mesLargo(d.mes).toUpperCase()}`, 80, y0);
-    g.fillStyle = "#fff"; g.font = '800 92px "Unbounded", sans-serif'; g.fillText(esAno(d.mes) ? tx(`El ${d.mes}`, d.mes) : tx("La 224", "The 224"), 80, y0 + 130);
-    g.font = '600 44px "Figtree", sans-serif'; g.fillText(tx(`${d.n} jugadores · ${d.dias} días con alguien jugando`, `${d.n} players · ${d.dias} days with someone online`), 80, y0 + 200);
+    g.fillStyle = "#fff"; g.font = '400 92px "Anton", sans-serif'; g.fillText(esAno(d.mes) ? tx(`El ${d.mes}`, d.mes) : tx("La 224", "The 224"), 80, y0 + 130);
+    g.font = '600 44px "Archivo", sans-serif'; g.fillText(tx(`${d.n} jugadores · ${d.dias} días con alguien jugando`, `${d.n} players · ${d.dias} days with someone online`), 80, y0 + 200);
     const stats = [
       [tx("Horas entre todos", "Hours together"), decTx(d.sum("horas"), 0)], [tx("Muertes por tonto", "Silly deaths"), numTx(d.sum("muertes"))],
       [tx("Bloques minados", "Blocks mined"), numTx(d.sum("minado"))], [tx("Diamantes", "Diamonds"), numTx(d.sum("diamantes"))],
@@ -1891,10 +1920,10 @@ pintarReloj(); setInterval(pintarReloj, 1000);
     stats.forEach(([etq, val], k) => {
       const x = 80 + (k % 2) * 470, y = sy + Math.floor(k / 2) * paso;
       g.fillStyle = "#00000038"; redondo(g, x, y, 450, 180, 28); g.fill();
-      g.fillStyle = "#fff"; g.font = '800 64px "Unbounded", sans-serif';
+      g.fillStyle = "#fff"; g.font = '400 64px "Anton", sans-serif';
       while (g.measureText(val).width > 400) g.font = g.font.replace(/\d+px/, m => (parseInt(m) - 4) + "px");
       g.fillText(val, x + 34, y + 95);
-      g.fillStyle = "#ffffffcc"; g.font = '600 32px "Figtree", sans-serif'; g.fillText(etq, x + 34, y + 145);
+      g.fillStyle = "#ffffffcc"; g.font = '600 32px "Archivo", sans-serif'; g.fillText(etq, x + 34, y + 145);
     });
     const lider = d.campeon || (d.tabla[0] && d.tabla[0].nombre);
     const lineas = [];
@@ -1902,7 +1931,7 @@ pintarReloj(); setInterval(pintarReloj, 1000);
     const hh = d.top("horas")[0], m = d.top("muertes")[0];
     if (hh) lineas.push(`${tx("Más viciado", "Most addicted")}: ${hh.nombre}`);
     if (m) lineas.push(`${tx("Más tonto", "Clumsiest")}: ${m.nombre}`);
-    g.fillStyle = "#fff"; g.font = '600 38px "Figtree", sans-serif';
+    g.fillStyle = "#fff"; g.font = '600 38px "Archivo", sans-serif';
     const ly = sy + 3 * paso + 20;
     lineas.slice(0, 3).forEach((e, k) => g.fillText(e, 80, ly + k * 56));
     pie(g, W_, H);
@@ -1912,7 +1941,7 @@ pintarReloj(); setInterval(pintarReloj, 1000);
   function pie(g, W_, H) {
     g.textAlign = "left"; g.fillStyle = "#ffffffaa"; g.font = '26px "Silkscreen", monospace';
     g.fillText(paginaBase().replace(/^https?:\/\//, "").replace(/\/$/, ""), 80, H - 60);
-    g.font = '600 28px "Figtree", sans-serif'; g.fillText(tx(`Generada el ${fechaHoy()}`, `Made on ${fechaHoy()}`), 80, H - 104);
+    g.font = '600 28px "Archivo", sans-serif'; g.fillText(tx(`Generada el ${fechaHoy()}`, `Made on ${fechaHoy()}`), 80, H - 104);
   }
 
   function animar(lam) {
@@ -1935,7 +1964,7 @@ pintarReloj(); setInterval(pintarReloj, 1000);
     const W_ = 1080, H = alto ? 1920 : 1350, c = document.createElement("canvas");
     c.width = W_; c.height = H;
     const g = c.getContext("2d");
-    try { await Promise.all([document.fonts.load('800 80px "Unbounded"'), document.fonts.load('600 40px "Figtree"'), document.fonts.load('40px "Silkscreen"')]); } catch {}
+    try { await Promise.all([document.fonts.load('400 80px "Anton"'), document.fonts.load('600 40px "Archivo"'), document.fonts.load('40px "Silkscreen"')]); } catch {}
     const fondo = g.createLinearGradient(0, 0, W_, H);
     if (esNavidad(d.mes)) { fondo.addColorStop(0, "#5a0b12"); fondo.addColorStop(.55, "#b3261e"); fondo.addColorStop(1, "#1f7a35"); }
     else { fondo.addColorStop(0, "#1f7a35"); fondo.addColorStop(.55, "#2b5fd9"); fondo.addColorStop(1, "#a33ed6"); }
@@ -1943,7 +1972,7 @@ pintarReloj(); setInterval(pintarReloj, 1000);
     g.fillStyle = "#ffffff12";
     for (let x = 0; x < W_; x += 40) g.fillRect(x, 0, 2, H);
     for (let y = 0; y < H; y += 40) g.fillRect(0, y, W_, 2);
-    g.fillStyle = "#ffffff1c"; g.font = '800 420px "Unbounded", sans-serif'; g.textAlign = "right"; g.fillText("224", W_ + 30, H - 20);
+    g.fillStyle = "#ffffff1c"; g.font = '400 420px "Anton", sans-serif'; g.textAlign = "right"; g.fillText("224", W_ + 30, H - 20);
     g.textAlign = "left";
     const y0 = alto ? 260 : 120;
     g.fillStyle = "#ffffffcc"; g.font = '34px "Silkscreen", monospace'; g.fillText(`WRAPPED 224 · ${mesLargo(d.mes).toUpperCase()}`, 80, y0);
@@ -1960,10 +1989,10 @@ pintarReloj(); setInterval(pintarReloj, 1000);
     const xTexto = cabeza ? 340 : 80;
     g.fillStyle = "#fff";
     // El nombre siempre completo: si es largo, se hace más chiquito
-    let tamNom = 72; g.font = `800 ${tamNom}px "Unbounded", sans-serif`;
-    while (g.measureText(d.j.nombre).width > W_ - xTexto - 70 && tamNom > 30) { tamNom -= 2; g.font = `800 ${tamNom}px "Unbounded", sans-serif`; }
+    let tamNom = 72; g.font = `400 ${tamNom}px "Anton", sans-serif`;
+    while (g.measureText(d.j.nombre).width > W_ - xTexto - 70 && tamNom > 30) { tamNom -= 2; g.font = `400 ${tamNom}px "Anton", sans-serif`; }
     g.fillText(d.j.nombre, xTexto, yc + 100);
-    g.font = '600 46px "Figtree", sans-serif'; g.fillText(t.t, xTexto, yc + 180);
+    g.font = '600 46px "Archivo", sans-serif'; g.fillText(t.t, xTexto, yc + 180);
 
     const stats = [
       [tx("Horas jugadas", "Hours played"), decTx(d.j.horas)], [tx("Muertes por tonto", "Silly deaths"), numTx(d.j.muertes)],
@@ -1974,14 +2003,14 @@ pintarReloj(); setInterval(pintarReloj, 1000);
     stats.forEach(([etq, val], k) => {
       const x = 80 + (k % 2) * 470, y = sy + Math.floor(k / 2) * paso;
       g.fillStyle = "#00000038"; redondo(g, x, y, 450, 180, 28); g.fill();
-      g.fillStyle = "#fff"; g.font = '800 64px "Unbounded", sans-serif'; g.fillText(val, x + 34, y + 95);
-      g.fillStyle = "#ffffffcc"; g.font = '600 32px "Figtree", sans-serif'; g.fillText(etq, x + 34, y + 145);
+      g.fillStyle = "#fff"; g.font = '400 64px "Anton", sans-serif'; g.fillText(val, x + 34, y + 95);
+      g.fillStyle = "#ffffffcc"; g.font = '600 32px "Archivo", sans-serif'; g.fillText(etq, x + 34, y + 145);
     });
     const extra = [];
     if (d.causas[0]) extra.push(tx(`Lo que más lo mató: ${limpia(d.causas[0][0])}`, `Top killer: ${limpia(d.causas[0][0])}`));
     if (d.j.racha > 1) extra.push(tx(`Mejor racha: ${d.j.racha} días seguidos`, `Best streak: ${d.j.racha} days in a row`));
     extra.push(tx(`Número de la suerte: ${numeroSuerte(d.j)}`, `Lucky number: ${numeroSuerte(d.j)}`));
-    g.fillStyle = "#fff"; g.font = '600 38px "Figtree", sans-serif';
+    g.fillStyle = "#fff"; g.font = '600 38px "Archivo", sans-serif';
     const ey = sy + 3 * paso + 20;
     extra.slice(0, alto ? 3 : 2).forEach((e, k) => g.fillText(e, 80, ey + k * 58));
     pie(g, W_, H);
@@ -2003,11 +2032,11 @@ pintarReloj(); setInterval(pintarReloj, 1000);
 console.log("%c⛏ MINECRAFT 224", "font:800 20px sans-serif;color:#ffc94d", "\n¿Andas viendo el código? Únete al Discord y ayúdale a Dylan con el server.");
 (function () {
   let toques = 0, t;
-  $(".hero.cine h1").addEventListener("click", () => {
+  $(".hero.estreno h1").addEventListener("click", () => {
     toques++; clearTimeout(t); t = setTimeout(() => toques = 0, 1500);
     if (toques === 7) {
       toques = 0;
-      const l = $(".hero.cine h1"); l.classList.remove("girar"); void l.offsetWidth; l.classList.add("girar");
+      const l = $(".hero.estreno h1"); l.classList.remove("girar"); void l.offsetWidth; l.classList.add("girar");
       avisar("¿Ya? Deja el título en paz.");
     }
   });

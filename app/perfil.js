@@ -17,7 +17,7 @@
     const enLinea = () => new Map(((D.presencia && D.presencia.enLinea) || []).map(x => [x.nombre.toLowerCase(), x.desde]));
     const promedio = k => js.reduce((s, j) => s + (Number(j[k]) || 0), 0) / Math.max(1, js.length);
     const lugarEn = (n, k, menos = false) => 1 + js.filter(j => menos ? (j[k] || 0) < (App.jugador(n)[k] || 0) : (j[k] || 0) > (App.jugador(n)[k] || 0)).length;
-    const COLOR_RANGO = { Leyenda: "#f5c451", Veterano: "#c9d1d9", Aventurero: "#5fd068", Novato: "#8a8f98" };
+    const COLOR_RANGO = { Leyenda: "#f5c451", Veterano: "#c9d1d9", Aventurero: "#ffc94d", Novato: "#8a8f98" };
     const medallasDe = j => (j.medallas || []).filter(m => !m.unica).reduce((s, m) => s + (m.nivel || 0), 0);
 
     // Metas "de veterano": las barras se llenan contra esto (o contra el mejor, si alguien ya lo pasó).
@@ -492,36 +492,36 @@
       const redondo = (x, y, w, h, r) => { g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + h, r); g.arcTo(x + w, y + h, x, y + h, r); g.arcTo(x, y + h, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath(); };
       const CW = 460, CH = 644;
       function frente() {
-        const f = g.createLinearGradient(0, 0, 0, CH); f.addColorStop(0, "#1d2a25"); f.addColorStop(1, "#101714");
+        const f = g.createLinearGradient(0, 0, 0, CH); f.addColorStop(0, "#2b1a4c"); f.addColorStop(1, "#160d2a");
         g.fillStyle = f; redondo(-CW / 2, -CH / 2, CW, CH, 30); g.fill();
         g.lineWidth = 6; g.strokeStyle = rangoColor; g.stroke();
-        g.fillStyle = "#93a39b"; g.font = '24px "Silkscreen", monospace'; g.textAlign = "left"; g.fillText("#" + numeroCarta(j.nombre), -CW / 2 + 28, -CH / 2 + 50);
+        g.fillStyle = "#b9aad3"; g.font = '24px "Silkscreen", monospace'; g.textAlign = "left"; g.fillText("#" + numeroCarta(j.nombre), -CW / 2 + 28, -CH / 2 + 50);
         g.fillStyle = rangoColor; redondo(CW / 2 - 98, -CH / 2 + 22, 72, 72, 16); g.fill();
-        g.fillStyle = "#0b0f0c"; g.textAlign = "center"; g.font = '700 16px "Figtree", sans-serif'; g.fillText("NV", CW / 2 - 62, -CH / 2 + 46);
-        g.font = '800 34px "Unbounded", sans-serif'; g.fillText(num(j.nivel || 1), CW / 2 - 62, -CH / 2 + 84);
+        g.fillStyle = "#160d2a"; g.textAlign = "center"; g.font = '700 16px "Archivo", sans-serif'; g.fillText("NV", CW / 2 - 62, -CH / 2 + 46);
+        g.font = '400 34px "Anton", sans-serif'; g.fillText(num(j.nivel || 1), CW / 2 - 62, -CH / 2 + 84);
         if (cuerpo) { g.imageSmoothingEnabled = false; const ch = 330, cw = ch * cuerpo.width / cuerpo.height; g.drawImage(cuerpo, -cw / 2, -CH / 2 + 110, cw, ch); }
-        g.fillStyle = "#fff"; g.textAlign = "left"; let t = 46; g.font = `800 ${t}px "Unbounded", sans-serif`;
-        while (g.measureText(j.nombre).width > CW - 60 && t > 20) { t -= 2; g.font = `800 ${t}px "Unbounded", sans-serif`; }
+        g.fillStyle = "#fff"; g.textAlign = "left"; let t = 46; g.font = `400 ${t}px "Anton", sans-serif`;
+        while (g.measureText(j.nombre).width > CW - 60 && t > 20) { t -= 2; g.font = `400 ${t}px "Anton", sans-serif`; }
         g.fillText(j.nombre, -CW / 2 + 28, CH / 2 - 120);
-        g.fillStyle = "#93a39b"; g.font = '600 24px "Figtree", sans-serif'; g.fillText(`${j.rango || "Novato"} · ${j.clase || "Novato"}`, -CW / 2 + 28, CH / 2 - 80);
-        g.fillStyle = "#e9f0ec"; g.font = '700 24px "Figtree", sans-serif'; g.fillText(`${dec(j.horas)} h   ${num(j.diamantes)} diamantes   ${num(j.muertes)} muertes`, -CW / 2 + 28, CH / 2 - 40);
+        g.fillStyle = "#b9aad3"; g.font = '600 24px "Archivo", sans-serif'; g.fillText(`${j.rango || "Novato"} · ${j.clase || "Novato"}`, -CW / 2 + 28, CH / 2 - 80);
+        g.fillStyle = "#f7efe3"; g.font = '700 24px "Archivo", sans-serif'; g.fillText(`${dec(j.horas)} h   ${num(j.diamantes)} diamantes   ${num(j.muertes)} muertes`, -CW / 2 + 28, CH / 2 - 40);
       }
       function atras() {
-        g.fillStyle = "#141b19"; redondo(-CW / 2, -CH / 2, CW, CH, 30); g.fill(); g.lineWidth = 6; g.strokeStyle = rangoColor; g.stroke();
-        g.fillStyle = "#fff"; g.textAlign = "left"; g.font = '800 34px "Unbounded", sans-serif'; g.fillText("Stats", -CW / 2 + 28, -CH / 2 + 70);
+        g.fillStyle = "#20143b"; redondo(-CW / 2, -CH / 2, CW, CH, 30); g.fill(); g.lineWidth = 6; g.strokeStyle = rangoColor; g.stroke();
+        g.fillStyle = "#fff"; g.textAlign = "left"; g.font = '400 34px "Anton", sans-serif'; g.fillText("Stats", -CW / 2 + 28, -CH / 2 + 70);
         datos.forEach(([t, v], i) => {
           const y = -CH / 2 + 110 + i * 82;
-          g.fillStyle = "#1b2421"; redondo(-CW / 2 + 24, y, CW - 48, 68, 14); g.fill();
-          g.fillStyle = "#93a39b"; g.font = '700 24px "Figtree", sans-serif'; g.textAlign = "left"; g.fillText(t, -CW / 2 + 44, y + 43);
-          g.fillStyle = "#fff"; g.font = '800 30px "Unbounded", sans-serif'; g.textAlign = "right"; g.fillText(v, CW / 2 - 44, y + 45);
+          g.fillStyle = "#2b1a4c"; redondo(-CW / 2 + 24, y, CW - 48, 68, 14); g.fill();
+          g.fillStyle = "#b9aad3"; g.font = '700 24px "Archivo", sans-serif'; g.textAlign = "left"; g.fillText(t, -CW / 2 + 44, y + 43);
+          g.fillStyle = "#fff"; g.font = '400 30px "Anton", sans-serif'; g.textAlign = "right"; g.fillText(v, CW / 2 - 44, y + 45);
         });
       }
       function cuadro(tms) {
         const p = tms / 6000;
-        const fondo = g.createLinearGradient(0, 0, W_, H_); fondo.addColorStop(0, "#0f3d2e"); fondo.addColorStop(1, "#0b0f0d");
+        const fondo = g.createLinearGradient(0, 0, W_, H_); fondo.addColorStop(0, "#3b1f5e"); fondo.addColorStop(1, "#160d2a");
         g.fillStyle = fondo; g.fillRect(0, 0, W_, H_);
         g.fillStyle = "#ffffff10"; for (let x = 0; x < W_; x += 36) g.fillRect(x, 0, 2, H_); for (let y = 0; y < H_; y += 36) g.fillRect(0, y, W_, 2);
-        g.fillStyle = "#5fd068"; g.font = '30px "Silkscreen", monospace'; g.textAlign = "center"; g.fillText("MINECRAFT 224", W_ / 2, 110);
+        g.fillStyle = "#ffc94d"; g.font = '30px "Silkscreen", monospace'; g.textAlign = "center"; g.fillText("MINECRAFT 224", W_ / 2, 110);
         // Gira 1 vuelta y media y regresa al frente
         const ang = p < .15 ? 0 : p > .85 ? Math.PI * 2 : (p - .15) / .7 * Math.PI * 2;
         const esc = Math.cos(ang), flota = Math.sin(tms / 400) * 10;

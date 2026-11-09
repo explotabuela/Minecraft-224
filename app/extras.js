@@ -118,7 +118,7 @@
       const c = el("canvas", { class: "particulas", "aria-hidden": "true" });
       inicio.prepend(c);
       const g = c.getContext("2d");
-      const COL = esNavidad() ? ["#ffffff", "#e8f1ff", "#d33b2c", "#3f9d4a"] : ["#5fd068", "#7cb342", "#b98a5a", "#7d7d7d", "#5fd0e8", "#f2c94c"];
+      const COL = esNavidad() ? ["#ffffff", "#e8f1ff", "#d33b2c", "#3f9d4a"] : ["#ffc94d", "#7cb342", "#b98a5a", "#7d7d7d", "#5fd0e8", "#f2c94c"];
       let W = 0, H = 0, dpr = Math.min(2, devicePixelRatio || 1), bloques = [], raf = 0, visible = true;
       const medir = () => { const r = inicio.getBoundingClientRect(); W = r.width; H = r.height; c.width = W * dpr; c.height = H * dpr; c.style.width = W + "px"; c.style.height = H + "px"; };
       medir();
@@ -201,7 +201,7 @@
       const g = c.getContext("2d"), dpr = Math.min(2, devicePixelRatio || 1);
       const medir = () => { c.width = innerWidth * dpr; c.height = innerHeight * dpr; };
       medir();
-      const COL = ["#f5c451", "#5fd068", "#ff6bb5", "#5fd0e8", "#ffffff", "#ff9a3c"];
+      const COL = ["#f5c451", "#ffc94d", "#ff6bb5", "#5fd0e8", "#ffffff", "#ff9a3c"];
       let chispas = [], t0 = performance.now(), ultimo = 0;
       function explotar() {
         const x = innerWidth * (.15 + Math.random() * .7), y = innerHeight * (.12 + Math.random() * .4), col = COL[Math.floor(Math.random() * COL.length)];
