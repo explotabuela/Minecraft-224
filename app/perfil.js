@@ -234,6 +234,10 @@
             siguiente ? el("p", { text: siguiente }) : null,
             el("p", { class: "medalla-rareza", text: tienen ? `La ${tienen === 1 ? "tiene 1" : `tienen ${tienen}`} de ${js.length} jugadores (${pct}%)${tienen === 1 ? ". ¡Rarísima!" : "."}` : "Nadie la tiene todavía." }));
           detalle.hidden = false;
+          // el detalle aparece justo abajo de la fila de la medalla que tocaste
+          const fila = [...rej.querySelectorAll(".medalla")].filter(x => x.offsetTop === b.offsetTop);
+          fila[fila.length - 1].after(detalle);
+          detalle.scrollIntoView({ block: "nearest", behavior: "smooth" });
         });
         return b;
       }));

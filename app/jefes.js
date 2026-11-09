@@ -82,7 +82,7 @@
         <div class="p-txt"><p class="lema">${esc(j.lema)}</p><h3>${esc(j.n)}</h3>
         <div class="p-pie"><span>${fecha(t).toUpperCase()}</span><span>${j.vida} DE VIDA</span></div>
         <dl class="p-premio"><dt>Todos</dt><dd>${esc(j.todos)}</dd><dt>#1</dt><dd>${esc(j.top)}</dd></dl></div>`;
-      a.prepend(escena(j, 150));
+      a.prepend(escena(j, 176));
       caja.append(a);
     });
     if (dest) {
@@ -91,7 +91,7 @@
       const j = JEFES[idx], t = new Date(j.f);
       const cartel = document.createElement("div");
       cartel.className = "d-cartel"; cartel.style.background = fondo(j);
-      cartel.append(escena(j, 250));
+      cartel.append(escena(j, 280));
       const info = document.createElement("div");
       info.className = "d-info";
       info.innerHTML = `<span class="d-etq">PRÓXIMO ESTRENO</span><h3>${esc(j.n)}</h3><p class="d-lema">${esc(j.lema)}</p>

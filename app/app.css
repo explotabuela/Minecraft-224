@@ -474,7 +474,7 @@
 .perfil-banner::after{content:"";position:absolute;inset:0;z-index:-1;background:var(--patron);background-size:var(--patron-size,auto);opacity:.5}
 .banner-minero{--banner:linear-gradient(160deg,#1d2733,#0f141b 70%);--patron:radial-gradient(circle at 20% 30%,#5fd0e855 0 3px,transparent 4px),radial-gradient(circle at 70% 60%,#5fd0e855 0 2px,transparent 3px),radial-gradient(circle at 40% 80%,#f5c45144 0 3px,transparent 4px);--patron-size:120px 120px}
 .banner-guerrero{--banner:linear-gradient(160deg,#3a1414,#140808 70%);--patron:repeating-linear-gradient(135deg,#ff6b5714 0 2px,transparent 2px 22px)}
-.banner-explorador{--banner:linear-gradient(160deg,#7d2d6c,#2c1850 55%,#160d2a);--patron:radial-gradient(circle at 85% 95%,#ffc94d55 0 46px,transparent 47px),radial-gradient(circle at 85% 95%,#ff7a3d33 0 70px,transparent 71px)}
+.banner-explorador{--banner:linear-gradient(160deg,#7d2d6c,#2c1850 55%,#160d2a);--patron:radial-gradient(circle,#ffffff2a 0 1px,transparent 1.5px);--patron-size:26px 26px}
 .banner-viciado{--banner:linear-gradient(160deg,#2b1a4d,#120a20 70%);--patron:repeating-linear-gradient(0deg,#b57bff14 0 2px,transparent 2px 6px)}
 .banner-novato{--banner:linear-gradient(160deg,#2b1a4c,#160d2a 70%);--patron:radial-gradient(circle at 80% 20%,#ffffff22 0 1px,transparent 2px);--patron-size:22px 22px}
 .perfil-banner{color:#fff}
@@ -966,3 +966,15 @@ canvas.skin3d{touch-action:pan-y}
 .medalla.unica .medalla-ico{color:#b98cff}
 .unica-que{display:block;font-style:normal;font-size:.68rem;color:var(--tenue);line-height:1.2;margin-top:2px}
 .cuentas-donde{flex-basis:100%;font-weight:700;color:var(--tenue);font-size:.75rem;letter-spacing:.02em}
+
+/* ===== Tema "Estreno" para pantallas completas (cine, presentar, TV) y carga ===== */
+:root{--atardecer:radial-gradient(1px 1px at 12% 8%,#fff9 99%,#0000),radial-gradient(1px 1px at 33% 14%,#fff7 99%,#0000),radial-gradient(1.5px 1.5px at 58% 6%,#fffa 99%,#0000),radial-gradient(1px 1px at 76% 18%,#fff6 99%,#0000),radial-gradient(1.5px 1.5px at 91% 9%,#fff9 99%,#0000),radial-gradient(1px 1px at 47% 24%,#fff5 99%,#0000),url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 160 30' preserveAspectRatio='none' shape-rendering='crispEdges'%3E%3Cpath fill='%234a1f55' d='M0 14h8v-2h10v3h12v-4h10v2h14v-3h12v4h10v-2h16v3h12v-3h10v2h12v-2h14v3h20V30H0z'/%3E%3Cpath fill='%23160d2a' d='M0 22h12v-3h14v2h10v-4h16v3h12v-2h10v4h14v-3h12v2h12v-3h10v2h18v2h20V30H0z'/%3E%3C/svg%3E") bottom/100% 32% no-repeat,linear-gradient(#1d1036 0 16%,#2c1850 16% 30%,#3f1f60 30% 43%,#5b2466 43% 55%,#7d2d6c 55% 65%,#a33a6c 65% 74%,#c2456c 74% 82%,#e2595f 82% 89%,#ff7a3d 89%)}
+.cine{background:var(--atardecer)}
+.cine-perfil::before{background:var(--atardecer)}
+.cine-perfil::after{opacity:.25}
+.presentacion{background:var(--atardecer)!important}
+.tv{background:var(--atardecer)}
+.medalla-detalle{grid-column:1/-1}
+.carga{width:100vw;height:100dvh;background:var(--atardecer)}
+.carga img{box-shadow:0 20px 60px -10px #ffc94d66}
+.carga p{color:#f7efe3cc}
