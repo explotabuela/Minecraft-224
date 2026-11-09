@@ -227,7 +227,7 @@
       degradado(x, ["#0b0a1e", "#1a1236", "#3a1c44", "#6a2c3a", "#a8462e", "#d07a3a"]);
       estrellas(d, 22, 26, "#ffe9c8aa");
       // luna de cosecha enorme
-      C(32, 20, 9, "#ffcf7a"); C(32, 20, 8, "#ffdb94"); [[29, 17, 1], [35, 23, 2], [31, 25, 1], [36, 16, 1]].forEach(([a, b, r]) => C(a, b, r, "#f0bd6a"));
+      C(8, 8, 6, "#ffcf7a"); C(8, 8, 5, "#ffdb94"); [[6, 6, 1], [10, 10, 1], [9, 5, 0]].forEach(([a, b, r]) => C(a, b, r, "#f0bd6a"));
       // cuervos volando
       [[8, 14], [14, 9], [42, 34], [18, 30]].forEach(([a, b]) => { L(a - 2, b - 1, a, b, "#0b0812"); L(a, b, a + 2, b - 1, "#0b0812"); });
       // colinas y cerca

@@ -53,9 +53,68 @@ public class Jefes
 
     private void Guardar() => Archivo.Guardar(Ruta, _e);
 
+    // Corre solo cuando el bot está prendido todo el tiempo (Cybrancee): revisa cada minuto
+    public async Task CorrerAsync(CancellationToken cancelar)
+    {
+        while (!cancelar.IsCancellationRequested)
+        {
+            try { await PasoAsync(); } catch (Exception ex) { Console.WriteLine($"[Jefes] {ex.Message}"); }
+            try { await Task.Delay(TimeSpan.FromMinutes(1), cancelar); } catch { }
+        }
+    }
+
+    // Cartel del jefe (la misma imagen de la página)
+    private object Cartel(Jefe j, string texto) => new
+    {
+        title = j.Nombre.ToUpper(),
+        description = texto,
+        color = j.Id == "profe" ? 0x6B45C4 : 0xFFC94D,
+        image = new { url = _avisos.Url($"img/jefes/{j.Id}.png") },
+    };
+
+    // Mensajes "hackeados" antes de la jefa final
+    private record Hackeo(string Id, string Fecha, string Juego, string Discord);
+    private static readonly Hackeo[] Hackeos =
+    {
+        new("hack1", "2027-02-03T19:24:00-07:00",
+            "Se detectó un archivo desconocido en el servidor: cristina.exe",
+            "Se detectó un archivo desconocido en el servidor: `cristina.exe`"),
+        new("hack2", "2027-02-04T21:10:00-07:00",
+            "¿De verdad creen que la Profe es solo una profe? Revisen su código.",
+            "¿De verdad creen que la Profe es solo una profe? Revisen su código."),
+        new("hack3", "2027-02-05T20:24:00-07:00",
+            "Instalando... 87%. Nos vemos el sábado.",
+            "Instalando... **87%**. Nos vemos el sábado."),
+        new("hack4", "2027-02-06T16:10:00-07:00",
+            "Instalación al 100%. Hoy no hay extraordinario.",
+            "Instalación al **100%**. Hoy no hay extraordinario."),
+    };
+
+    private async Task HackeosAsync()
+    {
+        foreach (var h in Hackeos)
+        {
+            if (!DateTimeOffset.TryParse(h.Fecha, out var fecha)) continue;
+            var falta = fecha - DateTimeOffset.Now;
+            if (falta > TimeSpan.Zero || falta < TimeSpan.FromHours(-2) || _e.Hechos.Contains(h.Id)) continue;
+            _e.Hechos.Add(h.Id); Guardar();
+            var juego = h.Juego.Replace("\\", "\\\\").Replace("\"", "\\\"");
+            await _rcon.ComandoAsync("tellraw @a [\"\",{\"text\":\"[\",\"color\":\"dark_red\"},{\"text\":\"xxxxxx\",\"color\":\"red\",\"obfuscated\":true},{\"text\":\"] \",\"color\":\"dark_red\"},{\"text\":\"" + juego + "\",\"color\":\"red\"}]");
+            await _rcon.ComandoAsync("execute as @a at @s run playsound minecraft:block.beacon.deactivate master @s ~ ~ ~ 1 0.5");
+            await _avisos.AnunciarAsync("", new
+            {
+                title = "⚠️ [ERROR DEL SISTEMA]",
+                description = $"```\n> ...\n```\n{h.Discord}",
+                color = 0x8B0000,
+            });
+            Console.WriteLine($"[Jefes] Mensaje hackeado {h.Id}");
+        }
+    }
+
     public async Task PasoAsync()
     {
         await SemanaAsync();
+        await HackeosAsync();
         foreach (var j in Calendario)
         {
             if (!DateTimeOffset.TryParse(j.Fecha, out var fecha)) continue;
@@ -70,10 +129,11 @@ public class Jefes
                 _e.Hechos.Add(j.Id + ":aviso"); Guardar();
                 var p = lugar.Split(' ');
                 await _avisos.AnunciarAsync(
-                    $"👑 **MAÑANA A LAS 5:10 PM APARECE {j.Nombre.ToUpper()}**\n" +
-                    $"Lo vieron {j.Pista}, cerca de **X: {p[0]}  Z: {p[2]}**" +
+                    $"👑 **MAÑANA A LAS 5:10 PM APARECE {j.Nombre.ToUpper()}**",
+                    Cartel(j, $"Lo vieron {j.Pista}, cerca de **X: {p[0]}  Z: {p[2]}**" +
                     (j.Dimension == "minecraft:the_nether" ? " (en el Nether)" : "") +
-                    "\nLleguen preparados. Todos los que le peguen se llevan botín.");
+                    "\nLleguen preparados. Todos los que le peguen se llevan botín."),
+                    new[] { ("Ver todos los jefes", "#jefes") });
                 Console.WriteLine($"[Jefes] Aviso {j.Id} en {lugar}");
             }
 
@@ -89,7 +149,8 @@ public class Jefes
                 await _rcon.ComandoAsync($"execute in {j.Dimension} positioned {lugar} rotated 0 0 run function jefes224:{j.Id}/invocar");
                 _e.Hechos.Add(j.Id + ":invocado"); Guardar();
                 var p = lugar.Split(' ');
-                await _avisos.AnunciarAsync($"⚔️ **¡{j.Nombre.ToUpper()} HA DESPERTADO!** en X: {p[0]}  Z: {p[2]}. ¡Vayan todos!");
+                await _avisos.AnunciarAsync($"⚔️ **¡{j.Nombre.ToUpper()} HA DESPERTADO!**",
+                    Cartel(j, $"Está en **X: {p[0]}  Z: {p[2]}**. ¡Vayan todos!"));
                 Console.WriteLine($"[Jefes] Invocado {j.Id}");
             }
         }

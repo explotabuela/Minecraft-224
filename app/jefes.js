@@ -80,7 +80,7 @@
       a.innerHTML = `<span class="p-num">${String(i + 1).padStart(2, "0")}/08</span>
         ${prox ? '<span class="sello">PRÓXIMO</span>' : paso ? '<span class="sello gris">YA PASÓ</span>' : j.final ? '<span class="sello oro">FINAL</span>' : ""}
         <div class="p-txt"><p class="lema">${esc(j.lema)}</p><h3>${esc(j.n)}</h3>
-        <div class="p-pie"><span>${fecha(t).toUpperCase()}</span><span>${j.vida} DE VIDA</span></div>
+        <div class="p-pie${String(j.vida).length > 5 ? " largo" : ""}"><span>${fecha(t).toUpperCase()}</span><span>${j.vida} DE VIDA</span></div>
         <dl class="p-premio"><dt>Todos</dt><dd>${esc(j.todos)}</dd><dt>#1</dt><dd>${esc(j.top)}</dd></dl></div>`;
       a.prepend(escena(j, 176));
       caja.append(a);

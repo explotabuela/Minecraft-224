@@ -116,6 +116,7 @@ _ = vigilante.CorrerAsync(cancelar.Token);
 _ = desaparecidos.CorrerAsync(cancelar.Token);
 _ = new Inauguracion(config, avisos).CorrerAsync(cancelar.Token);
 _ = new AperturaNether(config, rcon, avisos).CorrerAsync(cancelar.Token);
+_ = new Jefes(config, rcon, avisos).CorrerAsync(cancelar.Token);
 
 // Bot de Discord (comandos, chat de dos sentidos, whitelist, capturas)
 if (string.IsNullOrWhiteSpace(config.DiscordToken))
