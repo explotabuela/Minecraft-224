@@ -7,7 +7,7 @@
     { id: "muneco", lema: "Esta Navidad nadie se salva del frío.", c1: "#5d9bcc", c2: "#0f2440", n: "El Muñeco de Nieve Maldito", f: "2026-12-26T17:10:00-07:00", vida: 470, donde: "En la nieve",
       d: "Ventisca, bolas de nieve y esqueletos de hielo. El jefe de Navidad.",
       todos: "Caja de regalo (shulker) con comida, XP y manzana dorada", top: "Tótem y Botas de Hielo" },
-    { id: "viejo", lema: "Se va con todo, y con cohetes.", c1: "#d9922f", c2: "#3f1a07", n: "El Año Viejo", f: "2027-01-02T17:10:00-07:00", vida: 580, donde: "En una planicie",
+    { id: "viejo", lema: "Se quema a medianoche, y te lleva con él.", c1: "#d9922f", c2: "#3f1a07", n: "El Año Viejo", f: "2027-01-02T17:10:00-07:00", vida: 580, donde: "En una planicie",
       d: "Cohetes que explotan por todos lados. Al final se quema.",
       todos: "64 cohetes y manzana dorada encantada", top: "Tótem y Ballesta de Año Nuevo" },
     { id: "reina", lema: "Bajo tierra, nadie te oye gritar.", c1: "#7d2b3c", c2: "#160a10", n: "La Reina Araña", f: "2027-01-09T17:10:00-07:00", vida: 700, donde: "Bajo tierra, en una cueva frondosa",
@@ -22,8 +22,8 @@
     { id: "ultimo", lema: "Si te escucha, ya valiste.", c1: "#1f5560", c2: "#030d10", n: "El Último", f: "2027-01-30T17:10:00-07:00", vida: 1000, donde: "Sobre la oscuridad profunda",
       d: "Un Warden gigante. Si te escucha, corre.",
       todos: "Lingote de netherita, tótem, brújula de recuperación y Sigilo veloz III", top: "Botas de El Último" },
-    { id: "profe", lema: "El examen final.", c1: "#6b45c4", c2: "#160c30", n: "La Profe Cristina", f: "2027-02-06T17:10:00-07:00", vida: 1500, donde: "En una pradera", final: true,
-      d: "La jefa final. Ilusiones, ceguera, Monitores y 1500 de vida.",
+    { id: "profe", lema: "El examen final.", c1: "#6b45c4", c2: "#160c30", n: "La Profe Cristina", f: "2027-02-06T17:10:00-07:00", vida: "1500 + ???", donde: "En una pradera", final: true,
+      d: "La jefa final. Copias de sí misma, ceguera y Monitores. Y si la vencen... despierta Cristina Digital, el doble de fuerte.",
       todos: "Élitros, 64 cohetes y Diploma de la 224", top: "Regla de la Profe (maza) y Diploma con 10" },
   ];
   const MISIONES = [

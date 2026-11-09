@@ -58,27 +58,34 @@
     },
     viejo(d, g) {
       const { R, P, L } = d;
-      // fuego abajo
-      for (let a = 0; a < 32; a += 2) { const h = 5 + ((a * 7) % 6); R(a, 32 - h, 2, h, a % 4 ? "#d92b1a" : "#ff7a1a"); }
-      for (let a = 3; a < 32; a += 6) R(a, 28, 2, 4, "#ffd166");
-      // cuerpo de trapo con camisa
-      R(8, 24, 16, 6, "#4a5a8a"); R(8, 24, 16, 1, "#6a7aaa"); R(15, 24, 2, 6, "#2a3a6a");
-      // paja saliendo
-      [[6, 13], [5, 16], [6, 19], [7, 22], [25, 13], [26, 16], [25, 19], [24, 22]].forEach(([a, b]) => L(a, b, a + (a < 16 ? 3 : -3), b, "#e8c860"));
-      // cabeza de costal
-      R(9, 11, 14, 13, "#c49a62"); R(22, 11, 1, 13, "#a07a46"); R(9, 23, 14, 1, "#a07a46");
-      for (let i = 0; i < 14; i++) P(10 + (i * 5) % 12, 12 + (i * 3) % 11, "#b08a52");
-      // ojos en X grandes y cosidos
-      R(10, 14, 5, 5, "#7a5a32"); R(17, 14, 5, 5, "#7a5a32");
-      L(10, 14, 14, 18, "#1a0e04"); L(14, 14, 10, 18, "#1a0e04"); L(17, 14, 21, 18, "#1a0e04"); L(21, 14, 17, 18, "#1a0e04");
-      L(11, 14, 14, 17, "#1a0e04"); L(18, 14, 21, 17, "#1a0e04");
-      // sonrisa cosida enorme
-      L(11, 20, 13, 21, "#1a0e04"); R(13, 21, 6, 1, "#1a0e04"); L(19, 21, 21, 20, "#1a0e04"); [13, 15, 17].forEach(a => { P(a, 20, "#1a0e04"); P(a, 22, "#1a0e04"); });
-      // sombrero de paja con listón
-      R(4, 9, 24, 2, "#d4ad52"); R(4, 10, 24, 1, "#a8853a"); R(10, 4, 12, 5, "#dcb55a"); R(10, 4, 12, 1, "#f0d070"); R(10, 8, 12, 1, "#8a1a1a");
-      // "2026" escrito en el listón
-      [11, 13, 16, 18].forEach(a => P(a, 8, "#f4ecdf"));
-      g.P(12, 16, "#ff9a2a"); g.P(19, 16, "#ff9a2a"); g.R(4, 31, 24, 1, "#ff9a00");
+      // poste de madera y travesaño
+      R(15, 18, 2, 14, "#5a3a1e"); R(15, 18, 1, 14, "#7a5230");
+      // llamitas en la base (el Año Viejo se quema)
+      [[10, 4], [12, 6], [14, 3], [17, 5], [19, 7], [21, 4]].forEach(([a, h]) => { R(a, 32 - h, 2, h, "#d92b1a"); R(a, 32 - Math.ceil(h / 2), 1, Math.ceil(h / 2), "#ff8a1a"); });
+      [11, 15, 18, 20].forEach(a => P(a, 31, "#ffd166"));
+      // camisa a cuadros con brazos abiertos
+      const cuadros = (x0, y0, w, h) => { R(x0, y0, w, h, "#a8322a"); for (let i = x0; i < x0 + w; i++) if ((i - x0) % 3 === 1) R(i, y0, 1, h, "#6a1a16"); for (let j = y0; j < y0 + h; j++) if ((j - y0) % 3 === 1) R(x0, j, w, 1, "#6a1a16"); for (let i = x0; i < x0 + w; i += 3) for (let j = y0; j < y0 + h; j += 3) P(i, j, "#d0584a"); };
+      cuadros(10, 17, 12, 10); cuadros(3, 17, 7, 5); cuadros(22, 17, 7, 5);
+      R(10, 17, 12, 1, "#7a221c"); R(15, 17, 2, 10, "#5a1410"); [19, 22, 25].forEach(b => P(16, b - 1, "#e8d8a0"));
+      // paja de las manos y de la cintura
+      [[0, 18], [1, 19], [0, 20], [1, 21], [2, 17]].forEach(([a, b]) => { R(a, b, 3, 1, "#e8c860"); R(31 - a - 2, b, 3, 1, "#e8c860"); });
+      R(10, 26, 12, 1, "#c9a050"); [[11, 27], [13, 28], [18, 27], [20, 28], [12, 29]].forEach(([a, b]) => L(a, b - 1, a, b, "#e8c860"));
+      // cabeza de costal con costuras
+      R(10, 6, 12, 11, "#c49a62"); R(21, 6, 1, 11, "#a07a46"); R(10, 16, 12, 1, "#a07a46");
+      for (let i = 0; i < 16; i++) P(10 + (i * 5) % 11, 7 + (i * 3) % 9, "#b08a52");
+      R(12, 17, 8, 1, "#e8c860"); P(11, 17, "#d4ad52"); P(20, 17, "#d4ad52");
+      // ojos en X cosidos que brillan por dentro
+      R(11, 9, 4, 4, "#3a2410"); R(17, 9, 4, 4, "#3a2410");
+      g.R(12, 10, 2, 2, "#ff8a1a"); g.R(18, 10, 2, 2, "#ff8a1a");
+      L(11, 9, 14, 12, "#1a0e04"); L(14, 9, 11, 12, "#1a0e04"); L(17, 9, 20, 12, "#1a0e04"); L(20, 9, 17, 12, "#1a0e04");
+      // sonrisa cosida
+      L(11, 14, 12, 15, "#1a0e04"); R(12, 15, 8, 1, "#1a0e04"); L(20, 15, 21, 14, "#1a0e04"); [13, 15, 17, 19].forEach(a => { P(a, 14, "#1a0e04"); P(a, 16, "#1a0e04"); });
+      // sombrero de paja con listón rojo
+      R(5, 5, 22, 2, "#d4ad52"); R(5, 6, 22, 1, "#a8853a"); R(10, 1, 12, 4, "#dcb55a"); R(10, 1, 12, 1, "#f0d070"); R(10, 4, 12, 1, "#8a1a1a");
+      [[6, 4], [25, 4], [8, 7], [23, 7]].forEach(([a, b]) => P(a, b, "#e8c860"));
+      // cuervo en el brazo
+      R(25, 14, 3, 3, "#0e0a10"); R(27, 13, 2, 2, "#0e0a10"); P(29, 14, "#f0b030"); R(24, 15, 1, 2, "#0e0a10"); P(28, 13, "#ff3b3b");
+      g.P(28, 13, "#ff3b3b");
     },
     reina(d, g) {
       const { R, P, L, C } = d;
@@ -185,6 +192,9 @@
       g.R(12, 16, 2, 1, "#ff3b4a"); g.R(18, 16, 2, 1, "#ff3b4a");
       // nariz y sonrisa de villana
       P(16, 18, "#c9966f"); P(16, 19, "#c9966f"); R(13, 21, 6, 1, "#b0182a"); P(12, 20, "#b0182a"); P(19, 20, "#b0182a"); R(14, 22, 4, 1, "#8a1020"); R(14, 21, 4, 1, "#f4ecdf");
+      // falla digital: circuitos debajo de la piel
+      g.P(20, 19, "#ff3b4a"); g.P(21, 19, "#ff3b4a"); g.P(21, 20, "#ff3b4a"); g.P(21, 21, "#ff3b4a"); g.P(20, 22, "#ff3b4a");
+      P(22, 13, "#4ff0ff"); P(23, 13, "#4ff0ff"); P(24, 15, "#4ff0ff");
       // aretes de perla
       P(9, 19, "#f4ecdf"); P(22, 19, "#f4ecdf"); P(9, 20, "#d8d0c0"); P(22, 20, "#d8d0c0");
     },
@@ -213,12 +223,19 @@
       R(0, 62, 48, 10, "#dfe9f2"); R(0, 62, 48, 1, "#ffffff");
     },
     viejo(d) {
-      const { R, P, x } = d;
-      degradado(x, ["#0a0a24", "#1a1440", "#3a1f4a", "#6a2a3a"]);
-      [[10, 12, "#ff5a5a"], [37, 9, "#ffd166"], [24, 22, "#6af0ff"], [41, 30, "#b56aff"], [6, 30, "#7aff8a"]].forEach(([cx, cy, c]) => {
-        for (let t = 0; t < 12; t++) { const a = t * Math.PI / 6; for (let r = 2; r < 6; r++) P(Math.round(cx + Math.cos(a) * r), Math.round(cy + Math.sin(a) * r), r > 4 ? c + "88" : c); } P(cx, cy, "#fff"); });
-      // techos de pueblo
-      [[0, 58, 10], [9, 54, 8], [16, 60, 9], [25, 55, 10], [35, 57, 13]].forEach(([a, b, w]) => { R(a, b, w, 72 - b, "#120a1a"); P(a + 2, b + 4, "#ffcf6a"); P(a + w - 3, b + 6, "#ffcf6a"); });
+      const { R, P, L, C, x } = d;
+      degradado(x, ["#0b0a1e", "#1a1236", "#3a1c44", "#6a2c3a", "#a8462e", "#d07a3a"]);
+      estrellas(d, 22, 26, "#ffe9c8aa");
+      // luna de cosecha enorme
+      C(32, 20, 9, "#ffcf7a"); C(32, 20, 8, "#ffdb94"); [[29, 17, 1], [35, 23, 2], [31, 25, 1], [36, 16, 1]].forEach(([a, b, r]) => C(a, b, r, "#f0bd6a"));
+      // cuervos volando
+      [[8, 14], [14, 9], [42, 34], [18, 30]].forEach(([a, b]) => { L(a - 2, b - 1, a, b, "#0b0812"); L(a, b, a + 2, b - 1, "#0b0812"); });
+      // colinas y cerca
+      for (let i = 0; i < 48; i++) R(i, 50 + Math.round(Math.sin(i / 7) * 2), 1, 22, "#1a0f14");
+      R(0, 54, 48, 1, "#3a2414"); R(0, 57, 48, 1, "#3a2414"); for (let a = 2; a < 48; a += 7) R(a, 52, 1, 8, "#4a2e18");
+      // trigal
+      R(0, 60, 48, 12, "#3a2a10");
+      for (let a = 0; a < 48; a++) { const h = 4 + ((a * 13) % 5); R(a, 60 - h + 4, 1, h, a % 2 ? "#b88a2a" : "#8a6418"); if (a % 3 === 0) P(a, 60 - h + 3, "#e8c060"); }
     },
     reina(d) {
       const { R, P, L, x } = d;
