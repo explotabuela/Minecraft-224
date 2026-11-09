@@ -22,8 +22,8 @@
     { id: "ultimo", lema: "Si te escucha, ya valiste.", c1: "#1f5560", c2: "#030d10", n: "El Último", f: "2027-01-30T17:10:00-07:00", vida: 1000, donde: "Sobre la oscuridad profunda",
       d: "Un Warden gigante. Si te escucha, corre.",
       todos: "Lingote de netherita, tótem, brújula de recuperación y Sigilo veloz III", top: "Botas de El Último" },
-    { id: "profe", lema: "El examen final.", c1: "#6b45c4", c2: "#160c30", n: "La Profe Cristina", f: "2027-02-06T17:10:00-07:00", vida: 1000, donde: "En una pradera", final: true,
-      d: "La jefa final. Monitores, exámenes sorpresa y errores de compilación.",
+    { id: "profe", lema: "El examen final.", c1: "#6b45c4", c2: "#160c30", n: "La Profe Cristina", f: "2027-02-06T17:10:00-07:00", vida: 2000, donde: "En una pradera", final: true,
+      d: "La jefa final. Ilusiones, ceguera, Monitores y 2000 de vida.",
       todos: "Élitros, 64 cohetes y Diploma de la 224", top: "Regla de la Profe (maza) y Diploma con 10" },
   ];
   const MISIONES = [
