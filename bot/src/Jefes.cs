@@ -19,9 +19,9 @@ public class Jefes
         public int Semana { get; set; } = -1;
     }
 
-    private record Jefe(string Id, string Nombre, string Fecha, string Dimension, string Bioma, string Pista);
+    public record Jefe(string Id, string Nombre, string Fecha, string Dimension, string Bioma, string Pista);
 
-    private static readonly Jefe[] Calendario =
+    public static readonly Jefe[] Calendario =
     {
         new("bruja",    "La Bruja del Pantano",       "2026-12-19T17:10:00-07:00", "minecraft:overworld", "minecraft:swamp",            "en un pantano"),
         new("muneco",   "El Muñeco de Nieve Maldito", "2026-12-26T17:10:00-07:00", "minecraft:overworld", "minecraft:snowy_plains",     "en la nieve"),

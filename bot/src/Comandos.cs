@@ -71,6 +71,7 @@ public class Comandos
                 Op("categoria", "¿De qué?", true, Opciones(Categorias.Select(c => (c.Nombre, c.Valor)).ToArray())),
                 Op("periodo", "¿De cuándo? (si no pones nada: siempre)", false, Opciones(("Esta semana", "semana"), ("Este mes", "mes"), ("Desde siempre", "siempre")))),
             Cmd("liga", "Cómo va la liga del mes"),
+            Cmd("jefe", "Cuándo y dónde sale el próximo jefe"),
             Cmd("wrapped", "Te mando por privado el link de tu Wrapped del mes", Op("jugador", "Nombre en Minecraft (si no pones nada, el tuyo)", false)),
             Cmd("entrar", "Pide que te metan a la whitelist (si juegas en los dos, pon los dos)",
                 Op("java", "Tu usuario de Java (compu)", false),
@@ -82,7 +83,7 @@ public class Comandos
         };
         foreach (var s in servidores)
             await _discord.RegistrarComandosAsync(s, comandos);
-        Console.WriteLine("[Discord] Comandos listos: /ip /chiste /online /stats /carta /vs /top /liga /wrapped /entrar /unir /vincular");
+        Console.WriteLine("[Discord] Comandos listos: /ip /chiste /online /stats /carta /vs /top /liga /jefe /wrapped /entrar /unir /vincular");
     }
 
     // ---------- Comandos ----------
@@ -104,6 +105,7 @@ public class Comandos
                 "vs" => await VsAsync(i),
                 "top" => Top(i),
                 "liga" => LigaCmd(),
+                "jefe" => JefeCmd(),
                 "wrapped" => await WrappedAsync(i),
                 "entrar" => Entrar(i),
                 "unir" => await UnirAsync(i),
@@ -127,6 +129,31 @@ public class Comandos
     private object Embed(object e, params (string Texto, string Ancla)[] botones) => botones.Length == 0
         ? new { embeds = new[] { e }, allowed_mentions = new { parse = Array.Empty<string>() } }
         : new { embeds = new[] { e }, allowed_mentions = new { parse = Array.Empty<string>() }, components = Discord.Botones(botones.Select(b => (b.Texto, Url(b.Ancla))).ToArray()) };
+
+    // ---------- /jefe ----------
+    private object JefeCmd()
+    {
+        var ahora = DateTimeOffset.Now;
+        var lista = Jefes.Calendario
+            .Select(j => (J: j, F: DateTimeOffset.TryParse(j.Fecha, out var f) ? f : DateTimeOffset.MinValue))
+            .Where(x => x.F > ahora.AddHours(-1)).OrderBy(x => x.F).ToList();
+        if (lista.Count == 0)
+            return Embed(new { title = "Ya pasaron todos los jefes", description = "La temporada ya terminó. Revisen la página para ver quién ganó cada uno.", color = 0xFFC94D }, ("Ver los jefes", "#jefes"));
+        var (j, f) = lista[0];
+        var unix = f.ToUnixTimeSeconds();
+        var num = Array.IndexOf(Jefes.Calendario, j) + 1;
+        var texto = f <= ahora
+            ? $"**¡Ya está afuera!** Salió {j.Pista}. Vayan todos."
+            : $"Sale el **<t:{unix}:F>**\n⏳ <t:{unix}:R>\n\nLo van a ver {j.Pista}. Un día antes aviso las coordenadas.";
+        return Embed(new
+        {
+            title = $"Jefe {num} de {Jefes.Calendario.Length}: {j.Nombre.ToUpper()}",
+            description = texto,
+            color = j.Id == "profe" ? 0x6B45C4 : 0xFFC94D,
+            image = new { url = Url($"img/jefes/{j.Id}.png") },
+            footer = new { text = "Todos los que le peguen se llevan botín. El #1 en daño, un premio único." },
+        }, ("Ver todos los jefes", "#jefes"));
+    }
 
     // ---------- /chiste ----------
     private static readonly (string Pregunta, string Respuesta)[] Chistes =
