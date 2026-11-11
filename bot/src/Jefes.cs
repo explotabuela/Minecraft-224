@@ -127,6 +127,7 @@ public class Jefes
                 if (lugar == null) continue;
                 _e.Lugar[j.Id] = lugar;
                 _e.Hechos.Add(j.Id + ":aviso"); Guardar();
+                await MandarLugarAsync(j, lugar, (int)falta.TotalMinutes);
                 var p = lugar.Split(' ');
                 await _avisos.AnunciarAsync(
                     $"👑 **MAÑANA A LAS 5:10 PM APARECE {j.Nombre.ToUpper()}**",
@@ -135,6 +136,32 @@ public class Jefes
                     "\nLleguen preparados. Todos los que le peguen se llevan botín."),
                     new[] { ("Ver todos los jefes", "#jefes") });
                 Console.WriteLine($"[Jefes] Aviso {j.Id} en {lugar}");
+            }
+
+            // Campanas a los 60, 30 y 10 minutos; a los 10 se abre el portal del spawn
+            foreach (var min in new[] { 60, 30, 10 })
+            {
+                var clave = $"{j.Id}:campana{min}";
+                if (falta <= TimeSpan.Zero || falta > TimeSpan.FromMinutes(min) || _e.Hechos.Contains(clave)) continue;
+                if (!_e.Lugar.TryGetValue(j.Id, out var donde))
+                {
+                    donde = await BuscarAsync(j);
+                    if (donde == null) continue;
+                    _e.Lugar[j.Id] = donde;
+                }
+                _e.Hechos.Add(clave); Guardar();
+                await MandarLugarAsync(j, donde, min);
+                await _rcon.ComandoAsync("function jefes224:jefe/campana");
+                if (min == 10) await _rcon.ComandoAsync("function jefes224:jefe/portal_abrir");
+                Console.WriteLine($"[Jefes] Campana de {min} min para {j.Id}");
+            }
+
+            // Hora y media después de la pelea se cierra el portal
+            if (falta < TimeSpan.FromMinutes(-90) && _e.Hechos.Contains(j.Id + ":invocado") && !_e.Hechos.Contains(j.Id + ":portalcerrado"))
+            {
+                _e.Hechos.Add(j.Id + ":portalcerrado"); Guardar();
+                await _rcon.ComandoAsync("function jefes224:jefe/portal_cerrar");
+                Console.WriteLine($"[Jefes] Portal cerrado para {j.Id}");
             }
 
             // Invocación el sábado (hasta 1 hora de tolerancia)
@@ -154,6 +181,20 @@ public class Jefes
                 Console.WriteLine($"[Jefes] Invocado {j.Id}");
             }
         }
+    }
+
+    // Le pasa al datapack dónde es la pelea y cuántos minutos faltan (campanas, portal y brújula)
+    private async Task MandarLugarAsync(Jefe j, string lugar, int min)
+    {
+        var p = lugar.Split(' ');
+        if (p.Length < 3) return;
+        await _rcon.ComandoAsync($"scoreboard players set #jx j_var {p[0]}");
+        await _rcon.ComandoAsync($"scoreboard players set #jy j_var {p[1]}");
+        await _rcon.ComandoAsync($"scoreboard players set #jz j_var {p[2]}");
+        await _rcon.ComandoAsync($"scoreboard players set #jefe_dim j_var {(j.Dimension == "minecraft:the_nether" ? 1 : 0)}");
+        await _rcon.ComandoAsync($"scoreboard players set #jefe_id j_var {Array.IndexOf(Calendario, j) + 1}");
+        await _rcon.ComandoAsync($"scoreboard players set #jefe_min j_var {min}");
+        await _rcon.ComandoAsync("scoreboard players set #jefe_hay j_var 1");
     }
 
     // Busca el bioma del jefe cerca de un punto random alrededor del spawn y regresa "x y z"
