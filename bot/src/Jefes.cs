@@ -33,7 +33,7 @@ public class Jefes
         new("profe",    "La Profe Cristina",          "2027-02-06T17:10:00-07:00", "minecraft:overworld", "minecraft:meadow",           "en una pradera"),
     };
 
-    private static readonly string[][] Misiones =
+    public static readonly string[][] Misiones =
     {
         new[] { "Mata 30 zombis", "Junta 32 de hierro crudo", "Consigue 5 diamantes", "Comercia 10 veces con aldeanos" },
         new[] { "Mata 10 blazes", "Consigue 64 de cuarzo", "Mata 15 creepers", "Pesca 15 veces" },

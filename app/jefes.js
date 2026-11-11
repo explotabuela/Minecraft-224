@@ -26,6 +26,7 @@
       d: "La jefa final. Copias de sí misma, ceguera y Monitores. Y si la vencen... despierta Cristina Digital, el doble de fuerte.",
       todos: "Élitros, 64 cohetes y Diploma de la 224", top: "Regla de la Profe (maza) y Diploma con 10" },
   ];
+  window.JEFES = JEFES;
   const MISIONES = [
     [["Mata 30 zombis", "32 de XP"], ["Junta 32 de hierro crudo", "Libro de Irrompibilidad III"], ["Consigue 5 diamantes", "3 diamantes"], ["Comercia 10 veces con aldeanos", "16 esmeraldas"], "Manzana dorada encantada"],
     [["Mata 10 blazes", "8 varas de blaze"], ["Consigue 64 de cuarzo", "32 de XP"], ["Mata 15 creepers", "Libro de Protección contra explosiones IV"], ["Pesca 15 veces", "Caña encantada"], "Shulker box"],

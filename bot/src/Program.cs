@@ -108,6 +108,9 @@ catch (Exception ex)
 
 altas = new Altas(config, rcon, alias, Unir);
 var cancelar = new CancellationTokenSource();
+if (discord != null) _ = new Admin(config, rcon, discord).CorrerAsync(cancelar.Token);
+_ = new Ficha(config, rcon, avisos, github, alias).CorrerAsync(cancelar.Token);
+if (discord != null) _ = new Encuesta(config, discord).CorrerAsync(cancelar.Token);
 _ = lector.CorrerAsync(cancelar.Token);
 _ = ranking.CorrerAsync(cancelar.Token);
 _ = pagina.CorrerAsync(cancelar.Token);

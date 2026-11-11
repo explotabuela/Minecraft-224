@@ -5,7 +5,7 @@ using System.Text.RegularExpressions;
 namespace Bot224;
 
 // Los comandos de Discord, los botones de la whitelist y el chat de Discord -> Minecraft
-public class Comandos
+public partial class Comandos
 {
     private readonly Config _config;
     private readonly Discord _discord;
@@ -80,17 +80,26 @@ public class Comandos
                 Op("principal", "El nombre que se va a quedar", true), Op("otro", "El otro nombre (ej. .Pepe de Bedrock)", true)),
             Cmd("vincular", "(Solo Dylan) Dice qué usuario de Discord es qué jugador",
                 Op("usuario", "El usuario de Discord", true, tipo: 6), Op("jugador", "Su nombre en Minecraft", true)),
+            Cmd("calendario", "Los 8 jefes con su fecha y cuáles ya pasaron"),
+            Cmd("mision", "Tus misiones de la semana y cómo vas"),
+            Cmd("muertes", "Tus últimas muertes y qué te mató"),
+            Cmd("tumba", "Dónde quedó tu última tumba (solo la tuya)"),
+            Cmd("reglas", "Las reglas del server"),
+            Cmd("ayuda", "La lista de todos los comandos"),
+            Cmd("sugerencia", "Mándale una idea a Dylan", Op("texto", "Tu idea", true)),
+            Cmd("reporte", "Avisa de un problema o de alguien, en privado", Op("texto", "Qué pasó", true)),
+            Cmd("estado", "(Solo Dylan) TPS, jugadores y cómo va la temporada"),
         };
         foreach (var s in servidores)
             await _discord.RegistrarComandosAsync(s, comandos);
-        Console.WriteLine("[Discord] Comandos listos: /ip /chiste /online /stats /carta /vs /top /liga /jefe /wrapped /entrar /unir /vincular");
+        Console.WriteLine("[Discord] Comandos listos: /ip /chiste /online /stats /carta /vs /top /liga /jefe /calendario /mision /muertes /tumba /medallas /semana /wrapped /reglas /ayuda /sugerencia /reporte /entrar /unir /vincular /estado");
     }
 
     // ---------- Comandos ----------
     private async Task ComandoAsync(JsonElement i)
     {
         var nombre = i.GetProperty("data").GetProperty("name").GetString();
-        var privado = nombre is "wrapped" or "unir" or "vincular";
+        var privado = nombre is "wrapped" or "unir" or "vincular" or "muertes" or "tumba" or "mision" or "sugerencia" or "reporte" or "estado";
         await _discord.EsperarAsync(i, privado);
         object respuesta;
         try
@@ -110,6 +119,15 @@ public class Comandos
                 "entrar" => Entrar(i),
                 "unir" => await UnirAsync(i),
                 "vincular" => Vincular(i),
+                "calendario" => Calendario(),
+                "mision" => await MisionAsync(i),
+                "muertes" => await MuertesAsync(i),
+                "tumba" => await TumbaAsync(i),
+                "reglas" => Reglas(),
+                "ayuda" => Ayuda(),
+                "sugerencia" => await BuzonAsync(i, false),
+                "reporte" => await BuzonAsync(i, true),
+                "estado" => await EstadoAsync(i),
                 _ => Texto("No conozco ese comando 🤨"),
             };
         }

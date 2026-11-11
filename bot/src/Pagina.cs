@@ -252,6 +252,8 @@ public class Pagina
         var datos = new
         {
             actualizado = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss"),
+            luna = Admin.Luna,
+            semanaDificultad = Admin.Semana,
             pagina = _config.PaginaUrl,
             jugadores = jugadores.Select(j => new
             {

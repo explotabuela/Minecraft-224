@@ -40,6 +40,8 @@
 <script src="app/jefes-arte.js" defer></script>
 <script src="app/jefes.js" defer></script>
 <script src="app/musica.js" defer></script>
+<script src="app/temas.js" defer></script>
+<script src="app/fichas.js" defer></script>
 <style>
 /* Layout: página moderna por apartados con menú fijo arriba; cada apartado con su encabezado.
    Oscuro con brillo verde suave; lo "Minecraft" queda solo en detalles pixelados chiquitos. */
@@ -348,6 +350,33 @@ h2{font-family:var(--f-display);font-weight:800;font-size:clamp(1.7rem,4vw,2.4re
 .temblor main,.temblor .hero{animation:temblor .4s linear 2}
 @keyframes temblor{25%{transform:translate(6px,-4px)}50%{transform:translate(-6px,4px)}75%{transform:translate(4px,6px)}}
 
+/* Temas vivos y fichas */
+.nieve-lienzo{position:fixed;inset:0;pointer-events:none;z-index:60}
+.tema-navidad .hero-cielo{filter:saturate(.9) brightness(1.04)}
+.tema-luna{--acento:#ff5a5a}
+.tema-luna::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:55;background:radial-gradient(circle at 50% 0%,rgba(190,20,20,.30),rgba(120,0,0,.14) 45%,transparent 72%);mix-blend-mode:multiply}
+.tema-luna .hero-cielo{filter:hue-rotate(-28deg) saturate(1.5) brightness(.82)}
+.aviso-jefe{position:relative;z-index:3;margin:0 0 10px;font-family:var(--f-tit),sans-serif;letter-spacing:.14em;font-size:.95rem;color:#ffc94d;text-align:center;text-shadow:0 2px 10px rgba(0,0,0,.6)}
+.hero-cartel{position:absolute;right:4%;bottom:0;height:78%;max-height:420px;width:auto;z-index:2;filter:drop-shadow(0 12px 30px rgba(0,0,0,.6));image-rendering:pixelated;pointer-events:none}
+@media(max-width:760px){.hero-cartel{right:50%;transform:translateX(50%);height:56%;opacity:.5}}
+.son-boton{font-size:1rem;line-height:1}
+.fichas-caja{display:grid;gap:18px;margin-top:18px}
+.ficha{background:var(--capa);border:1px solid var(--linea);border-radius:var(--radio,18px);overflow:hidden;color:var(--texto)}
+.ficha-cabeza{display:flex;gap:16px;align-items:center;padding:14px 16px;border-bottom:1px solid var(--linea)}
+.ficha-cartel{width:60px;height:auto;border-radius:8px;image-rendering:pixelated}
+.ficha-cabeza h3{margin:0;font-size:1.15rem}
+.ficha-sub{margin:2px 0 0;font-size:.9rem;color:var(--tenue)}
+.ficha-fecha{margin:1px 0 0;font-size:.8rem;color:var(--tenue);opacity:.8}
+.ficha-tabla{padding:10px 16px 16px;display:grid;gap:7px}
+.ficha-fila{display:grid;grid-template-columns:22px 24px minmax(70px,1fr) 2.2fr auto;gap:9px;align-items:center;font-size:.9rem}
+.ficha-pos{color:var(--tenue);text-align:right;font-variant-numeric:tabular-nums}
+.ficha-cara{image-rendering:pixelated;border-radius:4px}
+.ficha-nombre{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ficha-barra{display:block;height:9px;border-radius:99px;background:var(--capa-2);overflow:hidden}
+.ficha-barra i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#ffc94d,#ff7a4d)}
+.ficha-dano{font-variant-numeric:tabular-nums;color:var(--tenue);font-size:.82rem;white-space:nowrap}
+.ficha-vacia{color:var(--tenue);margin:6px 0}
+@media(max-width:620px){.ficha-fila{grid-template-columns:18px 20px 1fr 1.4fr auto;font-size:.82rem}.ficha-dano{font-size:.74rem}}
 /* Preguntas */
 .faq{display:grid;gap:10px;max-width:760px}
 .faq details{background:var(--capa);border:1px solid var(--linea);border-radius:var(--radio);padding:0 20px}
@@ -681,6 +710,15 @@ main section+section::before{content:"";position:absolute;top:0;left:0;right:0;h
     <h3 class="carril-tit">La cartelera completa</h3>
     <div class="carril" id="jefes-caja" tabindex="0" aria-label="Los 8 jefes de la temporada"></div>
     <p class="cierre"><b>¿No pudiste ir?</b> Cuando un jefe ya pasó, cualquiera puede pedir revancha una vez al día con <code>/trigger revancha</code>. Si no lo habías vencido, te llevas el botín.</p>
+  </section>
+
+  <section id="fichas" hidden>
+    <div class="cabeza">
+      <span class="eyebrow">DESPUÉS DE LA PELEA</span>
+      <h2>La ficha de cada jefe</h2>
+      <p>Cuánto duró la pelea y cuánto daño hizo cada quien. El bot la sube solita cuando cae el jefe.</p>
+    </div>
+    <div class="fichas-caja" id="fichas-caja"></div>
   </section>
 
   <section id="misiones">
