@@ -56,6 +56,8 @@ public partial class Comandos
         }
         JsonObject Cmd(string nombre, string desc, params JsonObject[] ops) =>
             new() { ["name"] = nombre, ["description"] = desc, ["options"] = new JsonArray(ops) };
+        // Solo los admins del Discord lo ven en la lista
+        JsonObject Admin(JsonObject c) { c["default_member_permissions"] = "0"; return c; }
         JsonArray Opciones(params (string Nombre, string Valor)[] o) =>
             new(o.Select(x => (JsonNode)new JsonObject { ["name"] = x.Nombre, ["value"] = x.Valor }).ToArray());
 
@@ -73,10 +75,10 @@ public partial class Comandos
             Cmd("entrar", "Pide que te metan a la whitelist (si juegas en los dos, pon los dos)",
                 Op("java", "Tu usuario de Java (compu)", false),
                 Op("bedrock", "Tu gamertag de Bedrock (cel, consola, Windows)", false)),
-            Cmd("unir", "(Solo Dylan) Junta dos nombres de la misma persona, ej. Java y Bedrock",
-                Op("principal", "El nombre que se va a quedar", true), Op("otro", "El otro nombre (ej. .Pepe de Bedrock)", true)),
-            Cmd("vincular", "(Solo Dylan) Dice qué usuario de Discord es qué jugador",
-                Op("usuario", "El usuario de Discord", true, tipo: 6), Op("jugador", "Su nombre en Minecraft", true)),
+            Admin(Cmd("unir", "(Solo Dylan) Junta dos nombres de la misma persona, ej. Java y Bedrock",
+                Op("principal", "El nombre que se va a quedar", true), Op("otro", "El otro nombre (ej. .Pepe de Bedrock)", true))),
+            Admin(Cmd("vincular", "(Solo Dylan) Dice qué usuario de Discord es qué jugador",
+                Op("usuario", "El usuario de Discord", true, tipo: 6), Op("jugador", "Su nombre en Minecraft", true))),
             Cmd("calendario", "Los 8 jefes con su fecha y cuáles ya pasaron"),
             Cmd("mision", "Tus misiones de la semana y cómo vas"),
             Cmd("muertes", "Tus últimas muertes y qué te mató"),

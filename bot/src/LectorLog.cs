@@ -108,6 +108,18 @@ public class LectorLog
         if (!m.Success) return;
         var mensaje = m.Groups[1].Value;
 
+        // Server prendido / apagado
+        if (mensaje.StartsWith("Done (") && mensaje.Contains("For help, type"))
+        {
+            await _webhook.EnviarAsync("🟢 **¡El server está prendido!** ⛏️");
+            return;
+        }
+        if (mensaje == "Stopping the server")
+        {
+            await _webhook.EnviarAsync("🔴 **Se apagó el server**");
+            return;
+        }
+
         // Guardar nombres de los que se conectan
         var login = RegexLogin.Match(mensaje);
         if (login.Success)
