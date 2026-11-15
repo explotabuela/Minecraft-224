@@ -19,9 +19,13 @@ public class Admin
     private DateTime _ultimoReinicio = DateTime.MinValue;
     private readonly Dictionary<string, (int Diam, int Neth)> _ultimo = new();
 
-    public Admin(Config config, Rcon rcon, Discord discord)
+    private readonly Anunciador? _avisos;
+    private bool _tesoroActivo;
+
+    public Admin(Config config, Rcon rcon, Discord discord, Anunciador? avisos = null)
     {
         _config = config; _rcon = rcon; _discord = discord;
+        _avisos = avisos;
     }
 
     // Lee los TPS con /tick query (vanilla desde 1.20.3). Regresa 0 si no se pudo.
@@ -129,6 +133,11 @@ public class Admin
     private DateTime _ultimoTesoro = DateTime.MinValue;
     private async Task TesoroAsync()
     {
+        var activo = await ScoreAsync("#tes_activo", "j_var") == 1;
+        if (activo && !_tesoroActivo && _avisos != null)
+            await _avisos.AnunciarAsync("🗺️ **¡Busqueda del tesoro!** Hay un cofre escondido cerca del spawn. Las pistas salen en el chat del juego cada 5 minutos y el primero que lo abra se lo queda.");
+        _tesoroActivo = activo;
+        if (activo) return;
         var ahora = DateTime.Now;
         if (ahora.DayOfWeek != DayOfWeek.Wednesday && ahora.DayOfWeek != DayOfWeek.Sunday) return;
         if (ahora.Hour != 18 || ahora.Minute > 10) return;

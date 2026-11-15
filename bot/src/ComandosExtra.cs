@@ -47,6 +47,75 @@ public partial class Comandos
         });
     }
 
+    // ---------- /medallas ----------
+    private object MedallasCmd(JsonElement i)
+    {
+        var yo = MiJugador(i);
+        if (yo == null) return Texto("Todavia no se cual eres en Minecraft. Usa `/entrar` o pidele a Dylan que te vincule.");
+        var principal = _alias.Principal(yo);
+        var mias = _pagina.Meds.De(principal);
+        var lineas = mias.Take(15).Select(m => $"**{m.Nombre}** — {Medallas.Niveles[Math.Clamp(m.Nivel, 0, 4)]}").ToList();
+        if (lineas.Count == 0) lineas.Add("Todavia no tienes ninguna. La primera cae rapido.");
+        if (mias.Count > 15) lineas.Add($"...y {mias.Count - 15} mas.");
+        // La que le queda mas cerca, con las stats que el bot ya tiene
+        var j = _pagina.Ultima?.Jugadores.FirstOrDefault(x => x.Nombre.Equals(principal, StringComparison.OrdinalIgnoreCase));
+        if (j != null)
+        {
+            var v = new Dictionary<string, double>
+            {
+                ["horas"] = j.Horas, ["minado"] = j.S.Minado, ["diamantes"] = j.S.Diamantes, ["mobs"] = j.S.Mobs,
+                ["metros"] = j.S.Metros, ["record"] = j.S.Record, ["muertes"] = j.S.Muertes, ["netherita"] = j.S.Netherita,
+            };
+            var cerca = Medallas.Categorias.Where(c => v.ContainsKey(c.Stat))
+                .Select(c => (C: c, Meta: c.Metas.FirstOrDefault(m => m > v[c.Stat]), Valor: v[c.Stat]))
+                .Where(x => x.Meta > 0).OrderByDescending(x => x.Valor / x.Meta).FirstOrDefault();
+            if (cerca.C != null)
+                lineas.Add($"\nLa que te queda mas cerca: **{cerca.C.Nombre}** ({Stats.Num((int)cerca.Valor)} de {Stats.Num(cerca.Meta)} {cerca.C.Unidad})");
+        }
+        return Embed(new { title = $"Medallas de {principal}", description = string.Join("\n", lineas), color = 0xF5C451 }, ("Ver todas", Perfil(principal)));
+    }
+
+    // ---------- /semana ----------
+    private object SemanaCmd(JsonElement i)
+    {
+        var yo = MiJugador(i);
+        if (yo == null) return Texto("Todavia no se cual eres en Minecraft. Usa `/entrar` o pidele a Dylan que te vincule.");
+        var foto = _pagina.Ultima;
+        if (foto == null) return Texto("Todavia estoy juntando los datos, intenta en un minuto.");
+        var principal = _alias.Principal(yo);
+        var mia = foto.Semana.FirstOrDefault(x => x.Key.Equals(principal, StringComparison.OrdinalIgnoreCase)).Value;
+        if (mia == null || mia.Values.All(x => x == 0)) return Texto("Esta semana no has jugado nada. Entra, que te estan ganando.");
+        int V(string k) => mia.GetValueOrDefault(k);
+        var orden = foto.Semana.OrderByDescending(x => x.Value.GetValueOrDefault("minutos")).Select(x => x.Key).ToList();
+        var lugar = orden.FindIndex(n => n.Equals(principal, StringComparison.OrdinalIgnoreCase)) + 1;
+        return Embed(new
+        {
+            title = $"La semana de {principal}",
+            description =
+                $"Tiempo jugado: **{Stats.Tiempo(V("minutos"))}**\n" +
+                $"Bloques minados: **{Stats.Num(V("minado"))}**\n" +
+                $"Mobs matados: **{Stats.Num(V("mobs"))}**\n" +
+                $"Diamantes: **{Stats.Num(V("diamantes"))}**\n" +
+                $"Metros caminados: **{Stats.Num(V("metros"))}**\n" +
+                $"Muertes: **{Stats.Num(V("muertes"))}**\n\n" +
+                $"Vas #{lugar} de {orden.Count} en horas jugadas esta semana.",
+            color = 0x5FD068,
+        }, ("Ver el ranking", "#ranking"));
+    }
+
+    // ---------- /tesoro ----------
+    private async Task<object> TesoroAsync(JsonElement i)
+    {
+        var activo = await ScoreAsync("#tes_activo", "j_var") == 1;
+        var yo = MiJugador(i);
+        var mios = yo == null ? 0 : await ScoreAsync(yo, "j_tesoros");
+        var texto = activo
+            ? "**Hay un tesoro escondido ahorita.** Las pistas salen en el chat del juego cada 5 minutos. El primero que abra el cofre se lo queda."
+            : "Ahorita no hay ninguno. Salen los miercoles y domingos a las 6 pm, y a veces de sorpresa.";
+        if (yo != null) texto += $"\n\nTu llevas **{mios}** tesoro(s) encontrados.";
+        return Embed(new { title = "Busqueda del tesoro", description = texto, color = 0xF5C451 });
+    }
+
     // ---------- /tumba ----------
     private async Task<object> TumbaAsync(JsonElement i)
     {
@@ -147,6 +216,7 @@ public partial class Comandos
             "`/tumba` — donde quedo tu ultima tumba\n" +
             "`/medallas` — las que llevas\n" +
             "`/semana` — tu resumen de la semana\n" +
+            "`/tesoro` — si hay busqueda del tesoro ahorita\n" +
             "`/wrapped` — tu Wrapped del mes, por privado\n" +
             "`/reglas` — las reglas\n" +
             "`/sugerencia` — mandale una idea a Dylan\n" +

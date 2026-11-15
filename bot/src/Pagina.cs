@@ -53,6 +53,8 @@ public class Pagina
         public double Horas => Math.Round(S.Minutos / 60.0, 1);
     }
 
+    public Medallas Meds => _medallas;
+
     public class Foto
     {
         public DateTime Fecha { get; set; }

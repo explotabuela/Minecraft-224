@@ -111,6 +111,19 @@ public class Medallas
 
     public record Nueva(string Jugador, string Id, string Nombre, int Nivel, string Icono);
 
+    // Las medallas que ya tiene alguien, de mayor a menor nivel (para /medallas)
+    public List<(string Nombre, int Nivel)> De(string jug)
+    {
+        lock (_candado)
+        {
+            var s = _d.FirstOrDefault(x => x.Key.Equals(jug, StringComparison.OrdinalIgnoreCase)).Value;
+            if (s == null) return new();
+            return s.Where(x => x.Value.Nivel > 0)
+                    .Select(x => (Categorias.FirstOrDefault(c => c.Id == x.Key)?.Nombre ?? Especiales.FirstOrDefault(e => e.Id == x.Key).Nombre ?? x.Key, x.Value.Nivel))
+                    .OrderByDescending(x => x.Item2).ToList();
+        }
+    }
+
     public Medallas()
     {
         _silencio = !File.Exists(Ruta);
