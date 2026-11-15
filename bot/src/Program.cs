@@ -2,6 +2,13 @@ using Bot224;
 using System.Text.RegularExpressions;
 
 Console.OutputEncoding = System.Text.Encoding.UTF8;
+// Todo el bot trabaja en hora de Culiacan, aunque el hosting este en UTC
+if (!OperatingSystem.IsWindows())
+{
+    Environment.SetEnvironmentVariable("TZ", "America/Mazatlan");
+    TimeZoneInfo.ClearCachedData();
+}
+Console.WriteLine($"Hora del bot: {DateTime.Now:dd/MM HH:mm} ({TimeZoneInfo.Local.Id})");
 Console.WriteLine("=== BOT 224 ===");
 
 var config = Config.Cargar("config.json");
