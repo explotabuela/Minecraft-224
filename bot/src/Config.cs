@@ -24,6 +24,8 @@ public class Config
     // Bot de Discord de verdad: comandos, chat de dos sentidos y whitelist (opcional)
     // Si un mod del server ya manda las muertes a Discord, pon esto en false para que no salgan dobles
     [JsonPropertyName("muertes_en_discord")] public bool MuertesEnDiscord { get; set; } = true;
+    // Si un mod del server ya pasa el chat a Discord, pon esto en false para que no salga doble
+    [JsonPropertyName("chat_en_discord")] public bool ChatEnDiscord { get; set; } = true;
     [JsonPropertyName("discord_token")] public string DiscordToken { get; set; } = "";
     [JsonPropertyName("canal_chat_id")] public string CanalChatId { get; set; } = "";
     [JsonPropertyName("canal_capturas_id")] public string CanalCapturasId { get; set; } = "";

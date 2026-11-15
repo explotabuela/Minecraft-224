@@ -300,6 +300,10 @@ public class Discord
     public Task RegistrarComandosAsync(string servidor, JsonArray comandos) =>
         ApiAsync(HttpMethod.Put, $"/applications/{AppId}/guilds/{servidor}/commands", comandos);
 
+    // Borra los comandos globales (los que dejó el mod cuando usaba este mismo bot)
+    public Task BorrarGlobalesAsync() =>
+        ApiAsync(HttpMethod.Put, $"/applications/{AppId}/commands", new JsonArray());
+
     // ---------- Ayudas para leer interacciones ----------
     public static string UsuarioId(JsonElement i) =>
         (i.TryGetProperty("member", out var m) ? m.GetProperty("user") : i.GetProperty("user")).GetProperty("id").GetString() ?? "";

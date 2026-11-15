@@ -20,7 +20,6 @@ public class Admin
     private readonly Dictionary<string, (int Diam, int Neth)> _ultimo = new();
 
     private readonly Anunciador? _avisos;
-    private bool _tesoroActivo;
 
     public Admin(Config config, Rcon rcon, Discord discord, Anunciador? avisos = null)
     {
@@ -59,7 +58,6 @@ public class Admin
                 await LagAsync();
                 await TrampasAsync();
                 await ReinicioAsync();
-                await TesoroAsync();
             }
             catch (Exception ex) { Console.WriteLine($"[Admin] {ex.Message}"); }
             try { await Task.Delay(TimeSpan.FromMinutes(2), cancelar); } catch { }
@@ -127,26 +125,6 @@ public class Admin
             return m.Success ? int.Parse(m.Groups[1].Value) : 0;
         }
         catch { return 0; }
-    }
-
-    // 332: busqueda del tesoro automatica, miercoles y domingo a las 6 pm
-    private DateTime _ultimoTesoro = DateTime.MinValue;
-    private async Task TesoroAsync()
-    {
-        var activo = await ScoreAsync("#tes_activo", "j_var") == 1;
-        if (activo && !_tesoroActivo && _avisos != null)
-            await _avisos.AnunciarAsync("🗺️ **¡Busqueda del tesoro!** Hay un cofre escondido cerca del spawn. Las pistas salen en el chat del juego cada 5 minutos y el primero que lo abra se lo queda.");
-        _tesoroActivo = activo;
-        if (activo) return;
-        var ahora = DateTime.Now;
-        if (ahora.DayOfWeek != DayOfWeek.Wednesday && ahora.DayOfWeek != DayOfWeek.Sunday) return;
-        if (ahora.Hour != 18 || ahora.Minute > 10) return;
-        if (_ultimoTesoro.Date == ahora.Date) return;
-        _ultimoTesoro = ahora;
-        var conectados = await _rcon.ComandoAsync("list");
-        if (conectados.Contains("There are 0 ")) return;
-        await _rcon.ComandoAsync("function j:tesoro");
-        Console.WriteLine("[Admin] Busqueda del tesoro lanzada");
     }
 
     // 597: reinicio diario a las 5 de la manana, con aviso de 5 minutos

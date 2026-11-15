@@ -61,9 +61,6 @@ public partial class Comandos
 
         var comandos = new JsonArray
         {
-            Cmd("ip", "La IP del server para entrar"),
-            Cmd("chiste", "Un chiste malo de Minecraft"),
-            Cmd("online", "Quién está jugando ahorita"),
             Cmd("stats", "Las stats de un jugador", Op("jugador", "Nombre en Minecraft (si no pones nada, las tuyas)", false)),
             Cmd("carta", "La carta de un jugador: nivel, rango, clase y stats", Op("jugador", "Nombre en Minecraft (si no pones nada, la tuya)", false)),
             Cmd("vs", "Compara a dos jugadores", Op("jugador1", "Primer jugador", true), Op("jugador2", "Segundo jugador", true)),
@@ -86,32 +83,26 @@ public partial class Comandos
             Cmd("tumba", "Dónde quedó tu última tumba (solo la tuya)"),
             Cmd("medallas", "Las medallas que llevas y la que te queda más cerca"),
             Cmd("semana", "Tu resumen de los últimos 7 días"),
-            Cmd("tesoro", "Si hay una búsqueda del tesoro ahorita y cuántos llevas"),
-            Cmd("reglas", "Las reglas del server"),
-            Cmd("ayuda", "La lista de todos los comandos"),
             Cmd("sugerencia", "Mándale una idea a Dylan", Op("texto", "Tu idea", true)),
             Cmd("reporte", "Avisa de un problema o de alguien, en privado", Op("texto", "Qué pasó", true)),
-            Cmd("estado", "(Solo Dylan) TPS, jugadores y cómo va la temporada"),
         };
+        try { await _discord.BorrarGlobalesAsync(); } catch (Exception ex) { Console.WriteLine($"[Discord] No se pudieron borrar los globales: {ex.Message}"); }
         foreach (var s in servidores)
             await _discord.RegistrarComandosAsync(s, comandos);
-        Console.WriteLine("[Discord] Comandos listos: /ip /chiste /online /stats /carta /vs /top /liga /jefe /calendario /mision /muertes /tumba /medallas /semana /tesoro /wrapped /reglas /ayuda /sugerencia /reporte /entrar /unir /vincular /estado");
+        Console.WriteLine("[Discord] Comandos listos: /stats /carta /vs /top /liga /jefe /calendario /mision /muertes /tumba /medallas /semana /wrapped /sugerencia /reporte /entrar /unir /vincular");
     }
 
     // ---------- Comandos ----------
     private async Task ComandoAsync(JsonElement i)
     {
         var nombre = i.GetProperty("data").GetProperty("name").GetString();
-        var privado = nombre is "wrapped" or "unir" or "vincular" or "muertes" or "tumba" or "mision" or "medallas" or "semana" or "sugerencia" or "reporte" or "estado";
+        var privado = nombre is "wrapped" or "unir" or "vincular" or "muertes" or "tumba" or "mision" or "medallas" or "semana" or "sugerencia" or "reporte";
         await _discord.EsperarAsync(i, privado);
         object respuesta;
         try
         {
             respuesta = nombre switch
             {
-                "ip" => Ip(),
-                "chiste" => Chiste(),
-                "online" => await OnlineAsync(),
                 "stats" => await StatsAsync(i),
                 "carta" => Carta(i),
                 "vs" => await VsAsync(i),
@@ -128,12 +119,8 @@ public partial class Comandos
                 "tumba" => await TumbaAsync(i),
                 "medallas" => MedallasCmd(i),
                 "semana" => SemanaCmd(i),
-                "tesoro" => await TesoroAsync(i),
-                "reglas" => Reglas(),
-                "ayuda" => Ayuda(),
                 "sugerencia" => await BuzonAsync(i, false),
                 "reporte" => await BuzonAsync(i, true),
-                "estado" => await EstadoAsync(i),
                 _ => Texto("No conozco ese comando 🤨"),
             };
         }
@@ -177,86 +164,6 @@ public partial class Comandos
             image = new { url = Url($"img/jefes/{j.Id}.png") },
             footer = new { text = "Todos los que le peguen se llevan botín. El #1 en daño, un premio único." },
         }, ("Ver todos los jefes", "#jefes"));
-    }
-
-    // ---------- /chiste ----------
-    private static readonly (string Pregunta, string Respuesta)[] Chistes =
-    {
-        ("¿Por qué el creeper no tiene amigos?", "Porque cada vez que se acerca a alguien, explota la relación."),
-        ("¿Qué le dijo un bloque de tierra a otro?", "Nada, los bloques de tierra no hablan. Pero si hablaran, sería de lo bajo que han caído."),
-        ("¿Por qué el esqueleto no fue a la fiesta?", "Porque no tenía cuerpo para eso."),
-        ("¿Cuál es el mob más bueno para las matemáticas?", "La araña, porque tiene ocho patas para contar."),
-        ("¿Qué hace un zombi en la escuela?", "Repite el año. Todos los años."),
-        ("¿Por qué el enderman no juega a las escondidas?", "Porque si lo ves, se enoja y te encuentra él a ti."),
-        ("¿Cómo se llama un diamante que cuenta chistes?", "Un diamante en bruto."),
-        ("¿Por qué la gallina cruzó la lava?", "No la cruzó. Ahora es pollo asado."),
-        ("¿Qué le dijo Steve a la cama a las 3 de la mañana?", "Ahorita voy, nomás mino un bloque más."),
-        ("¿Por qué el aldeano siempre dice \"hmm\"?", "Porque está pensando cuánto más te va a cobrar."),
-        ("¿Cuál es el colmo de un minero?", "Que se le pierda el pico en la cueva y no lo pueda minar."),
-        ("¿Qué le dijo la lava al jugador?", "Te voy a extrañar, y a tus diamantes también."),
-        ("¿Por qué el ghast llora tanto?", "Porque lleva toda la vida en el Nether y nadie le pregunta cómo está."),
-        ("¿Qué mob es el mejor DJ?", "El slime, porque siempre trae el bajo rebotando."),
-        ("¿Por qué el Warden no ve películas?", "Porque es ciego, pero si hablas durante la película, te encuentra."),
-        ("¿Qué hace un panda en el gimnasio?", "Bambú-squats."),
-        ("¿Por qué Herobrine nunca gana a las escondidas?", "Porque lo quitaron del juego en cada actualización."),
-        ("¿Qué le dijo el pico de madera al pico de diamante?", "Algún día voy a ser como tú. El de diamante no contestó, estaba encantado."),
-        ("¿Cuál es la comida favorita del creeper?", "La que le da un \"boom\" de sabor."),
-        ("¿Por qué el pescador de la 224 nunca pesca nada?", "Porque se la pasa revisando el Discord."),
-        ("¿Qué es lo primero que hace un jugador de la 224 al entrar?", "Morirse."),
-        ("¿Por qué el dragón del End está de mal humor?", "Porque cada vez que lo matan, lo vuelven a invocar."),
-        ("¿Qué le dijo una antorcha a otra?", "Estás que ardes."),
-        ("¿Por qué el ajolote siempre está feliz?", "Porque nadie le ha explicado que vive en una cubeta."),
-        ("¿Qué hace un cerdo con una silla de montar?", "Pensar seriamente en su vida."),
-        ("¿Cuál es el bloque más chismoso?", "El bloque de notas, siempre está sonando."),
-        ("¿Por qué la oveja rosa es la más rara?", "Porque sale una de cada mil, como los que entregan la tarea a tiempo."),
-        ("¿Qué dijo el jugador después de caer en el vacío?", "Nada, ya no lo volvimos a ver."),
-        ("¿Por qué las arañas no usan zapatos?", "Porque se les iría todo el sueldo en tenis."),
-        ("¿Cuál es el mob más dramático?", "El ghast: grita, llora y te avienta bolas de fuego."),
-        ("¿Qué le dijo el cofre vacío al jugador?", "No vengas a buscar lo que no guardaste."),
-        ("¿Por qué el zombi aldeano no consigue trabajo?", "Porque en su currículum dice \"experiencia: comer cerebros\"."),
-        ("¿Cuál es el colmo de un constructor?", "Hacer la casa más bonita del server y que un creeper la reseñe."),
-        ("¿Por qué el bot de la 224 cuenta chistes malos?", "Porque los buenos están en el Nether y le da miedo ir."),
-        ("¿Qué le dijo el sol al zombi?", "Nos vemos al rato, si llegas."),
-        ("¿Por qué los phantoms no tienen amigos?", "Porque solo aparecen cuando no has dormido, como los problemas."),
-        ("¿Qué hace el admin cuando se cae el server?", "Lo mismo que todos: decir que fue culpa de alguien más."),
-        ("¿Por qué el ender pearl nunca llega tarde?", "Porque se teletransporta. Bueno, y luego te quita vida."),
-        ("¿Cómo se despide un creeper?", "Ssssss... ya me voy."),
-        ("¿Qué le dijo la cama al jugador en el Nether?", "Ni se te ocurra."),
-    };
-    private int _ultimoChiste = -1;
-    private object Chiste()
-    {
-        int k; do k = Random.Shared.Next(Chistes.Length); while (k == _ultimoChiste && Chistes.Length > 1);
-        _ultimoChiste = k;
-        var (p, r) = Chistes[k];
-        return Embed(new { title = p, description = $"||{r}||", color = Verde, footer = new { text = "Toca el cuadro negro para ver la respuesta" } });
-    }
-
-    private object Ip()
-    {
-        var ip = string.IsNullOrWhiteSpace(_config.IpServer) ? "Todavía no hay IP, Dylan la pone en la inauguración 👀" : $"`{_config.IpServer}`";
-        var texto = $"**Java ({_config.Version}):** Multijugador → Agregar servidor → {ip}";
-        if (_config.PuertoBedrock > 0)
-            texto += $"\n**Bedrock:** Servidores → Agregar servidor → misma IP, puerto `{_config.PuertoBedrock}`";
-        return Embed(new { title = "⛏️ Cómo entrar a la 224", description = texto, color = Verde }, ("Ver la página", "#entrar"));
-    }
-
-    private async Task<object> OnlineAsync()
-    {
-        var r = await _rcon.ComandoAsync("list");
-        var m = RegexOnline.Match(r.Trim());
-        if (!m.Success) return Texto("🟢 El server está prendido.");
-        var cuantos = int.Parse(m.Groups[1].Value);
-        if (cuantos == 0) return Texto("🟢 El server está prendido pero **no hay nadie** 🦗");
-        var nombres = m.Groups[3].Value.Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
-        var lista = string.Join("\n", nombres.Select(n => $"▫️ {n}"));
-        return Embed(new
-        {
-            title = $"🟢 {cuantos} jugando ahorita",
-            description = lista,
-            color = Verde,
-            thumbnail = nombres.Length == 1 ? new { url = Skins.Cabeza(nombres[0]) } : null,
-        }, ("Ver en la página", "#inicio"));
     }
 
     // Busca el jugador: el que escribieron, o el que tiene vinculado quien usó el comando
@@ -612,6 +519,7 @@ public partial class Comandos
 
     private async Task ChatAsync(JsonElement m)
     {
+        if (!_config.ChatEnDiscord) return; // el chat lo pasa el mod
         if (string.IsNullOrEmpty(_config.CanalChatId) || m.GetProperty("channel_id").GetString() != _config.CanalChatId) return;
         if (m.TryGetProperty("webhook_id", out _)) return; // son los mensajes que vienen de Minecraft
         var autor = m.GetProperty("author");

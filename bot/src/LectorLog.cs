@@ -149,7 +149,8 @@ public class LectorLog
         {
             var jugador = _alias.Principal(chat.Groups[1].Value);
             _wrapped.Mensaje(jugador);
-            await _webhookChat.EnviarAsync(chat.Groups[2].Value, jugador, Webhook.Cara(jugador));
+            if (_config.ChatEnDiscord)
+                await _webhookChat.EnviarAsync(chat.Groups[2].Value, jugador, Webhook.Cara(jugador));
             return;
         }
 

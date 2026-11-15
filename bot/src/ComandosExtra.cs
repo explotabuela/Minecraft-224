@@ -103,19 +103,6 @@ public partial class Comandos
         }, ("Ver el ranking", "#ranking"));
     }
 
-    // ---------- /tesoro ----------
-    private async Task<object> TesoroAsync(JsonElement i)
-    {
-        var activo = await ScoreAsync("#tes_activo", "j_var") == 1;
-        var yo = MiJugador(i);
-        var mios = yo == null ? 0 : await ScoreAsync(yo, "j_tesoros");
-        var texto = activo
-            ? "**Hay un tesoro escondido ahorita.** Las pistas salen en el chat del juego cada 5 minutos. El primero que abra el cofre se lo queda."
-            : "Ahorita no hay ninguno. Salen los miercoles y domingos a las 6 pm, y a veces de sorpresa.";
-        if (yo != null) texto += $"\n\nTu llevas **{mios}** tesoro(s) encontrados.";
-        return Embed(new { title = "Busqueda del tesoro", description = texto, color = 0xF5C451 });
-    }
-
     // ---------- /tumba ----------
     private async Task<object> TumbaAsync(JsonElement i)
     {
@@ -183,48 +170,6 @@ public partial class Comandos
         }, ("Ver los jefes", "#jefes"));
     }
 
-    // ---------- /reglas ----------
-    private object Reglas() => Embed(new
-    {
-        title = "Reglas de la 224",
-        description =
-            "**1.** Nada de robar ni grifear.\n" +
-            "**2.** No se destruye lo de nadie.\n" +
-            "**3.** Sin trampas ni x-ray.\n" +
-            "**4.** Respeto en el chat y en la llamada.\n\n" +
-            "El que le haga a la maña se va. Sin avisos.",
-        color = 0xFFC94D,
-    }, ("Ver en la pagina", "#reglas"));
-
-    // ---------- /ayuda ----------
-    private object Ayuda() => Embed(new
-    {
-        title = "Todos los comandos",
-        description =
-            "`/ip` — la IP para entrar\n" +
-            "`/entrar` — pide que te metan a la whitelist\n" +
-            "`/online` — quien esta jugando ahorita\n" +
-            "`/jefe` — cuando y donde sale el proximo jefe\n" +
-            "`/calendario` — los 8 jefes con fecha\n" +
-            "`/stats` — las stats de alguien\n" +
-            "`/carta` — tu carta: nivel, rango y clase\n" +
-            "`/vs` — compara dos jugadores\n" +
-            "`/top` — el top 10 de lo que quieras\n" +
-            "`/liga` — como va la liga del mes\n" +
-            "`/mision` — tus misiones y tu avance\n" +
-            "`/muertes` — tus ultimas muertes y que te mato\n" +
-            "`/tumba` — donde quedo tu ultima tumba\n" +
-            "`/medallas` — las que llevas\n" +
-            "`/semana` — tu resumen de la semana\n" +
-            "`/tesoro` — si hay busqueda del tesoro ahorita\n" +
-            "`/wrapped` — tu Wrapped del mes, por privado\n" +
-            "`/reglas` — las reglas\n" +
-            "`/sugerencia` — mandale una idea a Dylan\n" +
-            "`/reporte` — avisa de un problema, en privado\n" +
-            "`/chiste` — un chiste malo",
-        color = 0x5FD068,
-    }, ("Ver la pagina", ""));
-
     // ---------- /sugerencia y /reporte ----------
     private async Task<object> BuzonAsync(JsonElement i, bool reporte)
     {
@@ -249,25 +194,4 @@ public partial class Comandos
             : "Listo, ya le llego tu idea a Dylan. Gracias.");
     }
 
-    // ---------- /estado (solo Dylan) ----------
-    private async Task<object> EstadoAsync(JsonElement i)
-    {
-        if (Discord.UsuarioId(i) != _config.AdminId) return Texto("Ese comando es solo para Dylan.");
-        var lista = await _rcon.ComandoAsync("list");
-        var tps = await Admin.TpsAsync(_rcon);
-        var semana = await ScoreAsync("#semana", "j_var");
-        var muertes = await ScoreAsync("#muertes", "j_var");
-        var lunas = await ScoreAsync("#lunas", "j_var");
-        return Embed(new
-        {
-            title = "Estado del server",
-            description =
-                $"**TPS:** {(tps > 0 ? tps.ToString("0.0") : "?")} {(tps >= 18 ? "🟢" : tps >= 14 ? "🟡" : "🔴")}\n" +
-                $"**Jugadores:** {lista.Trim()}\n" +
-                $"**Semana de dificultad:** {semana}\n" +
-                $"**Muertes en total:** {muertes}\n" +
-                $"**Lunas de sangre:** {lunas}",
-            color = 0x5FD068,
-        });
-    }
 }
