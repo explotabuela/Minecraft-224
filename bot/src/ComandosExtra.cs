@@ -47,6 +47,26 @@ public partial class Comandos
         });
     }
 
+    // ---------- /diario ----------
+    private object DiarioCmd(JsonElement i)
+    {
+        var yo = MiJugador(i);
+        if (yo == null) return Texto("Todavia no se cual eres en Minecraft. Usa `/entrar` o pidele a Dylan que te vincule.");
+        var principal = _alias.Principal(yo);
+        var lineas = Diario.Instancia?.De(principal) ?? new();
+        if (lineas.Count == 0) return Texto("Tu diario todavia esta vacio. Entra a la 224 y se va llenando solo.");
+        var meses = new[] { "ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic" };
+        string Dia(string f) => DateTime.TryParse(f, out var d) ? $"{d.Day} {meses[d.Month - 1]}" : f;
+        var texto = string.Join("\n", lineas.TakeLast(15).Select(l => $"`{Dia(l.Fecha),6}`  {l.Texto}"));
+        return Embed(new
+        {
+            title = $"Diario de {principal}",
+            description = texto + (lineas.Count > 15 ? $"\n\n*...y {lineas.Count - 15} cosas mas. El diario completo sale en la pagina al final de la temporada.*" : ""),
+            color = 0x8B5A2B,
+            thumbnail = new { url = Skins.Cabeza(principal) },
+        });
+    }
+
     // ---------- /medallas ----------
     private object MedallasCmd(JsonElement i)
     {

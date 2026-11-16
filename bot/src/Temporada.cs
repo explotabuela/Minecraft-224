@@ -15,7 +15,7 @@ public static class Temporada
     {
         "data.json", "desaparecidos.json", "estado.json", "historial.json", "liga.json", "medallas.json", "mas_tontos.json",
         "perfiles.json", "presencia.json", "rachas.json", "resumen.json", "stats_cache.json", "wrapped.json", "xray_avisos.json",
-        "capturas.json", "capturas_conteo.json", "unicas.json", "nether_avisos.json",
+        "capturas.json", "capturas_conteo.json", "unicas.json", "nether_avisos.json", "diario.json", "tablon.json", "jefes_estado.json",
     };
 
     public static List<string> LoQueSeVa() => SeVan.Where(File.Exists).ToList();

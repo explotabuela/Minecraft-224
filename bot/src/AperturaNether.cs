@@ -32,7 +32,7 @@ public class AperturaNether
         await _rcon.ComandoAsync("gamerule allowEnteringNetherUsingPortals true");
         Marcar("abierto");
         if (falta > TimeSpan.FromHours(-3))
-            await _avisos.AnunciarAsync("🔥 **¡YA SE ABRIÓ EL NETHER!** Prendan sus portales, la 224 entra al infierno.");
+            { Diario.Instancia?.Temporada("nether", "Se abrió el Nether"); await _avisos.AnunciarAsync("🔥 **¡YA SE ABRIÓ EL NETHER!** Prendan sus portales, la 224 entra al infierno."); }
         Console.WriteLine("[Nether] Abierto");
     }
 
@@ -55,7 +55,7 @@ public class AperturaNether
                     await _rcon.ComandoAsync("gamerule allowEnteringNetherUsingPortals true");
                     Marcar("abierto");
                     if (falta > TimeSpan.FromHours(-3))
-                        await _avisos.AnunciarAsync("🔥 **¡YA SE ABRIÓ EL NETHER!** Prendan sus portales, la 224 entra al infierno.");
+                        { Diario.Instancia?.Temporada("nether", "Se abrió el Nether"); await _avisos.AnunciarAsync("🔥 **¡YA SE ABRIÓ EL NETHER!** Prendan sus portales, la 224 entra al infierno."); }
                     Console.WriteLine("[Nether] Abierto");
                 }
             }

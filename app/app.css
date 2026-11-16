@@ -978,3 +978,52 @@ canvas.skin3d{touch-action:pan-y}
 .carga{width:100vw;height:100dvh;background:var(--atardecer)}
 .carga img{box-shadow:0 20px 60px -10px #ffc94d66}
 .carga p{color:#f7efe3cc}
+
+/* ---------- Fin de temporada (#temporada) ---------- */
+.tp{display:grid;gap:6px;padding:14px 24px 26px}
+.tp-sec .sub-titulo{margin:22px 0 12px}
+.tp-cab{display:grid;justify-items:start;gap:8px;padding:6px 0 4px}
+.tp-titulo{font-family:var(--f-display);font-size:clamp(2.2rem,6vw,3.4rem);line-height:1;margin:0}
+.tp-fechas{color:var(--tenue);margin:0}
+.tp-totales{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.tp-total{background:var(--capa-2);border:1px solid var(--linea);border-radius:var(--radio);padding:14px;display:grid;gap:2px}
+.tp-total b{font-family:var(--f-display);font-size:1.7rem;line-height:1.1;color:var(--verde)}
+.tp-total span{color:var(--tenue);font-size:.85rem}
+.tp-campeon{display:flex;align-items:center;gap:18px;text-decoration:none;color:var(--texto);background:linear-gradient(90deg,#f5c45122,var(--capa-2));border:1px solid #f5c45166;border-radius:var(--radio);padding:12px 18px;margin-bottom:12px}
+.tp-campeon img{height:120px;image-rendering:pixelated}
+.tp-campeon div{display:grid;gap:2px}.tp-campeon b{font-family:var(--f-display);font-size:2rem;line-height:1.05}.tp-campeon small{color:var(--tenue)}
+.tp-tops{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
+.tp-top{background:var(--capa-2);border:1px solid var(--linea);border-radius:var(--radio);padding:12px}
+.tp-top h4{margin:0 0 8px;font-size:.92rem;color:var(--tenue)}
+.tp-top ol{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.tp-top li{display:flex;align-items:center;gap:8px}.tp-top li img{width:22px;height:22px;border-radius:4px;image-rendering:pixelated}
+.tp-top li span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.tp-top li b{font-variant-numeric:tabular-nums}
+.tp-linea{display:grid;gap:14px;border-left:2px solid var(--linea);padding-left:16px}
+.tp-semana h4{margin:0 0 6px;font-family:var(--f-display);font-size:1.25rem}.tp-semana h4 small{font-family:var(--f-body);font-size:.85rem;color:var(--tenue)}
+.tp-dia{display:grid;grid-template-columns:64px 1fr;gap:8px;padding:4px 0}
+.tp-fecha{color:var(--verde);font-weight:700;font-size:.85rem;font-variant-numeric:tabular-nums}
+.tp-dia ul{list-style:none;margin:0;padding:0;display:grid;gap:4px}.tp-dia li svg{vertical-align:-3px;margin-right:6px;color:var(--tenue)}
+.tp-diario{display:grid;gap:2px;margin-top:10px;max-height:340px;overflow:auto;border:1px solid var(--linea);border-radius:var(--radio);padding:8px 10px}
+.tp-renglon{display:grid;grid-template-columns:64px 1fr;gap:8px;padding:4px 0;border-bottom:1px solid var(--linea)}
+.tp select{font:600 .9rem var(--f-body);background:var(--capa-2);color:var(--texto);border:1px solid var(--linea);border-radius:var(--radio);padding:8px 10px}
+.pe{position:absolute;inset:0;background:#05040a;overflow:hidden;color:#fff;cursor:pointer}
+.pe-fondo{position:absolute;inset:-4%;background:#160d2a center/cover no-repeat;animation:pe-zoom 9s ease-out both}
+.pe-fondo.con-foto::after{content:"";position:absolute;inset:0;background:linear-gradient(#0008,#000a)}
+.pe-fondo.solo.con-foto::after{background:linear-gradient(transparent 60%,#000c)}
+@keyframes pe-zoom{from{transform:scale(1.08)}to{transform:scale(1)}}
+.pe-texto{position:absolute;inset:0;display:grid;place-items:center;padding:24px;animation:pe-entra .7s ease-out both}
+@keyframes pe-entra{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.pe-centro{display:grid;justify-items:center;gap:10px;text-align:center}
+.pe-mini{font-family:var(--f-pixel);font-size:.8rem;letter-spacing:.16em;text-transform:uppercase;color:#f5c451}
+.pe-grande{font-family:var(--f-display);font-size:clamp(2.6rem,9vw,5.5rem);line-height:1;margin:0}
+.pe-cuerpo{height:min(34vh,260px);image-rendering:pixelated}
+.pe-semana{display:grid;gap:14px;max-width:640px}
+.pe-semana ul{margin:0;padding:0;list-style:none;display:grid;gap:10px;font-size:clamp(1.05rem,2.6vw,1.4rem);font-weight:700}
+.pe-semana li{background:#0007;border-left:3px solid #f5c451;padding:8px 14px}
+.pe-pie{position:absolute;left:24px;right:24px;bottom:34px;display:grid;gap:4px}
+.pe-pie b{font-size:1.3rem}.pe-pie span{color:#ffffffbb}
+.pe-numeros{display:grid;gap:12px;text-align:center;font-size:clamp(1.1rem,2.8vw,1.5rem)}
+.pe-numeros b{font-family:var(--f-display);font-size:clamp(2rem,6vw,3.6rem);color:#f5c451;margin-right:8px}
+.pe .creditos-rollo{animation:rodar var(--dur) linear .4s both}
+.pe-barra{position:absolute;left:0;right:0;bottom:0;height:3px;background:#ffffff22}
+.pe-barra::after{content:"";position:absolute;left:0;top:0;bottom:0;width:var(--p,0%);background:#f5c451;transition:width .4s}

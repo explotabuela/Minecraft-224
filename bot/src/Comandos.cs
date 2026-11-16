@@ -82,6 +82,7 @@ public partial class Comandos
             Cmd("calendario", "Los 8 jefes con su fecha y cuáles ya pasaron"),
             Cmd("mision", "Tus misiones de la semana y cómo vas"),
             Cmd("muertes", "Tus últimas muertes y qué te mató"),
+            Cmd("diario", "Tu diario: lo que has hecho en la 224, día por día"),
             Cmd("tumba", "Dónde quedó tu última tumba (solo la tuya)"),
             Cmd("medallas", "Las medallas que llevas y la que te queda más cerca"),
             Cmd("semana", "Tu resumen de los últimos 7 días"),
@@ -91,14 +92,14 @@ public partial class Comandos
         try { await _discord.BorrarGlobalesAsync(); } catch (Exception ex) { Console.WriteLine($"[Discord] No se pudieron borrar los globales: {ex.Message}"); }
         foreach (var s in servidores)
             await _discord.RegistrarComandosAsync(s, comandos);
-        Console.WriteLine("[Discord] Comandos listos: /stats /carta /vs /top /liga /jefe /calendario /mision /muertes /tumba /medallas /semana /wrapped /sugerencia /reporte /entrar /unir /vincular");
+        Console.WriteLine("[Discord] Comandos listos: /stats /carta /vs /top /liga /jefe /calendario /mision /muertes /diario /tumba /medallas /semana /wrapped /sugerencia /reporte /entrar /unir /vincular");
     }
 
     // ---------- Comandos ----------
     private async Task ComandoAsync(JsonElement i)
     {
         var nombre = i.GetProperty("data").GetProperty("name").GetString();
-        var privado = nombre is "wrapped" or "unir" or "vincular" or "muertes" or "tumba" or "mision" or "medallas" or "semana" or "sugerencia" or "reporte";
+        var privado = nombre is "wrapped" or "unir" or "vincular" or "muertes" or "diario" or "tumba" or "mision" or "medallas" or "semana" or "sugerencia" or "reporte";
         await _discord.EsperarAsync(i, privado);
         object respuesta;
         try
@@ -118,6 +119,7 @@ public partial class Comandos
                 "calendario" => Calendario(),
                 "mision" => await MisionAsync(i),
                 "muertes" => await MuertesAsync(i),
+                "diario" => DiarioCmd(i),
                 "tumba" => await TumbaAsync(i),
                 "medallas" => MedallasCmd(i),
                 "semana" => SemanaCmd(i),

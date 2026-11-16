@@ -132,7 +132,9 @@ public class LectorLog
             _wrapped.Entro(jugador);
 
             // Racha de días seguidos: se anuncia desde el día 2
+            if (Diario.Instancia is { } dia && !dia.Tiene(jugador)) dia.Jugador(jugador, "entrada", "Entró a la 224 por primera vez");
             var racha = _rachas.Registrar(jugador, DateTime.Now);
+            if (racha is 3 or 7 or 14 or 21 or 30 or 45) Diario.Instancia?.Jugador(jugador, "racha", $"Llegó a {racha} días seguidos jugando");
             if (racha >= 2)
                 await _webhook.EnviarAsync($"🔥 **{jugador}** lleva **{racha} días seguidos** en la 224", jugador, Webhook.Cara(jugador));
             return;
@@ -169,7 +171,20 @@ public class LectorLog
         // Logros (para el Wrapped: primer diamante, Nether, End...)
         var logro = RegexLogro.Match(texto);
         if (logro.Success && _jugadores.Contains(logro.Groups[1].Value))
+        {
             _wrapped.Logro(_alias.Principal(logro.Groups[1].Value), logro.Groups[2].Value);
+            Diario.Instancia?.Jugador(_alias.Principal(logro.Groups[1].Value), "logro", $"Consiguió el logro «{logro.Groups[2].Value}»");
+        }
+
+        // Jefe derrotado: va a la bitácora de la temporada y al diario de los que pelearon
+        var jefeCayo = Regex.Match(texto, @"^¡(.+?) (?:HA CAÍDO|FUE DESINSTALADA)!");
+        if (jefeCayo.Success && Diario.Instancia is { } d)
+        {
+            var nombreJefe = System.Globalization.CultureInfo.GetCultureInfo("es-MX").TextInfo.ToTitleCase(jefeCayo.Groups[1].Value.ToLower());
+            d.Temporada("jefe", $"Cayó {nombreJefe}");
+            foreach (var j in _jugadores.Where(j => Regex.IsMatch(texto, $@"\b{Regex.Escape(j)}\b", RegexOptions.IgnoreCase)))
+                d.Jugador(_alias.Principal(j), "jefe", $"Ayudó a derrotar a {nombreJefe}");
+        }
 
         // ¿De qué jugador habla el mensaje?
         // Primero el que sale al inicio (el que murió / entró), si no, cualquiera que se mencione
@@ -182,9 +197,19 @@ public class LectorLog
         {
             var principal = _alias.Principal(quien);
             _wrapped.Muerte(principal, texto, _jugadores, quien);
-            _presencia.Murio(principal, Wrapped.Causa(quien, texto, _jugadores));
+            var causa = Wrapped.Causa(quien, texto, _jugadores);
+            _presencia.Murio(principal, causa);
+            Diario.Instancia?.Jugador(principal, "muerte", $"Se murió ({causa.Replace("⚔️ ", "por ")})");
         }
+        else if (texto.Contains("subió al escenario") || texto.Contains("ganó el torneo") || texto.Contains("manos vacías"))
+            Diario.Instancia?.Jugador(_alias.Principal(quien), "evento", texto.StartsWith(quien) ? texto[quien.Length..].Trim() : texto);
         var emoji = muerte ? "💀 " : "";
+        // Idea 2: si murió en la lava, se hizo sopa
+        if (muerte && texto.Contains("lava", StringComparison.OrdinalIgnoreCase))
+        {
+            emoji = "🍲 ";
+            texto = texto[..^"por tonto".Length].TrimEnd() + "... se hizo sopa";
+        }
         // Los de Bedrock: primero se consigue su skin para que no salga Steve
         if (quien.StartsWith('.') && Skins.Instancia != null) await Skins.Instancia.AsegurarAsync(quien, _alias);
         await _webhook.EnviarAsync($"{emoji}**{texto}**", quien, Webhook.Cara(quien));

@@ -115,6 +115,8 @@ public class Jefes
     {
         await SemanaAsync();
         await HackeosAsync();
+        await CaosAsync();
+        await CronoAsync();
         foreach (var j in Calendario)
         {
             if (!DateTimeOffset.TryParse(j.Fecha, out var fecha)) continue;
@@ -138,8 +140,8 @@ public class Jefes
                 Console.WriteLine($"[Jefes] Aviso {j.Id} en {lugar}");
             }
 
-            // Campanas a los 60, 30 y 10 minutos; a los 10 se abre el portal del spawn
-            foreach (var min in new[] { 60, 30, 10 })
+            // Avisos a los 60, 30, 15 y 5 minutos (campana en el juego y aviso en Discord); a los 15 se abre el portal del spawn
+            foreach (var min in new[] { 60, 30, 15, 5 })
             {
                 var clave = $"{j.Id}:campana{min}";
                 if (falta <= TimeSpan.Zero || falta > TimeSpan.FromMinutes(min) || _e.Hechos.Contains(clave)) continue;
@@ -152,7 +154,8 @@ public class Jefes
                 _e.Hechos.Add(clave); Guardar();
                 await MandarLugarAsync(j, donde, min);
                 await _rcon.ComandoAsync("function jefes224:jefe/campana");
-                if (min == 10) await _rcon.ComandoAsync("function jefes224:jefe/portal_abrir");
+                if (min == 15) await _rcon.ComandoAsync("function jefes224:jefe/portal_abrir");
+                if (falta > TimeSpan.FromMinutes(min - 3)) await AvisoDiscordAsync(j, donde, min);
                 Console.WriteLine($"[Jefes] Campana de {min} min para {j.Id}");
             }
 
@@ -178,9 +181,24 @@ public class Jefes
                 var p = lugar.Split(' ');
                 await _avisos.AnunciarAsync($"⚔️ **¡{j.Nombre.ToUpper()} HA DESPERTADO!**",
                     Cartel(j, $"Está en **X: {p[0]}  Z: {p[2]}**. ¡Vayan todos!"));
+                Diario.Instancia?.Temporada("jefe", $"Apareció {j.Nombre}");
                 Console.WriteLine($"[Jefes] Invocado {j.Id}");
             }
         }
+    }
+
+    // Aviso en Discord antes del jefe: a la hora solo la hora, desde los 30 min con coordenadas
+    private async Task AvisoDiscordAsync(Jefe j, string lugar, int min)
+    {
+        var p = lugar.Split(' ');
+        var nether = j.Dimension == "minecraft:the_nether" ? " (en el Nether)" : "";
+        if (min >= 60)
+        {
+            await _avisos.AnunciarAsync($"⏰ **En 1 hora aparece {j.Nombre}.** Hoy a las 5:10 pm. Vayan preparando sus cosas.");
+            return;
+        }
+        var cuando = min == 5 ? "**¡En 5 minutos!**" : $"En **{min} minutos**";
+        await _avisos.AnunciarAsync($"⏰ {cuando} aparece **{j.Nombre}** en **X: {p[0]}  Z: {p[2]}**{nether}.");
     }
 
     // Le pasa al datapack dónde es la pelea y cuántos minutos faltan (campanas, portal y brújula)
@@ -208,6 +226,64 @@ public class Jefes
         var y = m.Groups[2].Value == "~" ? "100" : m.Groups[2].Value;
         if (j.Id is "bruja" or "muneco" or "viejo" or "rey" or "ultimo" or "profe") y = "100";
         return $"{m.Groups[1].Value} {y} {m.Groups[3].Value}";
+    }
+
+    // Día del caos: dos veces al mes, en días al azar (siempre los mismos para ese mes), de 12 pm a 12 pm
+    public IEnumerable<DateTimeOffset> DiasCaos()
+    {
+        if (!DateTimeOffset.TryParse(_config.Inauguracion, out var ini)) yield break;
+        if (!DateTimeOffset.TryParse(Calendario[^1].Fecha, out var fin)) yield break;
+        for (var m = new DateTime(ini.Year, ini.Month, 1); m <= fin.Date; m = m.AddMonths(1))
+        {
+            var r = new Random(m.Year * 100 + m.Month);
+            foreach (var (a, b) in new[] { (3, 13), (17, 27) })
+            {
+                var d = new DateTimeOffset(m.Year, m.Month, r.Next(a, b + 1), 12, 0, 0, ini.Offset);
+                if (d.DayOfWeek == DayOfWeek.Saturday) d = d.AddDays(1); // el sábado es del jefe
+                if (d < ini.AddDays(2) || d.AddDays(1) > fin) continue;
+                yield return d;
+            }
+        }
+    }
+
+    // Cronómetro y calendario del sótano: minutos que faltan para el próximo jefe y los días del caos
+    private static readonly string[] MesesCortos = { "ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic" };
+    private async Task CronoAsync()
+    {
+        var ahora = DateTimeOffset.Now;
+        var prox = Calendario.Select(j => DateTimeOffset.TryParse(j.Fecha, out var f) ? f : DateTimeOffset.MinValue).Where(f => f > ahora).DefaultIfEmpty(DateTimeOffset.MinValue).Min();
+        var min = prox == DateTimeOffset.MinValue ? 0 : (int)Math.Ceiling((prox - ahora).TotalMinutes);
+        await _rcon.ComandoAsync($"scoreboard players set #crono j_var {min}");
+        var dias = DiasCaos().Select(d => $"{d.Day} {MesesCortos[d.Month - 1]}").ToList();
+        string Linea(IEnumerable<string> x) => string.Join(", ", x);
+        await _rcon.ComandoAsync($"data modify storage jefes224:cal caos1 set value \"{Linea(dias.Take(2))}\"");
+        await _rcon.ComandoAsync($"data modify storage jefes224:cal caos2 set value \"{Linea(dias.Skip(2).Take(2))}\"");
+    }
+
+    private async Task CaosAsync()
+    {
+        var ahora = DateTimeOffset.Now;
+        foreach (var d in DiasCaos())
+        {
+            var k = $"caos:{d:yyyy-MM-dd}";
+            if (ahora >= d && ahora < d.AddHours(24) && !_e.Hechos.Contains(k + ":ini"))
+            {
+                _e.Hechos.Add(k + ":ini"); Guardar();
+                await _rcon.ComandoAsync("function jefes224:caos/empezar");
+                await _avisos.AnunciarAsync("🌀 **¡DÍA DEL CAOS!** Por 24 horas cada mob que aparezca sale de un tipo al azar: un zombi puede ser creeper y una araña puede ser bruja. Los jefes no cambian. Cuídense.");
+                Diario.Instancia?.Temporada("caos", "Día del caos: los mobs salieron cambiados");
+                Console.WriteLine($"[Jefes] Empezó el día del caos {d:yyyy-MM-dd}");
+            }
+            if (ahora >= d.AddHours(24) && _e.Hechos.Contains(k + ":ini") && !_e.Hechos.Contains(k + ":fin"))
+            {
+                _e.Hechos.Add(k + ":fin"); Guardar();
+                var resp = await _rcon.ComandoAsync("scoreboard players get #caos_n j_var");
+                var m = Regex.Match(resp, @"has (\d+)");
+                await _rcon.ComandoAsync("function jefes224:caos/terminar");
+                await _avisos.AnunciarAsync("🌀 Se acabó el Día del caos." + (m.Success ? $" Se cambiaron **{m.Groups[1].Value}** mobs." : "") + " Todo vuelve a la normalidad.");
+                Console.WriteLine($"[Jefes] Terminó el día del caos {d:yyyy-MM-dd}");
+            }
+        }
     }
 
     // +5% por semana: semana 0 la primera, 1 la segunda, etc.

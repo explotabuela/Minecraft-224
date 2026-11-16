@@ -60,6 +60,7 @@ public class Inauguracion
                 var cual = QueToca(DateTimeOffset.Now, fecha);
                 if (cual != null && !_mandados.Contains(cual))
                 {
+                    if (cual == "abierto") Diario.Instancia?.Temporada("inicio", "Arrancó la temporada 1 de la 224");
                     await _avisos.AnunciarAsync(Mensaje(cual), botones: new[] { ("Ver la página", "") });
                     // Los anteriores ya no tienen caso
                     foreach (var k in new[] { "dia", "hora", "abierto" })

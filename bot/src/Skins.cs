@@ -29,7 +29,7 @@ public class Skins
     public static string CuerpoUrl(string nombre)
     {
         var i = InfoDe(nombre);
-        return i != null && i.Cuerpo != "" && UrlBase != "" ? $"{UrlBase}{i.Cuerpo}?v={i.Hash}" : $"https://mc-heads.net/body/{Id(nombre)}/200";
+        return i != null && i.Cuerpo != "" && UrlBase != "" ? $"{UrlBase}{i.Cuerpo}?v={i.Hash}{i.Version}" : $"https://mc-heads.net/body/{Id(nombre)}/200";
     }
     public static string Id(string nombre)
     {
@@ -66,9 +66,11 @@ public class Skins
         public string Textura { get; set; } = "";   // ID de la textura (para la cara en Discord de los de Bedrock)
         public string Cara { get; set; } = "";      // skins/NOMBRE_cara.png (para Discord, ya no depende de otras páginas)
         public string Cuerpo { get; set; } = "";    // skins/NOMBRE_cuerpo.png
+        public int Version { get; set; }            // sube cuando cambia cómo se dibuja el cuerpo
     }
 
     private const string Ruta = "skins.json";
+    public const int VersionCuerpo = 2; // 2 = render 3D con pose
     // Se pueden cambiar para pruebas
     private static readonly string Mojang = Environment.GetEnvironmentVariable("M224_MOJANG") ?? "https://sessionserver.mojang.com";
     private static readonly string Geyser = Environment.GetEnvironmentVariable("M224_GEYSER") ?? "https://api.geysermc.org";
@@ -108,7 +110,7 @@ public class Skins
         foreach (var principal in jugadores)
         {
             var previo = De(principal);
-            if (previo != null && previo.Textura != "" && previo.Cara != "" && DateTime.TryParse(previo.Revisado, out var r) && DateTime.Now - r < TimeSpan.FromHours(6)) continue;
+            if (previo != null && previo.Textura != "" && previo.Cara != "" && previo.Version >= VersionCuerpo && DateTime.TryParse(previo.Revisado, out var r) && DateTime.Now - r < TimeSpan.FromHours(6)) continue;
             // Primero la cuenta de Java; si no hay, la de Bedrock
             var nombres = alias.NombresDe(principal).OrderBy(n => n.StartsWith('.') ? 1 : 0);
             foreach (var n in nombres)
@@ -125,17 +127,16 @@ public class Skins
                         await _github.SubirAsync(archivo, png, $"Skin de {principal}");
                         Console.WriteLine($"[Skins] Skin de {principal} subida ✔");
                     }
-                    var info = new Info { Hash = hash, Slim = slim, Archivo = archivo, Revisado = DateTime.Now.ToString("s"), Textura = UltimaTextura ?? "" };
+                    var info = new Info { Hash = hash, Slim = slim, Archivo = archivo, Revisado = DateTime.Now.ToString("s"), Textura = UltimaTextura ?? "", Version = VersionCuerpo };
                     // Cara y cuerpo ya armados, para que Discord no dependa de otras páginas de skins
                     try
                     {
                         var baseNombre = $"skins/{Uri.EscapeDataString(principal.ToLower())}";
                         info.Cara = baseNombre + "_cara.png"; info.Cuerpo = baseNombre + "_cuerpo.png";
                         if (previo == null || previo.Hash != hash || previo.Cara == "")
-                        {
                             await _github.SubirAsync(info.Cara, Png.Cara(png), $"Cara de {principal}");
-                            await _github.SubirAsync(info.Cuerpo, Png.Cuerpo(png, slim), $"Cuerpo de {principal}");
-                        }
+                        if (previo == null || previo.Hash != hash || previo.Cara == "" || previo.Version < VersionCuerpo)
+                            await _github.SubirAsync(info.Cuerpo, Render3D.Cuerpo(png, slim), $"Cuerpo 3D de {principal}");
                     }
                     catch (Exception ex) { Console.WriteLine($"[Skins] No pude armar la cara de {principal}: {ex.Message}"); info.Cara = info.Cuerpo = ""; }
                     if (n.StartsWith('.')) _datos[n] = info; // también con su nombre de Bedrock

@@ -190,6 +190,7 @@ public class Pagina
         foreach (var n in _medallas.Revisar(valores, especiales))
         {
             var titulo = n.Nivel == 5 ? $"🏅 **{n.Jugador}** ganó la medalla especial **{n.Nombre}**" : $"🏅 **{n.Jugador}** ganó la medalla **{n.Nombre}**";
+            Diario.Instancia?.Jugador(n.Jugador, "medalla", $"Ganó la medalla {n.Nombre}");
             await _avisos.AnunciarAsync(titulo, botones: new[] { ("Ver sus medallas", "#j-" + Uri.EscapeDataString(n.Jugador)) },
                 nombre: n.Jugador, avatar: Webhook.Cara(n.Jugador));
         }
@@ -309,6 +310,9 @@ public class Pagina
         {
             var hist = JsonSerializer.Serialize(_historial.Copia());
             await _github.SubirAsync("historial.json", Encoding.UTF8.GetBytes(hist), "Historial de la 224");
+            // Solo el bot que lee el log llena el diario; el de GitHub no lo pisa con uno vacío
+            if (Diario.Instancia?.Copia() is { } diario && (diario.Temporada.Count > 0 || diario.Jugadores.Count > 0))
+                await _github.SubirAsync("diario.json", Encoding.UTF8.GetBytes(JsonSerializer.Serialize(diario, Archivo.ParaPagina)), "Diario de la 224");
             _ultimoHistorial = DateTime.Now;
             File.WriteAllText("ultimo_historial.txt", _ultimoHistorial.ToString("s"));
         }

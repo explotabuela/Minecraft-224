@@ -26,6 +26,7 @@ var liga = new Liga();
 var medallas = new Medallas();
 var presencia = new Presencia();
 var vinculos = new Vinculos();
+var diario = new Diario();
 
 var stats = new Stats(config, rcon, alias);
 Skins.Fuente = stats;
@@ -55,6 +56,7 @@ async Task Unir(string principal, string otro)
     liga.Renombrar(otro, principal);
     vinculos.Renombrar(otro, principal);
     presencia.Renombrar(otro, principal);
+    diario.Renombrar(otro, principal);
     Console.WriteLine($"[Unir] {otro} ahora cuenta como {principal} ✔");
     // Que la página y los comandos ya lo vean junto
     if (!args.Contains("--una-vez")) _ = Task.Run(async () => { try { await pagina.ActualizarAsync(); } catch (Exception ex) { Console.WriteLine($"[Página] Error: {ex.Message}"); } });
@@ -87,6 +89,8 @@ pagina.CampeonNuevo += async (mes, tabla) =>
         color = 0xF5C451,
         image = new { url = Skins.CuerpoUrl(campeon.Nombre) },
     }, new[] { ("Ver la liga del mes", $"#mes-{mes}"), ("Wrapped de la 224", $"#wrapped-224~{mes}") });
+    diario.Temporada("campeon", $"{campeon.Nombre} fue el campeón de {nombreMes}");
+    diario.Jugador(campeon.Nombre, "campeon", $"Fue el campeón de la liga de {nombreMes}");
     Console.WriteLine($"[Liga] Campeón de {nombreMes}: {campeon.Nombre}");
 };
 
@@ -127,6 +131,7 @@ _ = desaparecidos.CorrerAsync(cancelar.Token);
 _ = new Inauguracion(config, avisos).CorrerAsync(cancelar.Token);
 _ = new AperturaNether(config, rcon, avisos).CorrerAsync(cancelar.Token);
 _ = new Jefes(config, rcon, avisos).CorrerAsync(cancelar.Token);
+_ = new Tablon(rcon, pagina).CorrerAsync(cancelar.Token);
 
 // Bot de Discord (comandos, chat de dos sentidos, whitelist, capturas)
 if (string.IsNullOrWhiteSpace(config.DiscordToken))
