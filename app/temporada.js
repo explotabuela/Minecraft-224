@@ -177,7 +177,10 @@
       mostrar();
     }
 
-    App.ruta("#temporada", () => abrir());
+    // Sale hasta que se acaba la temporada; #temporada-prueba la abre antes para revisarla
+    if (terminada()) document.querySelectorAll("[data-temporada]").forEach(a => { a.hidden = false; });
+    App.ruta("#temporada-prueba", () => abrir());
+    App.ruta("#temporada", () => terminada() ? abrir() : App.M.avisar("La página de la temporada sale cuando se acabe, el 6 de febrero"));
     App.temporadaAbrir = abrir;
   });
 })();

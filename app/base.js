@@ -546,7 +546,7 @@
   }
   function hojaMas() {
     const items = [["#ranking", "podio", "Ranking"], ["#misiones", "reglas", "Misiones"], ["#juegos", "mando", "Juegos"], ["#capturas", "foto", "Capturas"], ["#wrapped", "regalo", "Wrapped"], ["#estadisticas", "grafica", "Estadísticas"],
-      ["#meses", "calendario", "Meses"], ["#temporada", "trofeo", "Temporada"], ["#historia", "libro", "Historia"], ["#mapa", "mapa", "Mapa"], ["#entrar", "entrar", "Cómo entrar"], ["#reglas", "reglas", "Reglas"],
+      ["#meses", "calendario", "Meses"], ...(new Date() > new Date("2027-02-06T23:59:00-07:00") ? [["#temporada", "trofeo", "Temporada"]] : []), ["#historia", "libro", "Historia"], ["#mapa", "mapa", "Mapa"], ["#entrar", "entrar", "Cómo entrar"], ["#reglas", "reglas", "Reglas"],
       ["#preguntas", "pregunta", "Preguntas"]];
     const rej = el("div", { class: "hoja-rejilla" },
       items.map(([h, i, t]) => el("a", { href: h, html: icono(i, 22) + t })),
@@ -627,7 +627,7 @@
   // ---------- Buscador universal ----------
   const APARTADOS = [["Inicio", "#inicio", "casa"], ["Liga del mes", "#liga", "trofeo"], ["Ranking", "#ranking", "podio"], ["Jugadores", "#jugadores", "gente"], ["Jefes", "#jefes", "espada"], ["Misiones", "#misiones", "reglas"],
     ["VS", "#comparador", "rayo"], ["Mini juegos", "#juegos", "mando"], ["Estadísticas", "#estadisticas", "grafica"], ["Meses", "#meses", "calendario"],
-    ["Historia", "#historia", "libro"], ["Capturas", "#capturas", "foto"], ["Mapa", "#mapa", "mapa"], ["Wrapped", "#wrapped", "regalo"], ["Temporada 1", "#temporada", "trofeo"],
+    ["Historia", "#historia", "libro"], ["Capturas", "#capturas", "foto"], ["Mapa", "#mapa", "mapa"], ["Wrapped", "#wrapped", "regalo"], ...(new Date() > new Date("2027-02-06T23:59:00-07:00") ? [["Temporada 1", "#temporada", "trofeo"]] : []),
     ["Cómo entrar", "#entrar", "entrar"], ["Reglas", "#reglas", "reglas"], ["Preguntas", "#preguntas", "pregunta"]];
   const CATEGORIAS = [["Horas", "horas"], ["Diamantes", "diamantes"], ["Netherita", "netherita"], ["Bloques minados", "minado"], ["Mobs", "mobs"], ["Metros", "metros"], ["Muertes", "muertes"], ["Racha", "racha"], ["Nivel", "nivel"], ["Récord sin morir", "record"]];
   function abrirBuscador() {
