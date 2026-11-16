@@ -246,7 +246,7 @@ public class Jefes
         }
     }
 
-    // Cronómetro y calendario del sótano: minutos que faltan para el próximo jefe y los días del caos
+    // Cronómetro del sótano: minutos que faltan para el próximo jefe
     private static readonly string[] MesesCortos = { "ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic" };
     private async Task CronoAsync()
     {
@@ -254,10 +254,7 @@ public class Jefes
         var prox = Calendario.Select(j => DateTimeOffset.TryParse(j.Fecha, out var f) ? f : DateTimeOffset.MinValue).Where(f => f > ahora).DefaultIfEmpty(DateTimeOffset.MinValue).Min();
         var min = prox == DateTimeOffset.MinValue ? 0 : (int)Math.Ceiling((prox - ahora).TotalMinutes);
         await _rcon.ComandoAsync($"scoreboard players set #crono j_var {min}");
-        var dias = DiasCaos().Select(d => $"{d.Day} {MesesCortos[d.Month - 1]}").ToList();
-        string Linea(IEnumerable<string> x) => string.Join(", ", x);
-        await _rcon.ComandoAsync($"data modify storage jefes224:cal caos1 set value \"{Linea(dias.Take(2))}\"");
-        await _rcon.ComandoAsync($"data modify storage jefes224:cal caos2 set value \"{Linea(dias.Skip(2).Take(2))}\"");
+
     }
 
     private async Task CaosAsync()
