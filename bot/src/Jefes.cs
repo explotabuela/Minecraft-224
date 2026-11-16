@@ -116,7 +116,6 @@ public class Jefes
         await SemanaAsync();
         await HackeosAsync();
         await CaosAsync();
-        await CronoAsync();
         foreach (var j in Calendario)
         {
             if (!DateTimeOffset.TryParse(j.Fecha, out var fecha)) continue;
@@ -244,17 +243,6 @@ public class Jefes
                 yield return d;
             }
         }
-    }
-
-    // Cronómetro del sótano: minutos que faltan para el próximo jefe
-    private static readonly string[] MesesCortos = { "ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic" };
-    private async Task CronoAsync()
-    {
-        var ahora = DateTimeOffset.Now;
-        var prox = Calendario.Select(j => DateTimeOffset.TryParse(j.Fecha, out var f) ? f : DateTimeOffset.MinValue).Where(f => f > ahora).DefaultIfEmpty(DateTimeOffset.MinValue).Min();
-        var min = prox == DateTimeOffset.MinValue ? 0 : (int)Math.Ceiling((prox - ahora).TotalMinutes);
-        await _rcon.ComandoAsync($"scoreboard players set #crono j_var {min}");
-
     }
 
     private async Task CaosAsync()
